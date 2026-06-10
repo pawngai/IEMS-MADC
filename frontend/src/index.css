@@ -1,0 +1,625 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+/* Mobile WebView Fixes */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100%;
+    width: 100%;
+    font-family: "Segoe UI Variable Text", "Segoe UI", "Trebuchet MS", "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    background-color: #f8fafc;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+#root {
+    min-height: 100vh;
+    width: 100%;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Aptos Display", "Segoe UI Semibold", "Trebuchet MS", Verdana, sans-serif;
+}
+
+.font-service-book {
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+code, .mono {
+    font-family: "Cascadia Code", Consolas, "SFMono-Regular", monospace;
+}
+
+@layer base {
+    :root {
+        --background: 210 40% 98%;
+        --foreground: 222.2 84% 4.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 222.2 84% 4.9%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 222.2 84% 4.9%;
+        --primary: 222.2 47.4% 11.2%;
+        --primary-foreground: 210 40% 98%;
+        --secondary: 210 40% 96.1%;
+        --secondary-foreground: 222.2 47.4% 11.2%;
+        --muted: 210 40% 96.1%;
+        --muted-foreground: 215.4 16.3% 46.9%;
+        --accent: 217.2 91.2% 59.8%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 214.3 31.8% 91.4%;
+        --input: 214.3 31.8% 91.4%;
+        --ring: 222.2 84% 4.9%;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        --radius: 0.75rem;
+        
+        /* Layer specific */
+        --layer-1-bg: 0 0% 100%;
+        --layer-1-border: 215 25% 70%;
+        --layer-2-bg: 210 40% 98%;
+        --layer-2-border: 214.3 31.8% 91.4%;
+    }
+    
+    .dark {
+        --background: 222.2 84% 4.9%;
+        --foreground: 210 40% 98%;
+        --card: 222.2 84% 4.9%;
+        --card-foreground: 210 40% 98%;
+        --popover: 222.2 84% 4.9%;
+        --popover-foreground: 210 40% 98%;
+        --primary: 210 40% 98%;
+        --primary-foreground: 222.2 47.4% 11.2%;
+        --secondary: 217.2 32.6% 17.5%;
+        --secondary-foreground: 210 40% 98%;
+        --muted: 217.2 32.6% 17.5%;
+        --muted-foreground: 215 20.2% 65.1%;
+        --accent: 217.2 91.2% 59.8%;
+        --accent-foreground: 0 0% 100%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 217.2 32.6% 17.5%;
+        --input: 217.2 32.6% 17.5%;
+        --ring: 212.7 26.8% 83.9%;
+        --layer-1-bg: 222.2 47.4% 8%;
+        --layer-1-border: 215 25% 30%;
+        --layer-2-bg: 222.2 84% 4.9%;
+        --layer-2-border: 217.2 32.6% 17.5%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Layer 1 - Official Record Styling */
+.layer-1-card {
+    @apply bg-white dark:bg-slate-900 border-2 border-slate-300 dark:border-slate-600 shadow-md;
+}
+
+.layer-1-official {
+    @apply bg-white rounded-none border-2 border-slate-400 shadow-lg;
+}
+
+/* Layer 2 - Engagement Styling */
+.layer-2-card {
+    @apply bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm;
+}
+
+/* Status badges */
+.status-badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.status-submitted {
+    @apply bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300;
+}
+
+.status-verified {
+    @apply bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300;
+}
+
+.status-approved {
+    @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300;
+}
+
+.status-rejected {
+    @apply bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300;
+}
+
+/* Service Book Timeline */
+.service-timeline {
+    @apply relative;
+}
+
+.service-timeline::before {
+    content: '';
+    @apply absolute left-4 top-0 bottom-0 w-0.5 bg-slate-300 dark:bg-slate-600;
+}
+
+.service-entry {
+    @apply relative pl-10 pb-8;
+}
+
+.service-entry::before {
+    content: '';
+    @apply absolute left-2 top-1 w-5 h-5 rounded-full border-4 border-slate-900 dark:border-slate-100 bg-white dark:bg-slate-900;
+}
+
+/* Print styles for Service Book */
+
+/* Hide print-only content on screen */
+.sb-print-only {
+    display: none !important;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 18mm 15mm 20mm 15mm;
+    }
+
+    /* ---- Global resets ---- */
+    .no-print,
+    button,
+    .sb-screen-only,
+    [data-testid],
+    [role="tablist"],
+    nav,
+    aside,
+    header,
+    footer:not(.sb-footer),
+    .toast-container,
+    .sonner-toast {
+        display: none !important;
+    }
+
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-family: 'Times New Roman', Georgia, serif !important;
+        font-size: 11pt !important;
+        line-height: 1.4 !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    main {
+        margin: 0 !important;
+        padding: 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
+        max-width: none !important;
+        margin-left: 0 !important;
+    }
+
+    /* Reset the Layout scroller and its padding wrapper */
+    main > div {
+        overflow: visible !important;
+        height: auto !important;
+        min-height: 0 !important;
+        flex: none !important;
+        padding: 0 !important;
+    }
+
+    main > div > div {
+        padding: 0 !important;
+    }
+
+    .layer-1-official,
+    [class*="shadow"],
+    [class*="rounded"] {
+        box-shadow: none !important;
+        border-radius: 0 !important;
+    }
+
+    /* Show print-only content */
+    .sb-print-only {
+        display: block !important;
+    }
+
+    /* ---- Page breaks ---- */
+    .sb-part-page {
+        page-break-before: always;
+    }
+
+    .sb-part-page:first-child {
+        page-break-before: auto;
+    }
+
+    .sb-no-break {
+        page-break-inside: avoid;
+    }
+
+    .sb-blank-page {
+        min-height: 100vh;
+    }
+
+    .sb-blank-page-notice {
+        visibility: hidden;
+    }
+
+    tr {
+        page-break-inside: avoid;
+    }
+
+    /* ---- Government header ---- */
+    .sb-page-header {
+        text-align: center;
+        border-bottom: 2px solid #000;
+        padding-bottom: 6pt;
+        margin-bottom: 12pt;
+    }
+
+    .sb-page-header h2 {
+        font-size: 14pt;
+        font-weight: bold;
+        margin: 0;
+        letter-spacing: 1pt;
+        text-transform: uppercase;
+    }
+
+    .sb-page-header p {
+        font-size: 9pt;
+        margin: 2pt 0 0 0;
+        color: #333;
+    }
+
+    /* ---- Cover page ---- */
+    .sb-cover {
+        text-align: center;
+        padding-top: 120pt;
+    }
+
+    .sb-cover-title {
+        font-size: 26pt;
+        font-weight: bold;
+        letter-spacing: 2pt;
+        text-transform: uppercase;
+        border-top: 3pt solid #000;
+        border-bottom: 3pt solid #000;
+        padding: 12pt 0;
+        margin: 0 auto;
+        max-width: 80%;
+    }
+
+    .sb-cover-subtitle {
+        font-size: 11pt;
+        margin-top: 8pt;
+        color: #333;
+    }
+
+    .sb-cover-name {
+        font-size: 18pt;
+        font-weight: bold;
+        margin-top: 36pt;
+    }
+
+    .sb-cover-meta {
+        font-size: 10pt;
+        margin-top: 4pt;
+        color: #444;
+    }
+
+    .sb-cover-dept {
+        font-size: 12pt;
+        margin-top: 24pt;
+    }
+
+    /* ---- Part title ---- */
+    .sb-part-title {
+        font-size: 13pt;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 0.5pt;
+        border-bottom: 1.5pt solid #000;
+        padding-bottom: 4pt;
+        margin-bottom: 10pt;
+    }
+
+    /* ---- Tables ---- */
+    .sb-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 9.5pt;
+        margin-bottom: 10pt;
+    }
+
+    .sb-table th,
+    .sb-table td {
+        border: 0.5pt solid #000;
+        padding: 4pt 6pt;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .sb-table th {
+        background-color: #f0f0f0 !important;
+        font-weight: bold;
+        font-size: 9pt;
+    }
+
+    .sb-table td.sb-td-center {
+        text-align: center;
+    }
+
+    .sb-table td.sb-td-right {
+        text-align: right;
+    }
+
+    /* ---- Row label-value ---- */
+    .sb-row {
+        display: flex;
+        padding: 3pt 0;
+        border-bottom: 0.5pt dotted #ccc;
+        font-size: 10pt;
+    }
+
+    .sb-row-label {
+        width: 45%;
+        font-weight: bold;
+        color: #222;
+    }
+
+    .sb-row-value {
+        width: 55%;
+    }
+
+    /* ---- Grid layout ---- */
+    .sb-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3pt 16pt;
+    }
+
+    .sb-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 3pt 12pt;
+    }
+
+    /* ---- Photo / Signature ---- */
+    .sb-part-i-bio {
+        display: flex;
+        gap: 16pt;
+        align-items: flex-start;
+    }
+
+    .sb-part-i-fields {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sb-part-i-photo {
+        flex-shrink: 0;
+        text-align: center;
+    }
+
+    .sb-photograph {
+        width: 90pt;
+        height: 110pt;
+        object-fit: cover;
+        border: 1pt solid #000;
+        display: block;
+    }
+
+    .sb-photo-placeholder {
+        width: 90pt;
+        height: 110pt;
+        border: 1pt dashed #aaa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8pt;
+        color: #999;
+    }
+
+    .sb-photo-label {
+        font-size: 8pt;
+        text-align: center;
+        margin-top: 3pt;
+        color: #333;
+    }
+
+    .sb-photo {
+        width: 90pt;
+        height: 110pt;
+        object-fit: cover;
+        border: 1pt solid #000;
+    }
+
+    .sb-signature {
+        height: 45pt;
+        object-fit: contain;
+    }
+
+    /* ---- Attestation block ---- */
+    .sb-attestation {
+        margin-top: 24pt;
+        padding-top: 8pt;
+        border-top: 1pt solid #000;
+    }
+
+    .sb-attestation .sb-sig-line {
+        display: inline-block;
+        width: 200pt;
+        border-bottom: 1pt solid #000;
+        margin-top: 24pt;
+        margin-right: 40pt;
+    }
+
+    .sb-attestation .sb-sig-caption {
+        font-size: 8pt;
+        color: #555;
+        margin-top: 2pt;
+    }
+
+    /* ---- Footer ---- */
+    .sb-footer {
+        text-align: center;
+        font-size: 8pt;
+        color: #888;
+        border-top: 1pt solid #ccc;
+        padding-top: 6pt;
+        margin-top: 24pt;
+    }
+
+    .sb-footer-disclaimer {
+        font-style: italic;
+        font-size: 7.5pt;
+    }
+
+    /* ---- Misc ---- */
+    a {
+        color: #000 !important;
+        text-decoration: none !important;
+    }
+
+    .sb-section-heading {
+        font-size: 10.5pt;
+        font-weight: bold;
+        margin: 10pt 0 4pt 0;
+        text-decoration: underline;
+    }
+
+    img {
+        max-width: 100%;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-slate-100 dark:bg-slate-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+}
+
+/* Horizontal scrollbar visible on hover (shows track even without overflow) */
+.table-scroll-x-hover {
+    overflow-x: scroll;
+}
+.table-scroll-x-hover::-webkit-scrollbar:horizontal {
+    height: 6px;
+}
+.table-scroll-x-hover::-webkit-scrollbar-thumb:horizontal {
+    background: transparent;
+    border-radius: 9999px;
+    transition: background 0.2s;
+}
+.table-scroll-x-hover:hover::-webkit-scrollbar-thumb:horizontal {
+    @apply bg-slate-300 dark:bg-slate-600;
+}
+
+/* Data wrapper fix */
+@layer base {
+    [data-debug-wrapper="true"] {
+        display: contents !important;
+    }
+}
+
+@media (max-width: 640px) {
+    button,
+    [role="button"] {
+        min-height: 40px;
+    }
+
+    .overflow-x-auto,
+    .overflow-auto {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    [data-radix-popper-content-wrapper] {
+        max-width: calc(100vw - 0.75rem) !important;
+    }
+
+    /* Mobile-first table improvements */
+    table {
+        font-size: 0.8125rem;
+    }
+
+    /* Cards: slightly reduce padding on small screens */
+    .rounded-xl {
+        border-radius: 0.625rem;
+    }
+
+    /* Stack dialog footer buttons on very narrow screens */
+    [role="dialog"] footer,
+    [role="dialog"] [class*="DialogFooter"] {
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+    }
+
+    [role="dialog"] footer > *,
+    [role="dialog"] [class*="DialogFooter"] > * {
+        width: 100%;
+    }
+
+    /* Improve tab navigation on mobile */
+    [role="tablist"] {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    [role="tablist"]::-webkit-scrollbar {
+        display: none;
+    }
+}

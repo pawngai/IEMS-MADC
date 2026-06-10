@@ -1,0 +1,21 @@
+from __future__ import annotations
+
+from fastapi import APIRouter
+
+from contexts.service_book.api import corrections_router as _corrections_router
+from contexts.service_book.api import opening_router as _opening_router
+from contexts.service_book.api import parts_router as _parts_router
+from contexts.service_book.api import print_router as _print_router
+from contexts.service_book.api import query_router as _query_router
+from contexts.service_book.api import records_router as _records_router
+from contexts.service_book.api import verification_router as _verification_router
+
+
+service_book_router = APIRouter(prefix="/service-book", tags=["Service Book"])
+service_book_router.include_router(_opening_router.service_book_opening_router)
+service_book_router.include_router(_parts_router.service_book_parts_router)
+service_book_router.include_router(_records_router.service_book_records_router)
+service_book_router.include_router(_corrections_router.service_book_corrections_router)
+service_book_router.include_router(_verification_router.service_book_verification_router)
+service_book_router.include_router(_query_router.service_book_query_router)
+service_book_router.include_router(_print_router.service_book_print_router)

@@ -1,0 +1,692 @@
+{
+  "_metadata": {
+    "form_id": "employee_profile",
+    "version": "2.1.0",
+    "title": "Employee Profile Form",
+    "description": "Compliant Employee Profile Form. NOTE: This is STRUCTURE only. Business logic is in form_rules.py",
+    "parts": [
+      {"id": "personal", "label": "Personal Information", "step": 1},
+      {"id": "contact", "label": "Contact & Address", "step": 2},
+      {"id": "employment", "label": "Employment Details", "step": 3},
+      {"id": "type_specific", "label": "Type-Specific Details", "step": 4},
+      {"id": "family", "label": "Family", "step": 5},
+      {"id": "nominations", "label": "Nominations", "step": 6},
+      {"id": "documents", "label": "Documents", "step": 7}
+    ]
+  },
+  
+  "fields": [
+    {
+      "field_id": "employee_id",
+      "label": "Employee ID",
+      "data_type": "string",
+      "category": "identification",
+      "part": "personal",
+      "ui_type": "text",
+      "placeholder": "Auto-generated",
+      "help_text": "System-generated unique identifier"
+    },
+    {
+      "field_id": "full_name",
+      "label": "Full Name",
+      "data_type": "string",
+      "category": "identity",
+      "part": "personal",
+      "ui_type": "text",
+      "placeholder": "Enter full name as per official records",
+      "validation": {
+        "pattern": "^[A-Za-z\\s.]+$",
+        "min_length": 2,
+        "max_length": 100
+      }
+    },
+    {
+      "field_id": "gender",
+      "label": "Gender",
+      "data_type": "enum",
+      "category": "identity",
+      "part": "personal",
+      "ui_type": "select",
+      "options": [
+        {"value": "Male", "label": "Male"},
+        {"value": "Female", "label": "Female"},
+        {"value": "Transgender", "label": "Transgender"}
+      ]
+    },
+    {
+      "field_id": "date_of_birth",
+      "label": "Date of Birth",
+      "data_type": "date",
+      "category": "identity",
+      "part": "personal",
+      "ui_type": "date",
+      "validation": {
+        "min_age": 18,
+        "max_age": 65
+      }
+    },
+    {
+      "field_id": "nationality",
+      "label": "Nationality",
+      "data_type": "enum",
+      "category": "identity",
+      "part": "personal",
+      "ui_type": "select",
+      "options": [
+        {"value": "Indian", "label": "Indian"},
+        {"value": "Other", "label": "Other"}
+      ]
+    },
+    {
+      "field_id": "category",
+      "label": "Category (Reservation)",
+      "data_type": "enum",
+      "category": "identity",
+      "part": "personal",
+      "ui_type": "select",
+      "master_ref": "caste_categories",
+      "options": [
+        {"value": "GEN", "label": "General"},
+        {"value": "SC", "label": "Scheduled Caste"},
+        {"value": "ST", "label": "Scheduled Tribe"},
+        {"value": "OBC", "label": "Other Backward Class"},
+        {"value": "EWS", "label": "Economically Weaker Section"}
+      ]
+    },
+    {
+      "field_id": "religion",
+      "label": "Religion",
+      "data_type": "string",
+      "category": "identity",
+      "part": "personal",
+      "ui_type": "text",
+      "placeholder": "Religion"
+    },
+    {
+      "field_id": "marital_status",
+      "label": "Marital Status",
+      "data_type": "enum",
+      "category": "family",
+      "part": "family",
+      "ui_type": "select",
+      "options": [
+        {"value": "Single", "label": "Single"},
+        {"value": "Married", "label": "Married"},
+        {"value": "Divorced", "label": "Divorced"},
+        {"value": "Widowed", "label": "Widowed"}
+      ]
+    },
+    {
+      "field_id": "spouse_name",
+      "label": "Spouse Name",
+      "data_type": "string",
+      "category": "family",
+      "part": "family",
+      "ui_type": "text",
+      "placeholder": "Name of spouse"
+    },
+    {
+      "field_id": "father_husband_name",
+      "label": "Father's/Husband's Name",
+      "data_type": "string",
+      "category": "family",
+      "part": "family",
+      "ui_type": "text",
+      "placeholder": "Father's or Husband's name"
+    },
+    {
+      "field_id": "mother_name",
+      "label": "Mother's Name",
+      "data_type": "string",
+      "category": "family",
+      "part": "family",
+      "ui_type": "text",
+      "placeholder": "Mother's name"
+    },
+    {
+      "field_id": "blood_group",
+      "label": "Blood Group",
+      "data_type": "enum",
+      "category": "identity",
+      "part": "personal",
+      "ui_type": "select",
+      "options": [
+        {"value": "A+", "label": "A+"},
+        {"value": "A-", "label": "A-"},
+        {"value": "B+", "label": "B+"},
+        {"value": "B-", "label": "B-"},
+        {"value": "O+", "label": "O+"},
+        {"value": "O-", "label": "O-"},
+        {"value": "AB+", "label": "AB+"},
+        {"value": "AB-", "label": "AB-"}
+      ]
+    },
+
+    {
+      "field_id": "mobile_number",
+      "label": "Mobile Number",
+      "data_type": "string",
+      "category": "contact",
+      "part": "contact",
+      "ui_type": "tel",
+      "placeholder": "10-digit mobile number",
+      "validation": {
+        "pattern": "^[6-9][0-9]{9}$"
+      }
+    },
+    {
+      "field_id": "alternate_mobile",
+      "label": "Alternate Mobile",
+      "data_type": "string",
+      "category": "contact",
+      "part": "contact",
+      "ui_type": "tel",
+      "placeholder": "Alternate contact number"
+    },
+    {
+      "field_id": "personal_email",
+      "label": "Personal Email",
+      "data_type": "string",
+      "category": "contact",
+      "part": "contact",
+      "ui_type": "email",
+      "placeholder": "personal@email.com"
+    },
+    {
+      "field_id": "official_email",
+      "label": "Official Email",
+      "data_type": "string",
+      "category": "contact",
+      "part": "contact",
+      "ui_type": "email",
+      "placeholder": "official@gov.in"
+    },
+    {
+      "field_id": "emergency_contact_name",
+      "label": "Emergency Contact Name",
+      "data_type": "string",
+      "category": "contact",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "Emergency contact person"
+    },
+    {
+      "field_id": "emergency_contact_number",
+      "label": "Emergency Contact Number",
+      "data_type": "string",
+      "category": "contact",
+      "part": "contact",
+      "ui_type": "tel",
+      "placeholder": "Emergency contact number"
+    },
+    {
+      "field_id": "emergency_contact_relation",
+      "label": "Relation with Emergency Contact",
+      "data_type": "string",
+      "category": "contact",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "e.g., Father, Spouse, Brother"
+    },
+    
+    {
+      "field_id": "current_address_line1",
+      "label": "Current Address Line 1",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "House/Flat No., Street"
+    },
+    {
+      "field_id": "current_address_line2",
+      "label": "Current Address Line 2",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "Area, Locality"
+    },
+    {
+      "field_id": "current_city",
+      "label": "Current City",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "City"
+    },
+    {
+      "field_id": "current_state_code",
+      "label": "Current State",
+      "data_type": "enum",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "select",
+      "master_ref": "states"
+    },
+    {
+      "field_id": "current_pincode",
+      "label": "Current Pincode",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "6-digit pincode",
+      "validation": {
+        "pattern": "^[1-9][0-9]{5}$"
+      }
+    },
+    {
+      "field_id": "permanent_address_line1",
+      "label": "Permanent Address Line 1",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "House/Flat No., Street"
+    },
+    {
+      "field_id": "permanent_address_line2",
+      "label": "Permanent Address Line 2",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "Area, Locality"
+    },
+    {
+      "field_id": "permanent_city",
+      "label": "Permanent City",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "City"
+    },
+    {
+      "field_id": "permanent_state_code",
+      "label": "Permanent State",
+      "data_type": "enum",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "select",
+      "master_ref": "states"
+    },
+    {
+      "field_id": "permanent_pincode",
+      "label": "Permanent Pincode",
+      "data_type": "string",
+      "category": "address",
+      "part": "contact",
+      "ui_type": "text",
+      "placeholder": "6-digit pincode",
+      "validation": {
+        "pattern": "^[1-9][0-9]{5}$"
+      }
+    },
+    
+    {
+      "field_id": "employment_type",
+      "label": "Employment Type",
+      "data_type": "enum",
+      "category": "employment",
+      "part": "employment",
+      "ui_type": "select",
+      "options": [
+        {"value": "REGULAR", "label": "Regular (Permanent)"},
+        {"value": "CONTRACTUAL", "label": "Contractual"},
+        {"value": "DAILY_WAGE", "label": "Daily Wage / Casual"},
+        {"value": "DEPUTATION", "label": "Deputation"},
+        {"value": "REEMPLOYED", "label": "Re-employed"},
+        {"value": "OUTSOURCED", "label": "Outsourced"}
+      ],
+      "help_text": "Select employment type - this determines available fields"
+    },
+    {
+      "field_id": "department_code",
+      "label": "Department",
+      "data_type": "enum",
+      "category": "employment",
+      "part": "employment",
+      "ui_type": "select",
+      "master_ref": "departments"
+    },
+    {
+      "field_id": "office_code",
+      "label": "Office",
+      "data_type": "enum",
+      "category": "employment",
+      "part": "employment",
+      "ui_type": "select",
+      "master_ref": "offices"
+    },
+    {
+      "field_id": "designation_code",
+      "label": "Designation",
+      "data_type": "enum",
+      "category": "employment",
+      "part": "employment",
+      "ui_type": "select",
+      "master_ref": "designations"
+    },
+    {
+      "field_id": "posting_place",
+      "label": "Posting Place",
+      "data_type": "string",
+      "category": "employment",
+      "part": "employment",
+      "ui_type": "text",
+      "placeholder": "Place of posting"
+    },
+    {
+      "field_id": "recruitment_mode",
+      "label": "Mode of Recruitment",
+      "data_type": "enum",
+      "category": "employment",
+      "part": "type_specific",
+      "ui_type": "select",
+      "options": [
+        {"value": "Direct", "label": "Direct Recruitment"},
+        {"value": "Promotion", "label": "Promotion"},
+        {"value": "Deputation", "label": "Deputation"},
+        {"value": "Transfer", "label": "Transfer"}
+      ]
+    },
+    {
+      "field_id": "appointment_order_no",
+      "label": "Appointment Order Number",
+      "data_type": "string",
+      "category": "employment",
+      "part": "type_specific",
+      "ui_type": "text",
+      "placeholder": "GOV/YYYY/APPT/XXXX"
+    },
+    {
+      "field_id": "appointment_order_date",
+      "label": "Appointment Order Date",
+      "data_type": "date",
+      "category": "employment",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "service_group",
+      "label": "Service Group",
+      "data_type": "enum",
+      "category": "employment",
+      "part": "type_specific",
+      "ui_type": "select",
+      "options": [
+        {"value": "GRP-A", "label": "Group A (Gazetted)"},
+        {"value": "GRP-B-G", "label": "Group B (Gazetted)"},
+        {"value": "GRP-B-NG", "label": "Group B (Non-Gazetted)"},
+        {"value": "GRP-C", "label": "Group C"},
+        {"value": "GRP-D", "label": "Group D (MTS)"}
+      ]
+    },
+    {
+      "field_id": "cadre",
+      "label": "Cadre",
+      "data_type": "string",
+      "category": "employment",
+      "part": "type_specific",
+      "ui_type": "text",
+      "placeholder": "e.g., IAS, Central Secretariat Service"
+    },
+    {
+      "field_id": "pay_level",
+      "label": "Pay Level (7th CPC)",
+      "data_type": "enum",
+      "category": "pay",
+      "part": "type_specific",
+      "ui_type": "select",
+      "options": [
+        {"value": "1", "label": "Level 1 (₹18,000 - ₹56,900)"},
+        {"value": "2", "label": "Level 2 (₹19,900 - ₹63,200)"},
+        {"value": "3", "label": "Level 3 (₹21,700 - ₹69,100)"},
+        {"value": "4", "label": "Level 4 (₹25,500 - ₹81,100)"},
+        {"value": "5", "label": "Level 5 (₹29,200 - ₹92,300)"},
+        {"value": "6", "label": "Level 6 (₹35,400 - ₹1,12,400)"},
+        {"value": "7", "label": "Level 7 (₹44,900 - ₹1,42,400)"},
+        {"value": "8", "label": "Level 8 (₹47,600 - ₹1,51,100)"},
+        {"value": "9", "label": "Level 9 (₹53,100 - ₹1,67,800)"},
+        {"value": "10", "label": "Level 10 (₹56,100 - ₹1,77,500)"},
+        {"value": "11", "label": "Level 11 (₹67,700 - ₹2,08,700)"},
+        {"value": "12", "label": "Level 12 (₹78,800 - ₹2,09,200)"},
+        {"value": "13", "label": "Level 13 (₹1,23,100 - ₹2,15,900)"},
+        {"value": "14", "label": "Level 14 (₹1,44,200 - ₹2,18,200)"}
+      ]
+    },
+    {
+      "field_id": "basic_pay",
+      "label": "Basic Pay",
+      "data_type": "number",
+      "category": "pay",
+      "part": "type_specific",
+      "ui_type": "number",
+      "placeholder": "Current basic pay"
+    },
+    {
+      "field_id": "pension_scheme",
+      "label": "Pension Scheme",
+      "data_type": "enum",
+      "category": "retirement",
+      "part": "type_specific",
+      "ui_type": "select",
+      "options": [
+        {"value": "NPS", "label": "National Pension System (NPS)"},
+        {"value": "OPS", "label": "Old Pension Scheme (OPS)"},
+        {"value": "NA", "label": "Not Applicable"}
+      ]
+    },
+    {
+      "field_id": "retirement_date",
+      "label": "Date of Superannuation",
+      "data_type": "date",
+      "category": "retirement",
+      "part": "type_specific",
+      "ui_type": "date",
+      "help_text": "Calculated based on DOB + retirement age"
+    },
+    
+    {
+      "field_id": "contract_start_date",
+      "label": "Contract Start Date",
+      "data_type": "date",
+      "category": "contract",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "contract_end_date",
+      "label": "Contract End Date",
+      "data_type": "date",
+      "category": "contract",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "contract_renewal_count",
+      "label": "Contract Renewal Count",
+      "data_type": "number",
+      "category": "contract",
+      "part": "type_specific",
+      "ui_type": "number",
+      "placeholder": "Number of renewals"
+    },
+    {
+      "field_id": "consolidated_pay",
+      "label": "Consolidated Pay",
+      "data_type": "number",
+      "category": "contract",
+      "part": "type_specific",
+      "ui_type": "number",
+      "placeholder": "Monthly consolidated pay"
+    },
+    
+    {
+      "field_id": "daily_rate",
+      "label": "Daily Rate",
+      "data_type": "number",
+      "category": "daily_wage",
+      "part": "type_specific",
+      "ui_type": "number",
+      "placeholder": "Daily wage rate"
+    },
+    {
+      "field_id": "muster_roll_number",
+      "label": "Muster Roll Number",
+      "data_type": "string",
+      "category": "daily_wage",
+      "part": "type_specific",
+      "ui_type": "text",
+      "placeholder": "Muster roll registration number"
+    },
+    
+    {
+      "field_id": "parent_department_code",
+      "label": "Parent Department",
+      "data_type": "enum",
+      "category": "deputation",
+      "part": "type_specific",
+      "ui_type": "select",
+      "master_ref": "departments",
+      "help_text": "Original department from which deputed"
+    },
+    {
+      "field_id": "deputation_start_date",
+      "label": "Deputation Start Date",
+      "data_type": "date",
+      "category": "deputation",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "deputation_end_date",
+      "label": "Deputation End Date",
+      "data_type": "date",
+      "category": "deputation",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "deputation_tenure_years",
+      "label": "Deputation Tenure (Years)",
+      "data_type": "number",
+      "category": "deputation",
+      "part": "type_specific",
+      "ui_type": "number",
+      "placeholder": "Sanctioned deputation period"
+    },
+    {
+      "field_id": "lien_position",
+      "label": "Lien Position",
+      "data_type": "string",
+      "category": "deputation",
+      "part": "type_specific",
+      "ui_type": "text",
+      "placeholder": "Position held in parent department"
+    },
+    
+    {
+      "field_id": "previous_retirement_date",
+      "label": "Previous Retirement Date",
+      "data_type": "date",
+      "category": "reemployment",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "reemployment_start_date",
+      "label": "Re-employment Start Date",
+      "data_type": "date",
+      "category": "reemployment",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "reemployment_end_date",
+      "label": "Re-employment End Date",
+      "data_type": "date",
+      "category": "reemployment",
+      "part": "type_specific",
+      "ui_type": "date"
+    },
+    {
+      "field_id": "pension_details",
+      "label": "Pension Details",
+      "data_type": "string",
+      "category": "reemployment",
+      "part": "type_specific",
+      "ui_type": "textarea",
+      "placeholder": "PPO Number and Pension Amount"
+    },
+    
+    {
+      "field_id": "outsourcing_agency",
+      "label": "Outsourcing Agency",
+      "data_type": "string",
+      "category": "outsourced",
+      "part": "type_specific",
+      "ui_type": "text",
+      "placeholder": "Name of outsourcing agency"
+    },
+    {
+      "field_id": "agency_contract_number",
+      "label": "Agency Contract Number",
+      "data_type": "string",
+      "category": "outsourced",
+      "part": "type_specific",
+      "ui_type": "text",
+      "placeholder": "Contract reference number"
+    },
+    
+    {
+      "field_id": "aadhaar_number",
+      "label": "Aadhaar Number",
+      "data_type": "string",
+      "category": "documents",
+      "part": "documents",
+      "ui_type": "text",
+      "placeholder": "12-digit Aadhaar number",
+      "validation": {
+        "pattern": "^[2-9][0-9]{11}$"
+      }
+    },
+    {
+      "field_id": "pan_number",
+      "label": "PAN Number",
+      "data_type": "string",
+      "category": "documents",
+      "part": "documents",
+      "ui_type": "text",
+      "placeholder": "ABCDE1234F",
+      "validation": {
+        "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$"
+      }
+    },
+    {
+      "field_id": "bank_ifsc_code",
+      "label": "Bank IFSC Code",
+      "data_type": "string",
+      "category": "documents",
+      "part": "documents",
+      "ui_type": "text",
+      "placeholder": "IFSC Code",
+      "validation": {
+        "pattern": "^[A-Z]{4}0[A-Z0-9]{6}$"
+      }
+    },
+    {
+      "field_id": "photo_url",
+      "label": "Photograph",
+      "data_type": "file",
+      "category": "documents",
+      "part": "documents",
+      "ui_type": "file",
+      "accept": "image/*",
+      "help_text": "Passport size photograph"
+    }
+  ]
+}

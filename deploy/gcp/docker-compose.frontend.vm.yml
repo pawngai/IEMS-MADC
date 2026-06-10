@@ -1,0 +1,9 @@
+services:
+  frontend:
+    image: ${FRONTEND_IMAGE:?FRONTEND_IMAGE must be set in deploy/gcp/.env}
+    restart: unless-stopped
+
+  caddy:
+    depends_on:
+      - backend
+      - frontend

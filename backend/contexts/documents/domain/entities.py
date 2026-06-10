@@ -1,0 +1,33 @@
+"""Documents domain entities — see validation.py for rules and contracts/dto.py for DTOs."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Optional
+
+
+@dataclass(slots=True)
+class DocumentRecord:
+    document_id: str
+    filename: str
+    original_name: str
+    content_type: str
+    file_size: int
+    uploaded_by_user_id: Optional[str] = None
+    uploaded_employee_id: Optional[str] = None
+    uploaded_employee_code: Optional[str] = None
+    subject_employee_id: Optional[str] = None
+    subject_employee_code: Optional[str] = None
+    uploaded_at: Optional[str] = None
+    entity_type: Optional[str] = None
+    entity_id: Optional[str] = None
+    document_type: Optional[str] = None
+    source_context: Optional[str] = None
+    is_locked: bool = False
+    locked_at: Optional[str] = None
+    lock_reason: Optional[str] = None
+    locked_by_request_id: Optional[str] = None
+    locked_status: Optional[str] = None
+    version_number: int = 1
+    is_current: bool = True
+    supersedes_document_id: Optional[str] = None

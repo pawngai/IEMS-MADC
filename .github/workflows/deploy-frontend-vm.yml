@@ -1,0 +1,182 @@
+name: Deploy Frontend VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Frontend image tag to deploy, for example sha-<full-commit-sha>.
+        required: true
+        type: string
+      tunnel_through_iap:
+        description: Route VM access through IAP.
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: deploy-frontend-vm-production
+  cancel-in-progress: false
+
+env:
+  GAR_LOCATION: ${{ vars['GAR_LOCATION'] || 'us-central1' }}
+  GAR_REPOSITORY: ${{ vars['GAR_REPOSITORY'] || 'iems' }}
+  FRONTEND_IMAGE_NAME: ${{ vars['FRONTEND_IMAGE_NAME'] || 'myiems-frontend' }}
+  GCP_PROJECT_ID: ${{ vars['GCP_PROJECT_ID'] }}
+  GCE_ZONE: ${{ vars['GCE_ZONE'] || 'us-central1-a' }}
+  GCE_INSTANCE_NAME: ${{ vars['GCE_INSTANCE_NAME'] || 'iems-app-vm' }}
+  GCE_SSH_USER: ${{ vars['GCE_SSH_USER'] || 'kenne' }}
+  GCE_REPO_ROOT_ON_VM: ${{ vars['GCE_REPO_ROOT_ON_VM'] || '/home/kenne/MyIEMS' }}
+  FRONTEND_DEPLOY_COMPOSE_FILE: ${{ vars['FRONTEND_DEPLOY_COMPOSE_FILE'] || 'deploy/gcp/docker-compose.frontend.vm.yml' }}
+  FRONTEND_DEPLOY_ENV_FILE: ${{ vars['FRONTEND_DEPLOY_ENV_FILE'] || 'deploy/gcp/.env' }}
+  FRONTEND_APP_URL: ${{ vars['FRONTEND_APP_URL'] || '' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: ${{ vars['FRONTEND_APP_URL'] || '' }}
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+
+      - name: Validate frontend VM deploy configuration
+        shell: bash
+        run: |
+          test -n "${GCP_PROJECT_ID}" || { echo "Missing repository variable GCP_PROJECT_ID"; exit 1; }
+          test -n "${GCE_ZONE}" || { echo "Missing repository variable GCE_ZONE"; exit 1; }
+          test -n "${GCE_INSTANCE_NAME}" || { echo "Missing repository variable GCE_INSTANCE_NAME"; exit 1; }
+          test -n "${GCE_SSH_USER}" || { echo "Missing repository variable GCE_SSH_USER"; exit 1; }
+          test -n "${GCE_REPO_ROOT_ON_VM}" || { echo "Missing repository variable GCE_REPO_ROOT_ON_VM"; exit 1; }
+          test -n "${FRONTEND_DEPLOY_COMPOSE_FILE}" || { echo "Missing repository variable FRONTEND_DEPLOY_COMPOSE_FILE"; exit 1; }
+          test -n "${FRONTEND_DEPLOY_ENV_FILE}" || { echo "Missing repository variable FRONTEND_DEPLOY_ENV_FILE"; exit 1; }
+          test -n "${FRONTEND_APP_URL}" || { echo "Missing repository variable FRONTEND_APP_URL"; exit 1; }
+          test -n "${{ inputs.image_tag }}" || { echo "workflow_dispatch input image_tag is required"; exit 1; }
+          test -n "${{ secrets['GCP_WORKLOAD_IDENTITY_PROVIDER'] }}" || { echo "Missing repository secret GCP_WORKLOAD_IDENTITY_PROVIDER"; exit 1; }
+          test -n "${{ secrets['GCP_SERVICE_ACCOUNT'] }}" || { echo "Missing repository secret GCP_SERVICE_ACCOUNT"; exit 1; }
+
+      - id: resolve_image_tag
+        name: Resolve image tag
+        shell: bash
+        env:
+          MANUAL_IMAGE_TAG: ${{ inputs.image_tag }}
+        run: |
+          set -euo pipefail
+
+          echo "image_tag=${MANUAL_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+
+      - id: resolve_tunnel
+        name: Resolve tunnel settings
+        shell: bash
+        env:
+          MANUAL_TUNNEL_THROUGH_IAP: ${{ inputs.tunnel_through_iap }}
+        run: |
+          set -euo pipefail
+
+          echo "tunnel_through_iap=${MANUAL_TUNNEL_THROUGH_IAP}" >> "$GITHUB_OUTPUT"
+
+      - id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        with:
+          workload_identity_provider: ${{ secrets['GCP_WORKLOAD_IDENTITY_PROVIDER'] }}
+          service_account: ${{ secrets['GCP_SERVICE_ACCOUNT'] }}
+          create_credentials_file: true
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db
+
+      - name: Upload frontend deploy compose file to VM
+        shell: bash
+        env:
+          TUNNEL_THROUGH_IAP: ${{ steps.resolve_tunnel.outputs.tunnel_through_iap }}
+        run: |
+          set -euo pipefail
+
+          SSH_TARGET="${GCE_SSH_USER}@${GCE_INSTANCE_NAME}"
+          SCP_ARGS=(compute scp "deploy/gcp/docker-compose.frontend.vm.yml" "${SSH_TARGET}:${GCE_REPO_ROOT_ON_VM}/deploy/gcp/docker-compose.frontend.vm.yml" "--project=${GCP_PROJECT_ID}" "--zone=${GCE_ZONE}")
+          if [[ "${TUNNEL_THROUGH_IAP}" == "true" ]]; then
+            SCP_ARGS+=(--tunnel-through-iap)
+          fi
+          gcloud "${SCP_ARGS[@]}"
+
+      - name: Deploy selected frontend image to VM
+        shell: bash
+        env:
+          FRONTEND_IMAGE_REF: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.GAR_REPOSITORY }}/${{ env.FRONTEND_IMAGE_NAME }}:${{ steps.resolve_image_tag.outputs.image_tag }}
+          TUNNEL_THROUGH_IAP: ${{ steps.resolve_tunnel.outputs.tunnel_through_iap }}
+        run: |
+          set -euo pipefail
+
+          APP_HOST="$(printf '%s' "${FRONTEND_APP_URL}" | sed -E 's#^[A-Za-z]+://##; s#/.*$##')"
+          test -n "${APP_HOST}" || { echo "Unable to derive app host from FRONTEND_APP_URL=${FRONTEND_APP_URL}"; exit 1; }
+
+          REMOTE_COMMAND=$(cat <<EOF
+          set -euo pipefail
+          cd '${GCE_REPO_ROOT_ON_VM}'
+          if [[ '${FRONTEND_DEPLOY_ENV_FILE}' = /* ]]; then
+            ENV_PATH='${FRONTEND_DEPLOY_ENV_FILE}'
+          else
+            ENV_PATH='${GCE_REPO_ROOT_ON_VM}/${FRONTEND_DEPLOY_ENV_FILE}'
+          fi
+          mkdir -p "\$(dirname "\${ENV_PATH}")"
+          touch "\${ENV_PATH}"
+          sed -i '/^FRONTEND_IMAGE=/d' "\${ENV_PATH}"
+          echo 'FRONTEND_IMAGE=${FRONTEND_IMAGE_REF}' >> "\${ENV_PATH}"
+          mkdir -p '${GCE_REPO_ROOT_ON_VM}/deploy/gcp'
+          cat > '${GCE_REPO_ROOT_ON_VM}/deploy/gcp/Caddyfile' <<'CADDY'
+          ${APP_HOST} {
+              encode gzip zstd
+
+              @backend path /api/* /health/* /openapi.json /docs* /redoc*
+              handle @backend {
+                  reverse_proxy backend:8000
+              }
+
+              handle {
+                  reverse_proxy frontend:80
+              }
+          }
+          CADDY
+          compose() {
+            if sudo docker compose version >/dev/null 2>&1; then
+              sudo docker compose -f 'deploy/gcp/docker-compose.vm.yml' -f '${FRONTEND_DEPLOY_COMPOSE_FILE}' "\$@"
+            else
+              sudo docker-compose -f 'deploy/gcp/docker-compose.vm.yml' -f '${FRONTEND_DEPLOY_COMPOSE_FILE}' "\$@"
+            fi
+          }
+          compose pull frontend caddy
+          compose up -d --no-deps --force-recreate frontend caddy
+          compose ps
+          EOF
+          )
+
+          SSH_TARGET="${GCE_SSH_USER}@${GCE_INSTANCE_NAME}"
+          SSH_ARGS=(compute ssh "${SSH_TARGET}" "--project=${GCP_PROJECT_ID}" "--zone=${GCE_ZONE}")
+          if [[ "${TUNNEL_THROUGH_IAP}" == "true" ]]; then
+            SSH_ARGS+=(--tunnel-through-iap)
+          fi
+          gcloud "${SSH_ARGS[@]}" --command "${REMOTE_COMMAND}"
+
+      - name: Verify frontend health
+        shell: bash
+        run: |
+          curl --fail --show-error --silent \
+            --retry 12 \
+            --retry-delay 5 \
+            --retry-all-errors \
+            "${FRONTEND_APP_URL}"
+
+      - name: Publish summary
+        shell: bash
+        run: |
+          {
+            echo "## Frontend deployment"
+            echo
+            echo "- Image tag: ${{ steps.resolve_image_tag.outputs.image_tag }}"
+            echo "- Image: ${GAR_LOCATION}-docker.pkg.dev/${GCP_PROJECT_ID}/${GAR_REPOSITORY}/${FRONTEND_IMAGE_NAME}:${{ steps.resolve_image_tag.outputs.image_tag }}"
+            echo "- App URL: ${FRONTEND_APP_URL}"
+            echo "- Compose override: ${FRONTEND_DEPLOY_COMPOSE_FILE}"
+            echo "- Tunnel through IAP: ${{ steps.resolve_tunnel.outputs.tunnel_through_iap }}"
+          } >> "$GITHUB_STEP_SUMMARY"

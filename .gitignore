@@ -1,0 +1,121 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# IDE and editors
+.idea/
+.vscode/
+
+# Environment files
+.env
+.env.*
+backend/.env
+backend/.env.*
+!.env.example
+!backend/.env.example
+
+# Secrets and local auth artifacts
+*token.json*
+*credentials.json*
+*.pem
+
+# Node and frontend artifacts
+node_modules/
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+/coverage
+/build
+dist/
+.cache/
+
+# Next.js
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+.pytest_cache/
+pytest-cache-files-*/
+.pytest_temp/
+.tmp/
+
+# Logs and debug files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+dump.rdb
+devserver*.log
+*.out.log
+*.err.log
+*.out
+*.err
+server.*.log
+backend/server.*.log
+frontend/npm-start*.log
+.e2e-backend.out.log
+.e2e-backend.err.log
+.tmp_seed_admin_user.py
+test_output.txt
+test_results_temp.txt
+_test_err.txt
+
+# Root-level debug/admin/reset scripts (forbidden by cleanup policy)
+/_check_*.py
+/_debug_*.py
+/_reset_*.py
+/_seed_*.py
+/_update_*.py
+/_remove_*.py
+/onboard_*.py
+/scan-cleanup.ps1
+
+# Root-level loose test fixtures (committed binaries are forbidden)
+/test_photo.*
+/test_sig*.*
+/test_upload.*
+/test_signature.*
+/structure.txt
+
+# System files
+.DS_Store
+structure.txt
+test_result.md
+
+# Development tools
+chainlit.md
+.chainlit
+.ipynb_checkpoints/
+.ac
+
+# Data and databases
+agenthub/agents/youtube/db
+.mongo-data/
+.mongo-local/
+/iems_db_dump.archive.gz
+/iems_db_dump.stderr.log
+test_reports/
+uploads/
+frontend/build/
+
+# Archive files and large assets
+**/*.zip
+**/*.tar.gz
+**/*.tar
+**/*.tgz
+*.pack
+*.deb
+*.dylib
+
+# Mobile development
+android-sdk/

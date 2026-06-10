@@ -1,0 +1,182 @@
+name: Smoke Test VM
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_authenticated:
+        description: Run authenticated API tests (requires SMOKE_TEST_PASSWORD secret).
+        required: false
+        default: true
+        type: boolean
+      tunnel_through_iap:
+        description: Route VM access through IAP.
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: smoke-test-vm
+  cancel-in-progress: true
+
+env:
+  GCP_PROJECT_ID: ${{ vars['GCP_PROJECT_ID'] }}
+  GCE_ZONE: ${{ vars['GCE_ZONE'] || 'us-central1-a' }}
+  GCE_INSTANCE_NAME: ${{ vars['GCE_INSTANCE_NAME'] || 'iems-app-vm' }}
+  GCE_SSH_USER: ${{ vars['GCE_SSH_USER'] || 'kenne' }}
+  BACKEND_HEALTH_URL: ${{ vars['BACKEND_HEALTH_URL'] || '' }}
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Validate configuration
+        shell: bash
+        run: |
+          test -n "${GCP_PROJECT_ID}" || { echo "::error::Missing GCP_PROJECT_ID"; exit 1; }
+          test -n "${GCE_INSTANCE_NAME}" || { echo "::error::Missing GCE_INSTANCE_NAME"; exit 1; }
+
+      - id: auth
+        uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093
+        with:
+          workload_identity_provider: ${{ secrets['GCP_WORKLOAD_IDENTITY_PROVIDER'] }}
+          service_account: ${{ secrets['GCP_SERVICE_ACCOUNT'] }}
+
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db
+
+      # ── 1. Container health ─────────────────────────────────────────
+      - name: Check container status
+        shell: bash
+        env:
+          TUNNEL_THROUGH_IAP: ${{ inputs.tunnel_through_iap }}
+        run: |
+          set -euo pipefail
+          SSH_TARGET="${GCE_SSH_USER}@${GCE_INSTANCE_NAME}"
+          SSH_ARGS=(compute ssh "${SSH_TARGET}" "--project=${GCP_PROJECT_ID}" "--zone=${GCE_ZONE}")
+          if [[ "${TUNNEL_THROUGH_IAP}" == "true" ]]; then SSH_ARGS+=(--tunnel-through-iap); fi
+
+          REMOTE='set -euo pipefail
+          echo "--- docker compose ps ---"
+          CTR=$(sudo docker ps --format "{{.Names}}" | grep -i backend | grep -v pause | head -1)
+          sudo docker inspect --format "{{.State.Status}} {{.State.Health.Status}}" "${CTR}"
+          echo "--- backend image ---"
+          sudo docker inspect --format "{{.Config.Image}}" "${CTR}"
+          '
+          gcloud "${SSH_ARGS[@]}" --command "${REMOTE}"
+
+      # ── 2. Internal health endpoint ────────────────────────────────
+      - name: Health endpoint (inside container)
+        shell: bash
+        env:
+          TUNNEL_THROUGH_IAP: ${{ inputs.tunnel_through_iap }}
+        run: |
+          set -euo pipefail
+          SSH_TARGET="${GCE_SSH_USER}@${GCE_INSTANCE_NAME}"
+          SSH_ARGS=(compute ssh "${SSH_TARGET}" "--project=${GCP_PROJECT_ID}" "--zone=${GCE_ZONE}")
+          if [[ "${TUNNEL_THROUGH_IAP}" == "true" ]]; then SSH_ARGS+=(--tunnel-through-iap); fi
+
+          PYSCRIPT=$(base64 -w0 <<'PYEOF'
+          import urllib.request, json, sys
+          r = urllib.request.urlopen("http://127.0.0.1:8000/health/live", timeout=10)
+          body = json.loads(r.read())
+          print(json.dumps(body, indent=2))
+          if body.get("status") != "ok":
+              sys.exit(1)
+          print("Liveness check passed.")
+          PYEOF
+          )
+
+          REMOTE="set -euo pipefail; CTR=\$(sudo docker ps --format '{{.Names}}' | grep -i backend | grep -v pause | head -1); echo '${PYSCRIPT}' | base64 -d | sudo docker exec -i \"\${CTR}\" python -c 'import sys,textwrap; exec(textwrap.dedent(sys.stdin.read()))'"
+          gcloud "${SSH_ARGS[@]}" --command "${REMOTE}"
+
+      # ── 3. External health (if URL configured) ─────────────────────
+      - name: External health endpoint
+        if: ${{ env.BACKEND_HEALTH_URL != '' }}
+        shell: bash
+        run: |
+          curl --fail --show-error --silent \
+            --retry 5 --retry-delay 3 --retry-all-errors \
+            "${BACKEND_HEALTH_URL}"
+
+      # ── 4. Authenticated API smoke test ─────────────────────────────
+      - name: Authenticated employee-directory smoke test
+        if: ${{ inputs.run_authenticated }}
+        shell: bash
+        env:
+          TUNNEL_THROUGH_IAP: ${{ inputs.tunnel_through_iap }}
+          SMOKE_EMAIL: ${{ secrets['SMOKE_TEST_EMAIL'] || 'admin@madc.gov.in' }}
+          SMOKE_PASSWORD: ${{ secrets['SMOKE_TEST_PASSWORD'] }}
+        run: |
+          set -euo pipefail
+
+          if [[ -z "${SMOKE_PASSWORD:-}" ]]; then
+            echo "::warning::SMOKE_TEST_PASSWORD secret not set — skipping authenticated tests."
+            exit 0
+          fi
+
+          # Base64 encode credentials to avoid shell-expansion issues on remote
+          CREDS_B64=$(printf '%s\n%s' "${SMOKE_EMAIL}" "${SMOKE_PASSWORD}" | base64 -w0)
+
+          # Build the Python smoke test script and base64-encode it
+          PYSCRIPT=$(base64 -w0 <<'PYEOF'
+          import urllib.request, json, sys, os, textwrap
+
+          BASE = 'http://127.0.0.1:8000'
+
+          # --- Login ---
+          login_data = json.dumps({
+              'email': os.environ['SMOKE_EMAIL'],
+              'password': os.environ['SMOKE_PASS']
+          }).encode()
+          req = urllib.request.Request(
+              BASE + '/api/auth/login',
+              data=login_data,
+              headers={'Content-Type': 'application/json'}
+          )
+          resp = urllib.request.urlopen(req, timeout=15)
+          token_body = json.loads(resp.read())
+          token = token_body.get('access_token') or token_body.get('token')
+          if not token:
+              print('Login response:', json.dumps(token_body, indent=2))
+              print('ERROR: No access_token in login response')
+              sys.exit(1)
+          print('Login OK')
+
+          # --- Employee directory ---
+          req2 = urllib.request.Request(
+              BASE + '/api/employee-profiles/',
+              headers={'Authorization': 'Bearer ' + token}
+          )
+          resp2 = urllib.request.urlopen(req2, timeout=15)
+          profiles = json.loads(resp2.read())
+          items = profiles if isinstance(profiles, list) else profiles.get('data', profiles.get('items', []))
+          print(f'Employee profiles returned: {len(items)} record(s)')
+
+          if not items:
+              print('WARNING: No employee records returned.')
+          else:
+              codes = [e.get('employee_code', '') for e in items[:5]]
+              print('Sample codes:', codes)
+
+          # --- Check for MADC format ---
+          madc_count = sum(1 for e in items if str(e.get('employee_code', '')).startswith('MADC-'))
+          old_count = sum(1 for e in items if str(e.get('employee_code', '')).startswith('EMP-'))
+          print(f'MADC format: {madc_count}, Legacy EMP format: {old_count}')
+          if old_count > 0:
+              print('ERROR: Found legacy EMP-format codes after migration!')
+              sys.exit(1)
+          print('Smoke test PASSED')
+          PYEOF
+          )
+
+          SSH_TARGET="${GCE_SSH_USER}@${GCE_INSTANCE_NAME}"
+          SSH_ARGS=(compute ssh "${SSH_TARGET}" "--project=${GCP_PROJECT_ID}" "--zone=${GCE_ZONE}")
+          if [[ "${TUNNEL_THROUGH_IAP}" == "true" ]]; then SSH_ARGS+=(--tunnel-through-iap); fi
+
+          # On the remote: decode creds, find container, decode+run script
+          REMOTE="set -euo pipefail; CREDS=\$(echo '${CREDS_B64}' | base64 -d); EMAIL=\$(echo \"\${CREDS}\" | head -1); PASS=\$(echo \"\${CREDS}\" | tail -1); CTR=\$(sudo docker ps --format '{{.Names}}' | grep -i backend | grep -v pause | head -1); echo '${PYSCRIPT}' | base64 -d | sudo docker exec -i -e SMOKE_EMAIL=\"\${EMAIL}\" -e SMOKE_PASS=\"\${PASS}\" \"\${CTR}\" python -c 'import sys,textwrap; exec(textwrap.dedent(sys.stdin.read()))'"
+          gcloud "${SSH_ARGS[@]}" --command "${REMOTE}"

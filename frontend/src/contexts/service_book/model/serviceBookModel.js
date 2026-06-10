@@ -1,0 +1,87 @@
+export const PART_KEY_BY_ROMAN = {
+  I: "SB_PART_I",
+  "II-A": "SB_PART_II_A",
+  "II-B": "SB_PART_II_B",
+  III: "SB_PART_III",
+  IV: "SB_PART_IV",
+  V: "SB_PART_V",
+  VI: "SB_PART_VI",
+  VII: "SB_PART_VII",
+  VIII: "SB_PART_VIII",
+};
+
+export const ROMAN_BY_PART_KEY = Object.fromEntries(
+  Object.entries(PART_KEY_BY_ROMAN).map(([roman, key]) => [key, roman]),
+);
+
+export const WorkflowState = Object.freeze({
+  DRAFT: "DRAFT",
+  SUBMITTED: "SUBMITTED",
+  VERIFIED: "VERIFIED",
+  APPROVED: "APPROVED",
+  LOCKED: "LOCKED",
+  REJECTED: "REJECTED",
+  SUPERSEDED: "SUPERSEDED",
+});
+
+export const EDITABLE_STATES = new Set([WorkflowState.DRAFT, WorkflowState.REJECTED]);
+export const FINALIZED_STATES = new Set([WorkflowState.APPROVED, WorkflowState.LOCKED]);
+
+export const EntryKind = Object.freeze({
+  SNAPSHOT: "SNAPSHOT",
+  ROW: "ROW",
+  SHEET: "SHEET",
+  COMMENT: "COMMENT",
+});
+
+export const DEFAULT_SCHEMA_KEY_BY_PART = {
+  I: "SB_I_BIODATA",
+  "II-A": "SB_IIA_IMMUTABLE_CERTS",
+  "II-B": "SB_IIB_FAMILY_SHEET",
+  III: "SB_III_TOTAL_QS_SUMMARY",
+  IV: "SB_IV_SERVICE_HISTORY_ROW",
+  V: "SB_V_SERVICE_VERIFICATION_ROW",
+  VI: "SB_VI_LEAVE_OPENING_BALANCE",
+  VII: "SB_VII_LTC_ROW",
+  VIII: "SB_VIII_AUDIT_COMMENT",
+};
+
+export const SCHEMA_KEYS_BY_PART = {
+  I: ["SB_I_BIODATA"],
+  "II-A": ["SB_IIA_IMMUTABLE_CERTS"],
+  "II-B": [
+    "SB_IIB_FAMILY_SHEET",
+    "SB_IIB_PCF_NOMINATION_ROW",
+    "SB_IIB_DCRG_NOMINATION_ROW",
+    "SB_IIB_NPS_NOMINATION_ROW",
+    "SB_IIB_LEAVE_ENCASHMENT_NOMINATION_ROW",
+    "SB_IIB_FAMILY_PENSION_NOMINATION_ROW",
+    "SB_IIB_BANK_DETAILS",
+    "SB_IIB_NPS_PRAN",
+  ],
+  III: ["SB_III_PREVIOUS_SERVICE_ROW", "SB_III_FOREIGN_SERVICE_ROW", "SB_III_TOTAL_QS_SUMMARY"],
+  IV: ["SB_IV_SERVICE_HISTORY_ROW"],
+  V: ["SB_V_SERVICE_VERIFICATION_ROW"],
+  VI: ["SB_VI_LEAVE_TRANSACTION_ROW", "SB_VI_LEAVE_OPENING_BALANCE"],
+  VII: [
+    "SB_VII_LTC_ROW",
+    "SB_VII_HBA_ROW",
+    "SB_VII_VEHICLE_ADVANCE_ROW",
+    "SB_VII_FESTIVAL_ADVANCE_ROW",
+  ],
+  VIII: ["SB_VIII_AUDIT_COMMENT"],
+};
+
+export const ServiceBookPartKeys = {
+  PART_I: "I",
+  PART_II_A: "II-A",
+  PART_II_B: "II-B",
+  PART_III: "III",
+  PART_IV: "IV",
+  PART_V: "V",
+  PART_VI: "VI",
+  PART_VII: "VII",
+  PART_VIII: "VIII",
+};
+
+export const ServiceBookParts = ServiceBookPartKeys;

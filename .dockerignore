@@ -1,0 +1,16 @@
+.git
+.venv
+__pycache__
+uploads
+.pytest_cache
+.pytest_temp
+.tmp
+node_modules
+frontend/node_modules
+frontend/build
+frontend/dist
+test_reports
+*.log
+deploy-source-bundle.zip
+deploy-source-tree.zip
+deploy-overlay.zip

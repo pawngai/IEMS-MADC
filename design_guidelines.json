@@ -1,0 +1,139 @@
+{
+  "project_name": "IEMS - Integrated Employee Management System",
+  "design_philosophy": {
+    "core_concept": "The Digital Service Book",
+    "aesthetic": "Modern Government Minimalist",
+    "principles": [
+      "Authority through Clarity: No clutter, just truth.",
+      "Dual-Layer Architecture: Visual distinction between Official Record (Immutable) and Engagement (Interactive).",
+      "Accessibility First: High contrast, clear hierarchy, reduced motion preference.",
+      "The Paper Metaphor: Layer 1 feels like a pristine, digital document. Layer 2 feels like a modern app."
+    ]
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Manrope, sans-serif",
+      "body": "Inter, sans-serif",
+      "mono": "JetBrains Mono, monospace",
+      "service_book_title": "Merriweather, serif"
+    },
+    "scale": {
+      "h1": "text-4xl font-bold tracking-tight",
+      "h2": "text-3xl font-semibold tracking-tight",
+      "h3": "text-2xl font-semibold",
+      "body_lg": "text-lg leading-relaxed",
+      "body_base": "text-base leading-relaxed",
+      "caption": "text-sm text-muted-foreground",
+      "overline": "text-xs font-bold uppercase tracking-widest text-muted-foreground"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#0F172A",
+        "foreground": "#F8FAFC"
+      },
+      "secondary": {
+        "DEFAULT": "#F1F5F9",
+        "foreground": "#0F172A"
+      },
+      "accent": {
+        "DEFAULT": "#2563EB",
+        "foreground": "#FFFFFF"
+      },
+      "destructive": {
+        "DEFAULT": "#EF4444",
+        "foreground": "#FFFFFF"
+      },
+      "muted": {
+        "DEFAULT": "#F1F5F9",
+        "foreground": "#64748B"
+      },
+      "background": "#F8FAFC",
+      "surface": "#FFFFFF",
+      "border": "#E2E8F0"
+    },
+    "layer_specifics": {
+      "layer_1_official": {
+        "background": "#FFFFFF",
+        "border": "#94A3B8",
+        "accent": "#0F172A"
+      },
+      "layer_2_engagement": {
+        "background": "#F8FAFC",
+        "border": "#E2E8F0",
+        "accent": "#2563EB"
+      }
+    }
+  },
+  "layout": {
+    "grid_system": "Bento Grid Mode B (High Density)",
+    "spacing": {
+      "container_padding": "p-6 md:p-8 lg:p-12",
+      "element_gap": "gap-4 md:gap-6",
+      "section_gap": "gap-8 md:gap-12"
+    },
+    "containers": {
+      "card": "bg-white rounded-xl border border-border shadow-sm",
+      "official_doc": "bg-white rounded-none border-2 border-slate-200 shadow-md max-w-4xl mx-auto p-12 print:shadow-none print:border-none"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 rounded-md font-medium transition-colors",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/80 h-10 px-4 py-2 rounded-md font-medium transition-colors",
+      "ghost": "hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 rounded-md font-medium transition-colors",
+      "official": "border-2 border-primary text-primary hover:bg-primary hover:text-white h-10 px-6 rounded-none uppercase tracking-wider font-bold text-xs"
+    },
+    "inputs": {
+      "default": "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+    },
+    "cards": {
+      "dashboard": "rounded-xl border bg-card text-card-foreground shadow-sm",
+      "service_record": "rounded-none border-l-4 border-l-primary bg-white shadow-sm p-6"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "soft": "shadow-[0_2px_8px_rgba(0,0,0,0.04)]",
+      "medium": "shadow-[0_4px_16px_rgba(0,0,0,0.08)]",
+      "floating": "shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
+    },
+    "borders": {
+      "subtle": "border border-slate-200",
+      "official": "border-2 border-slate-900"
+    },
+    "glassmorphism": "backdrop-blur-md bg-white/80 border-b border-white/20"
+  },
+  "assets": {
+    "images": {
+      "login_bg": "https://images.unsplash.com/photo-1765366417046-f46361a7f26f?q=80&w=2000&auto=format&fit=crop",
+      "user_avatar_placeholder": "https://images.unsplash.com/photo-1659353220597-71b8c6a56259?q=80&w=200&auto=format&fit=crop",
+      "ai_assistant_bg": "https://images.unsplash.com/photo-1734971702116-3f61289df2c8?q=80&w=1000&auto=format&fit=crop"
+    },
+    "icons": "Lucide React (Default)",
+    "logo_placeholder": "Use a simple geometric shield or pillar icon in Primary Blue"
+  },
+  "motion": {
+    "transitions": "transition-all duration-200 ease-in-out",
+    "hover_lift": "hover:-translate-y-0.5 hover:shadow-md",
+    "page_transition": "animate-in fade-in slide-in-from-bottom-4 duration-500"
+  },
+  "instructions_to_main_agent": [
+    "STRICTLY distinguish between Layer 1 (Official) and Layer 2 (Engagement).",
+    "Layer 1 pages (Service Book, Profile) must look like digitized paper: White backgrounds, high contrast, serif titles, minimal rounded corners.",
+    "Layer 2 pages (Dashboard, Requests) should look like a modern SaaS: Soft shadows, rounded corners (xl), colorful charts.",
+    "Use the 'Manrope' font for all UI headings. Use 'Merriweather' ONLY for the 'Service Book' document title.",
+    "Implement a 'Dark Mode' toggle, but ensure the 'Service Book' view remains high-contrast (like a paper document) even in dark mode or switches to a specific 'Blueprint' style.",
+    "Use 'Sonner' for all toast notifications.",
+    "Ensure all interactive elements have 'data-testid' attributes.",
+    "For the AI Assistant, use a floating panel or a dedicated sidebar that feels distinct from the main content."
+  ],
+  "universal_guidelines": [
+    "Do not use gradients for text.",
+    "Avoid 'Inter' for headings.",
+    "Use 2x more padding than you think is necessary.",
+    "Never use pure black (#000000). Use Slate-950 (#020617) or similar.",
+    "Ensure 100% accessibility compliance (WCAG AA)."
+  ]
+}

@@ -1,0 +1,18 @@
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+COPY frontend/package.json frontend/package-lock.json ./
+RUN npm ci --ignore-scripts
+
+COPY frontend/ ./
+
+ARG REACT_APP_BACKEND_URL=/api
+ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+
+RUN npm run build
+
+FROM caddy:2-alpine
+
+COPY deploy/gcp/Caddyfile.frontend /etc/caddy/Caddyfile
+COPY --from=build /app/dist /srv

@@ -4,6 +4,7 @@ import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import Layout from "@/app/layout/Layout";
 import { ESS } from "@/shared/lib/routes";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess/api/essApi";
 import { leaveAPI } from "@/contexts/leave";
 import {
@@ -100,7 +101,8 @@ const formatEventActionLabel = (value, fallback = "Unknown") => {
 
 const EssDashboard = () => {
   const navigate = useNavigate();
-  const { user, can } = useAuth();
+  const { user } = useAuth();
+  const { can } = usePermissions();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [dashboardStats, setDashboardStats] = useState(null);

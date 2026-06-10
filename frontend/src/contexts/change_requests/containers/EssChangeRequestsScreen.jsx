@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Layout from "@/app/layout/Layout";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { documentsAPI } from "@/contexts/documents";
 import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/badge";
@@ -91,7 +92,8 @@ const STATUS_ICONS = {
 // ---------------------------------------------------------------------------
 
 export default function EssChangeRequestsScreen() {
-  const { user, getPrimaryAuthority } = useAuth();
+  const { user } = useAuth();
+  const { getPrimaryAuthority } = usePermissions();
 
   const { loading, requests, profile, serviceBook, serviceBookEligible, loadData } =
     useChangeRequestList({ partKeyToCompleteKey: PART_KEY_TO_COMPLETE_KEY });

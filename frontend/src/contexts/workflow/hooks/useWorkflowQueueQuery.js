@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Permissions } from "@/platform/permissions";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { getEmployeeCompletionStatus } from "@/shared/lib/utils";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";
 import { toast } from "sonner";
@@ -26,15 +27,15 @@ import {
 const normalizeStage = (value) => String(value || "").trim().toUpperCase();
 
 export function useWorkflowQueueQuery() {
+  const { user } = useAuth();
   const {
-    user,
     can,
     canAny,
     canAccessModule,
     canAccessEssPortal,
     getPrimaryAuthority,
     getAuthorityDisplayName,
-  } = useAuth();
+  } = usePermissions();
 
   const authority = getPrimaryAuthority();
   const authorityLabel = getAuthorityDisplayName(authority);

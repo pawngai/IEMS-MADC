@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '@/contexts/identity/api/authApi';
 import { getToken, getUser, setTokens, clearTokens } from "@/platform/api/httpClient";
-import { createPermissionSelectors } from "@/platform/permissions";
 
 const AuthContext = createContext(null);
 const DEFAULT_MODULE_ACCESS = { mode: "deny_by_default", allowed_modules: [] };
@@ -178,19 +177,20 @@ export const AuthProvider = ({ children }) => {
 		}
 	};
 
-	const permissionSelectors = createPermissionSelectors({ user, moduleAccess, activeRole });
-
+	// AuthContext holds only auth state. Permission/authority/module selectors
+	// live in @/contexts/identity_access (usePermissions); portal-access rules in
+	// portalAccessRules. clearMustChangePassword is retained as an essential
+	// auth-state transition that requires provider internals.
 	return (
 		<AuthContext.Provider value={{
 			user,
+			loading,
 			login,
 			logout,
-			loading,
-			clearMustChangePassword,
 			activeRole,
 			setActiveRole,
 			moduleAccess,
-			...permissionSelectors
+			clearMustChangePassword,
 		}}>
 			{children}
 		</AuthContext.Provider>

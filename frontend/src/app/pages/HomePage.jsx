@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { canEnterEssPortal } from "@/app/layout/Layout";
 import { Permissions } from "@/platform/permissions";
 import { ESS, DEPT, OPS, MAIN, ADMIN } from "@/shared/lib/routes";
@@ -117,7 +118,7 @@ const DepartmentSection = ({ summary }) => {
 
 const OperationsSection = ({ profileCount, leaveCount }) => {
   const navigate = useNavigate();
-  const { canAny } = useAuth();
+  const { canAny } = usePermissions();
 
   return (
     <div className="space-y-3">
@@ -173,7 +174,8 @@ const HomePageSkeleton = () => (
 /* ── Main HomePage ─────────────────────────────────────────────────── */
 
 const HomePage = () => {
-  const { user, can, canAny, canAccessEssPortal, getPrimaryAuthority } = useAuth();
+  const { user } = useAuth();
+  const { can, canAny, canAccessEssPortal, getPrimaryAuthority } = usePermissions();
   const authorities = Array.isArray(user?.authorities) ? user.authorities : [];
   const primaryAuth = getPrimaryAuthority();
   const isSystemAdmin = primaryAuth === "SYSTEM_ADMIN";

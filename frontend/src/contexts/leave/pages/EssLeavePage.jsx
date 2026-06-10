@@ -1,6 +1,7 @@
 import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "@/app/layout/Layout";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess";
 import { leaveAPI } from "@/contexts/leave/api/leaveApi";
 import { Permissions } from "@/platform/permissions";
@@ -66,7 +67,8 @@ const extractLeaveAttachmentFilename = (attachment) => {
 };
 
 const EssLeavePage = () => {
-  const { user, can } = useAuth();
+  const { user } = useAuth();
+  const { can } = usePermissions();
   const canApply = can(Permissions.LEAVE_APPLY_OWN);
   const canReadOwn = can(Permissions.LEAVE_READ_OWN);
   // On ESS portal, a dual-role user acting as EMPLOYEE should be able to

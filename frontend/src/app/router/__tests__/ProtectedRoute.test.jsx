@@ -5,11 +5,24 @@ import "@testing-library/jest-dom";
 import { ProtectedRoute } from "@/app/router/guards";
 
 const mockUseAuth = jest.fn();
+const mockUsePermissions = jest.fn();
 
 jest.mock("@/contexts/identity/model/authContext", () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
+
+jest.mock("@/contexts/identity_access", () => ({
+  __esModule: true,
+  usePermissions: () => mockUsePermissions(),
+}));
+
+// AuthContext now holds only auth state; permission selectors come from
+// usePermissions. Split a combined fixture across the two mocks.
+function setAuth({ user, loading = false, canAny, isAny, canAccessModule }) {
+  mockUseAuth.mockReturnValue({ user, loading });
+  mockUsePermissions.mockReturnValue({ canAny, isAny, canAccessModule });
+}
 
 jest.mock("@/app/pages/system-admin/AccessDeniedPage", () => ({
   __esModule: true,
@@ -29,7 +42,7 @@ jest.mock("react-router-dom", () => ({
 describe("ProtectedRoute strict auth options", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseAuth.mockReturnValue({
+    setAuth({
       user: { id: "u-1", authorities: ["SYSTEM_ADMIN"] },
       loading: false,
       canAny: (permissions) => permissions.some((p) => p === "ALLOW" || p === "ALLOW2"),
@@ -52,7 +65,7 @@ describe("ProtectedRoute strict auth options", () => {
   });
 
   test("enforces required authority", () => {
-    mockUseAuth.mockReturnValue({
+    setAuth({
       user: { id: "u-2", authorities: ["EMPLOYEE"] },
       loading: false,
       canAny: (permissions) => permissions.includes("ALLOW"),
@@ -73,7 +86,7 @@ describe("ProtectedRoute strict auth options", () => {
   });
 
   test("allows access when strict requirements are satisfied", () => {
-    mockUseAuth.mockReturnValue({
+    setAuth({
       user: { id: "u-3", authorities: ["SYSTEM_ADMIN"] },
       loading: false,
       canAny: (permissions) => permissions.includes("ALLOW") || permissions.includes("ALLOW2"),

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { Permissions } from "@/platform/permissions";
 import { serviceBookRecordsAPI } from "@/contexts/service_book/records/api/serviceBookRecordsApi";
 import { serviceRecordsApi } from "@/contexts/service_book/records/api/serviceRecordsApi";
@@ -36,7 +37,8 @@ const safeCall = (operation) => {
 
 export function useServiceBookRecordsPageState() {
   const { employeeId } = useParams();
-  const { user, can } = useAuth();
+  const { user } = useAuth();
+  const { can } = usePermissions();
 
   const targetEmployeeId = employeeId || user?.employee_id;
 

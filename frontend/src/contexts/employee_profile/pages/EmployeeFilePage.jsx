@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
 import EmployeeProfile from "@/contexts/employee_profile/components/EmployeeProfileSummary";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import {
   buildIdentityEditPath,
   buildProfileEditPath,
@@ -43,7 +44,7 @@ const EmployeeFile = () => {
   const { employeeId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { can, canAny, canAccessModule, getPrimaryAuthority } = useAuth();
+  const { can, canAny, canAccessModule, getPrimaryAuthority } = usePermissions();
 
   const [profile, setProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(true);

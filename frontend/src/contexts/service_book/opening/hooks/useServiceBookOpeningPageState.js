@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { MAIN } from "@/shared/lib/routes";
 import { toast } from "sonner";
 import { serviceBookOpeningApi } from "@/contexts/service_book/opening/api/serviceBookOpeningApi";
@@ -37,7 +38,8 @@ const safeCall = async (operation) => {
 export const useServiceBookOpeningPageState = () => {
   const { employeeId } = useParams();
   const navigate = useNavigate();
-  const { user, can } = useAuth();
+  const { user } = useAuth();
+  const { can } = usePermissions();
   const targetEmployeeId = employeeId || user?.employee_id;
 
   const [identity, setIdentity] = useState(null);

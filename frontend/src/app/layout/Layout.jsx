@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { isRegularEssEmployee } from "@/contexts/ess/services/essEligibility";
 import { canAccessEssDocuments } from "@/contexts/ess/services/essDomainService";
 import { Permissions } from "@/platform/permissions";
@@ -143,7 +144,8 @@ const readCollapsed = () => {
 };
 
 const Layout = ({ children }) => {
-  const { user, logout, can, canAny, canAccessModule, canAccessEssPortal, getPrimaryAuthority, getAuthorityDisplayName, setActiveRole } = useAuth();
+  const { user, logout, setActiveRole } = useAuth();
+  const { can, canAny, canAccessModule, canAccessEssPortal, getPrimaryAuthority, getAuthorityDisplayName } = usePermissions();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);

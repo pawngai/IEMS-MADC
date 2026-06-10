@@ -8,6 +8,7 @@ import { employeeProfileApi } from "@/contexts/employee_profile/api/employeeProf
 import { serviceBookAPI } from "@/contexts/service_book";
 import { isServiceBookEligible } from "@/contexts/service_book";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess";
 import { Permissions } from "@/platform/permissions";
 import { Badge } from "@/shared/ui/badge";
@@ -29,7 +30,7 @@ const STATUS_STYLES = {
 
 const EssProfilePage = () => {
   const navigate = useNavigate();
-  const { can } = useAuth();
+  const { can } = usePermissions();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [serviceBook, setServiceBook] = useState(null);

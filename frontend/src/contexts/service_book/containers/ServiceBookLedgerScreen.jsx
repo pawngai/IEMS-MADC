@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { AlertCircle, BookOpen, X } from "lucide-react";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { mastersAPI } from "@/contexts/masters";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -41,7 +42,8 @@ const LedgerLoadingState = () => (
 );
 
 export default function ServiceBookLedgerScreen({ employeeId, employeeName, partIDefaults = null, onClose, forceReadOnly = false, onCompletionChange, entryStatuses }) {
-  const { user, loading: authLoading, can, Permissions } = useAuth();
+  const { user, loading: authLoading } = useAuth();
+  const { can, Permissions } = usePermissions();
   const officialProjectionMode = true;
   const effectiveReadOnly = forceReadOnly || officialProjectionMode;
   const [activePart, setActivePart] = useState("I");

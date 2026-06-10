@@ -11,6 +11,7 @@ import Layout from "@/app/layout/Layout";
 import { OPS } from "@/shared/lib/routes";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { listProfilesByStatus } from "@/contexts/applications/model/globalPortalGateway";
 import { leaveAPI } from "@/contexts/leave";
 import { Permissions } from "@/platform/permissions";
@@ -125,8 +126,9 @@ const ActionButton = ({ icon: Icon, label, onClick, badge }) => (
 
 const GlobalPortalDashboard = () => {
   const navigate = useNavigate();
-  const { user, can, canAny, canAccessModule, getPrimaryAuthority, getAuthorityDisplayName } =
-    useAuth();
+  const { user } = useAuth();
+  const { can, canAny, canAccessModule, getPrimaryAuthority, getAuthorityDisplayName } =
+    usePermissions();
   const [loading, setLoading] = useState(true);
   const [profiles, setProfiles] = useState([]);
   const [leaves, setLeaves] = useState([]);

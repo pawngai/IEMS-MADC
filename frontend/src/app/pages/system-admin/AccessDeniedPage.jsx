@@ -1,6 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { getDefaultLandingPath } from "@/app/router/defaultLanding";
 import { AUTH } from "@/shared/lib/routes";
 import { Button } from "@/shared/ui/button";
@@ -10,8 +11,9 @@ const AccessDeniedPage = ({
   description = "You do not have permission to view this page.",
 }) => {
   const location = useLocation();
-  const auth = useAuth();
-  const homePath = auth.user ? getDefaultLandingPath(auth) || "/" : AUTH.LOGIN;
+  const { user } = useAuth();
+  const permissions = usePermissions();
+  const homePath = user ? getDefaultLandingPath({ user, ...permissions }) || "/" : AUTH.LOGIN;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-6">

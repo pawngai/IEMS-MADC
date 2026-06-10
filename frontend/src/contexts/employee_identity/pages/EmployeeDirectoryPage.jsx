@@ -6,6 +6,7 @@ import { employeeIdentityApi } from "@/contexts/employee_identity/api/employeeId
 import { userManagementAPI } from "@/contexts/identity";
 import { Permissions } from "@/platform/permissions";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { buildIdentityCreatePath } from "@/shared/lib/employeeEditorRoutes";
 import { cn, getApiErrorMessage } from "@/shared/lib/utils";
 import { Card, CardContent } from "@/shared/ui/card";
@@ -50,7 +51,7 @@ import {
 const EmployeeDirectoryPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { can, canAny, getPrimaryAuthority, isAny } = useAuth();
+  const { can, canAny, getPrimaryAuthority, isAny } = usePermissions();
   const primaryAuthority = getPrimaryAuthority();
   const useIdentityDirectory = ["GLOBAL_DATA_ENTRY", "VERIFIER", "APPROVING_AUTHORITY"].includes(primaryAuthority);
   const useUserDirectory = primaryAuthority === "SYSTEM_ADMIN";

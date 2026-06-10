@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
 import { documentsAPI } from "@/contexts/documents";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess";
 import { leaveAPI } from "@/contexts/leave/api/leaveApi";
 import { employeeIdentityApi } from "@/contexts/employee_master";
@@ -99,7 +100,8 @@ const LeaveDashboard = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { user, can, canAccessModule } = useAuth();
+  const { user } = useAuth();
+  const { can, canAccessModule } = usePermissions();
   const leaveModuleEnabled = canAccessModule("leave");
   const canApply = leaveModuleEnabled && can(Permissions.LEAVE_APPLY_OWN);
   const canReadOwn = leaveModuleEnabled && can(Permissions.LEAVE_READ_OWN);

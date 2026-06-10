@@ -30,18 +30,22 @@ jest.mock('@/contexts/ess/api/essApi', () => ({
   essAPI: { getDashboard: jest.fn(), getMyProfile: jest.fn() },
 }));
 
-jest.mock('@/contexts/identity/model/rbac', () => ({
+jest.mock('@/platform/permissions', () => ({
   __esModule: true,
   Permissions: {},
   Authorities: {},
+  DEPARTMENT_SCOPED_AUTHORITIES: ['DEPT_DATA_ENTRY', 'HOD'],
+  GLOBAL_IDENTITY_DATA_ENTRY_AUTHORITIES: ['GLOBAL_DATA_ENTRY', 'DEALING_ASSISTANT'],
+  DEPARTMENT_IDENTITY_DATA_ENTRY_AUTHORITIES: ['DEPT_DATA_ENTRY'],
   hasPermission: () => false,
   hasAuthority: () => false,
   hasAnyPermission: () => false,
   hasAnyAuthority: () => false,
+  normalizeWorkflowStage: (stage) => stage,
 }));
 
 // Mock auth context
-jest.mock('@/contexts/identity/model/authContext', () => ({
+jest.mock('@/contexts/identity', () => ({
   __esModule: true,
   AuthProvider: ({ children }) => <div>{children}</div>,
   useAuth: () => ({

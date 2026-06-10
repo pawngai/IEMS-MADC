@@ -9,7 +9,7 @@ from typing import Any
 from fastapi import HTTPException
 from fastapi.responses import StreamingResponse
 
-from contexts.rbac.domain.models import AUTHORITY_PERMISSIONS, Authority, Permission
+from contexts.rbac.contracts.models import AUTHORITY_PERMISSIONS, Authority, Permission
 
 def _csv_response(filename: str, rows: list[dict], headers: list[str]) -> StreamingResponse:
 	buff = StringIO()

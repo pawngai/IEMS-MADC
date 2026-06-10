@@ -4,9 +4,9 @@ from typing import Any
 
 from app_platform.auth.current_user import get_current_user
 from app_platform.db.runtime import get_db
-from contexts.employee_identity.contracts.identity_directory import find_identities_by_ids, resolve_identity_ref
-from contexts.rbac.application.access_control import require_owner_or_permissions, require_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.employee_master.contracts.identity_directory import find_identities_by_ids, resolve_identity_ref
+from contexts.rbac.contracts.access_control import require_owner_or_permissions, require_permissions
+from contexts.rbac.contracts.models import Permission
 from contexts.service_book.application.dto.filters import (
     ServiceBookFilter,
     parse_status_filters,
@@ -20,7 +20,7 @@ from contexts.service_book.read_side.application.factory import (
     build_service_book_service,
 )
 from contexts.service_book.repository.mongo_entry_repository import MongoServiceBookEntryRepository
-from contexts.service_book.records.contracts.service_summary_directory import (
+from contexts.service_book.contracts.service_summary_directory import (
     get_employee_service_summary,
 )
 from fastapi import APIRouter, Depends, HTTPException

@@ -10,15 +10,15 @@ from contexts.leave.contracts.dto import (
     LeaveApplicationResponseDTO,
 )
 from contexts.leave.infrastructure.gateway import LeaveMongoGateway
-from contexts.rbac.policies.operational import require_leave_listing_permission
+from contexts.rbac.contracts.operational import require_leave_listing_permission
 from contexts.leave.services.leave_service import (
     applyLeaveRequest,
     approveLeave,
     updateLeaveBalance,
 )
 from fastapi import APIRouter, Depends, Query, Request
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import require_permissions
+from contexts.rbac.contracts.models import Permission
+from contexts.rbac.contracts.access_control import require_permissions
 from app_platform.auth.current_user import get_current_user
 
 leave_router = APIRouter(prefix="/leave", tags=["Leave Management"])

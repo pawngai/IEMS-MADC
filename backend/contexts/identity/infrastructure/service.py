@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from contexts.rbac.domain.models import AUTHORITY_PERMISSIONS, WORKFLOW_TRANSITIONS, Authority, Permission, WorkflowStage
-from contexts.rbac.domain.models import UserResponse as AuthUserResponse
-from contexts.rbac.application.access_control import get_permissions as _get_perms
+from contexts.rbac.contracts.models import AUTHORITY_PERMISSIONS, WORKFLOW_TRANSITIONS, Authority, Permission, WorkflowStage
+from contexts.rbac.contracts.models import UserResponse as AuthUserResponse
+from contexts.rbac.contracts.access_control import get_permissions as _get_perms
 
 from contexts.identity.infrastructure import repo
 from contexts.identity.infrastructure import auth_session_service as _auth

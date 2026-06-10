@@ -6,8 +6,8 @@ from fastapi import HTTPException
 
 from contexts.employee_profile.application.services.workflow_engine import EmployeeWorkflowApplicationService
 from contexts.employee_profile.contracts.dto import EmployeeWorkflowAuditDTO
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import has_permission, is_owner
+from contexts.rbac.contracts.models import Permission
+from contexts.rbac.contracts.access_control import has_permission, is_owner
 
 
 EnforceDepartmentScopeFn = Callable[[dict, str, EmployeeWorkflowApplicationService, Optional[str]], Awaitable[Optional[str]]]

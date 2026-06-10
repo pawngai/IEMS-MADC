@@ -3,8 +3,8 @@ import { Navigate, Route } from "react-router-dom";
 import {
   DEPARTMENT_IDENTITY_DATA_ENTRY_AUTHORITIES,
   DEPARTMENT_SCOPED_AUTHORITIES,
-} from "@/contexts/access_control/services/authorizationService";
-import { Permissions } from "@/contexts/identity/model/rbac";
+} from "@/platform/permissions";
+import { Permissions } from "@/platform/permissions";
 import { ProtectedRoute } from "@/app/router/guards";
 
 const DeptDashboard = lazy(() => import("@/contexts/department/pages/DeptDashboardPage"));

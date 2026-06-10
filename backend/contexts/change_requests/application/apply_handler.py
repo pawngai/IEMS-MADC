@@ -7,14 +7,14 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from contexts.employee_profile.contracts.immutability import validate_immutability
-from contexts.employee_profile.contracts.profile_directory import (
+from contexts.employee_master.contracts.immutability import validate_immutability
+from contexts.employee_master.contracts.profile_directory import (
     find_profile,
 )
-from contexts.employee_profile.contracts.profile_commands import (
+from contexts.employee_master.contracts.profile_commands import (
     update_profile_fields,
 )
-from contexts.service_book.records.contracts.service_history_bridge import (
+from contexts.service_book.contracts.service_history_bridge import (
     apply_change_request_service_history,
 )
 from fastapi import HTTPException

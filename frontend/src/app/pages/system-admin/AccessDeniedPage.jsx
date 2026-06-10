@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/contexts/identity/model/authContext";
+import { useAuth } from "@/contexts/identity";
 import { getDefaultLandingPath } from "@/app/router/defaultLanding";
 import { AUTH } from "@/shared/lib/routes";
 import { Button } from "@/shared/ui/button";

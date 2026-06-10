@@ -14,6 +14,7 @@ REQUIRED_CONTEXTS = {
     "change_requests",
     "department",
     "documents",
+    "employee_master",
     "employee_identity",
     "employee_profile",
     "ess",
@@ -366,5 +367,4 @@ def test_no_backend_dot_imports_in_production_code() -> None:
         "'backend.*' imports are only allowed in scripts/ and tests/:\n"
         + "\n".join(sorted(violations))
     )
-
 

@@ -12,8 +12,8 @@ SHARED_KERNEL_ROOT = BACKEND_ROOT / "shared_kernel"
 # every context needs Permission/Authority enums for API authorization guards.
 # These prefixes are universally allowed as cross-context imports.
 UNIVERSALLY_ALLOWED_RBAC_PREFIXES = {
-    "contexts.rbac.domain.models",
-    "contexts.rbac.application.access_control",
+    "contexts.rbac.contracts.models",
+    "contexts.rbac.contracts.access_control",
 }
 
 ALLOWED_CONTEXTS_MODULE_IMPORT_FILES = {
@@ -276,6 +276,11 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
 
 }
 
+# The active rule is now simple: cross-context imports must use
+# contexts.<context>.contracts.*. The old migration allowlist above is retained
+# as historical context, but it must not permit new private imports.
+ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {}
+
 
 def _is_allowlisted_cross_context_import(rel_path: str, import_path: str) -> bool:
     allowed_prefixes = ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE.get(rel_path, set())
@@ -442,12 +447,46 @@ def test_contexts_do_not_import_each_other_directly() -> None:
                 continue
             target_context = segments[1]
             if target_context != current_context:
+                if len(segments) >= 3 and segments[2] == "contracts":
+                    continue
                 if any(imp.startswith(p) for p in UNIVERSALLY_ALLOWED_RBAC_PREFIXES):
                     continue
                 if _is_allowlisted_cross_context_import(rel_str, imp):
                     continue
                 violations.append(f"{rel}: imports {imp}")
     assert not violations, "Cross-context imports found:\n" + "\n".join(sorted(violations))
+
+
+def test_employee_master_is_canonical_employee_contract_boundary() -> None:
+    assert (CONTEXTS_ROOT / "employee_master" / "contracts").exists()
+
+    violations: list[str] = []
+    employee_implementation_contexts = {
+        "employee_identity",
+        "employee_profile",
+        "employee_master",
+    }
+    legacy_prefixes = (
+        "contexts.employee_identity.contracts",
+        "contexts.employee_profile.contracts",
+    )
+
+    for file_path in _iter_py_files(CONTEXTS_ROOT) or []:
+        rel = file_path.relative_to(BACKEND_ROOT)
+        parts = rel.parts
+        if len(parts) < 2:
+            continue
+        current_context = parts[1]
+        if current_context in employee_implementation_contexts:
+            continue
+        for imp in _imports_from_ast(file_path):
+            if imp.startswith(legacy_prefixes):
+                violations.append(f"{rel}: imports {imp}")
+
+    assert not violations, (
+        "External contexts must use contexts.employee_master.contracts for "
+        "employee current facts:\n" + "\n".join(sorted(violations))
+    )
 
 
 def test_domain_layer_has_no_cross_context_imports() -> None:
@@ -565,6 +604,8 @@ def test_cross_context_imports_do_not_target_internal_layers() -> None:
                 continue
             target_context = segments[1]
             if target_context == current_context:
+                continue
+            if len(segments) >= 3 and segments[2] == "contracts":
                 continue
             if not _is_cross_context_internal_import(imp):
                 continue

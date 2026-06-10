@@ -14,15 +14,15 @@ from typing import Any, Optional
 from app_platform.reference_data.infrastructure import service as reference_data_service
 from app_platform.domain_separation.data_ownership import assert_collection_ownership
 from contexts.audit.contracts.audit_directory import list_audit_logs
-from contexts.employee_identity.contracts.identity_directory import (
+from contexts.employee_master.contracts.identity_directory import (
     get_employee_ids_for_department as get_employee_ids_for_dept,
     get_employee_name_map as _employee_name_map,
 )
-from contexts.employee_profile.contracts.profile_directory import (
+from contexts.employee_master.contracts.profile_directory import (
     count_profiles_by_department,
     list_profiles_by_department,
 )
-from contexts.employee_profile.contracts.workflow_status_utils import workflow_status_filter_values
+from contexts.employee_master.contracts.workflow_status_utils import workflow_status_filter_values
 from contexts.leave.contracts.leave_directory import (
     count_pending_leave_applications,
     list_pending_leave_applications,

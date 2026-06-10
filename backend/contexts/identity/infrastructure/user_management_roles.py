@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from fastapi import HTTPException
 
-from contexts.employee_identity.contracts.identity_directory import get_employee_department_code
+from contexts.employee_master.contracts.identity_directory import get_employee_department_code
 from contexts.identity.infrastructure import repo
-from contexts.rbac.domain.models import Authority
+from contexts.rbac.contracts.models import Authority
 
 DEPARTMENT_SCOPED_AUTHORITIES = {"DEPT_DATA_ENTRY", "HOD"}
 ACCOUNT_PROVISIONING_READY_STAGE = "ACTIVE"

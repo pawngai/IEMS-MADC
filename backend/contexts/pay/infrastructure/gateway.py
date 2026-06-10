@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.employee_profile.contracts.profile_directory import require_profile_view
+from contexts.employee_master.contracts.profile_directory import require_profile_view
 from contexts.pay.contracts.dto import AllowanceChangeCreateDTO, PayRevisionCreateDTO
 from contexts.pay.domain.model import build_pay_snapshot
 from contexts.pay.infrastructure.pay_repository import PayLedgerRepository

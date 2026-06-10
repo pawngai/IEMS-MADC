@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from fastapi import HTTPException
 
-from contexts.rbac.application.access_control import require_owner_or_permissions, require_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.access_control import require_owner_or_permissions, require_permissions
+from contexts.rbac.contracts.models import Permission
 from contexts.service_book.application.queries import get_opening_part_i_defaults, resolve_employee_identity
 from contexts.service_book.opening.domain.opening import opening_response
 from contexts.service_book.opening.domain.opening_policy import require_regular_opening

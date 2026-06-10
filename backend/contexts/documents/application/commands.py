@@ -5,7 +5,7 @@ from typing import Any
 
 from app_platform.event_bus.types import EventName
 from contexts.documents.domain.metadata_rules import validate_document_metadata
-from contexts.employee_identity.contracts.identity_directory import resolve_identity_ref
+from contexts.employee_master.contracts.identity_directory import resolve_identity_ref
 from fastapi import HTTPException, UploadFile
 
 

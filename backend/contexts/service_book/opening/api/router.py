@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 
 from app_platform.auth.current_user import get_current_user
 from app_platform.db.runtime import get_db
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.models import Permission
 from contexts.service_book.opening.application.commands import (
     OpeningDocumentLink,
     OpeningRemarks,

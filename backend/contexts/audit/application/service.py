@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any, Optional
 
 from contexts.audit.repository import audit_repository as repo
-from contexts.rbac.domain.models import AuditLog, Permission
-from contexts.rbac.application.access_control import require_permissions
+from contexts.rbac.contracts.models import AuditLog, Permission
+from contexts.rbac.contracts.access_control import require_permissions
 from contexts.audit.domain.models import ImmutableAuditLog
 
 

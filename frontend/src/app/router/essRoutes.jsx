@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
-import { Permissions } from "@/contexts/identity/model/rbac";
-import { useAuth } from "@/contexts/identity/model/authContext";
+import { Permissions } from "@/platform/permissions";
+import { useAuth } from "@/contexts/identity";
 import { ESS_DOCUMENTS_REQUIRED_PERMISSIONS, hasEssEmployeeIdentity } from "@/contexts/ess/services/essDomainService";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { ProtectedRoute } from "@/app/router/guards";

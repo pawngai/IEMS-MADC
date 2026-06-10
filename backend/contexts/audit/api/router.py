@@ -3,8 +3,8 @@ from __future__ import annotations
 from app_platform.db.runtime import get_db
 from contexts.audit.services.audit_service import buildAuditTrail, recordAuditEntry
 from fastapi import APIRouter, Depends, Query
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import require_permissions
+from contexts.rbac.contracts.models import Permission
+from contexts.rbac.contracts.access_control import require_permissions
 from app_platform.auth.current_user import get_current_user
 
 audit_router = APIRouter(prefix="/audit", tags=["Audit & Compliance"])

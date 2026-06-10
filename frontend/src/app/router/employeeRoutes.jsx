@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Navigate, Route, useParams, generatePath } from "react-router-dom";
-import { GLOBAL_IDENTITY_DATA_ENTRY_AUTHORITIES } from "@/contexts/access_control/services/authorizationService";
-import { Permissions } from "@/contexts/identity/model/rbac";
+import { GLOBAL_IDENTITY_DATA_ENTRY_AUTHORITIES } from "@/platform/permissions";
+import { Permissions } from "@/platform/permissions";
 import { ProtectedRoute } from "@/app/router/guards";
 
 const ServiceBookPage = lazy(() => import("@/contexts/service_book/pages/ServiceBookPage"));

@@ -12,9 +12,9 @@ from contexts.audit.contracts.audit_directory import (
 	count_audit_logs,
 	list_audit_log_action_counts,
 )
-from contexts.employee_identity.contracts.identity_commands import delete_identity
-from contexts.employee_profile.contracts.profile_commands import archive_and_delete_profile
-from contexts.employee_profile.contracts.profile_directory import (
+from contexts.employee_master.contracts.identity_commands import delete_identity
+from contexts.employee_master.contracts.profile_commands import archive_and_delete_profile
+from contexts.employee_master.contracts.profile_directory import (
 	count_profiles as count_employee_profiles,
 	find_profile_view,
 	get_employee_ids_for_department,
@@ -30,7 +30,7 @@ from contexts.leave.contracts.leave_directory import (
 	list_leave_applications,
 	list_pending_leave_applications,
 )
-from contexts.rbac.application.access_control import forbid_system_admin_write, require_system_admin
+from contexts.rbac.contracts.access_control import forbid_system_admin_write, require_system_admin
 from contexts.service_book.contracts.service_book_directory import count_servicebook_entries
 from contexts.system_admin.api.shared import (
 	EmployeeDeleteRequest,

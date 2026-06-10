@@ -28,7 +28,7 @@ from contexts.identity.contracts.department_authority_commands import (
     revoke_department_authority,
     sync_department_authority,
 )
-from contexts.rbac.application.access_control import require_system_admin
+from contexts.rbac.contracts.access_control import require_system_admin
 from app_platform.auth.current_user import get_current_user
 
 

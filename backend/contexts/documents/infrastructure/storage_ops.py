@@ -112,7 +112,7 @@ async def _require_media_access(
 	if current_user is None:
 		return
 
-	from contexts.rbac.application.access_control import has_active_authority
+	from contexts.rbac.contracts.access_control import has_active_authority
 	from contexts.documents.infrastructure.access_control import can_manage_all_documents
 
 	if can_manage_all_documents(current_user):
@@ -133,7 +133,7 @@ async def _require_media_access(
 	if not employee_id or db is None:
 		raise HTTPException(status_code=403, detail="You can only access your own media")
 
-	from contexts.employee_profile.contracts.media_directory import employee_owns_media
+	from contexts.employee_master.contracts.media_directory import employee_owns_media
 
 	field = "photo_url" if bucket == StorageBucket.PHOTO else "signature_url"
 	if await employee_owns_media(

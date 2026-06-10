@@ -8,10 +8,10 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Optional
 
-from contexts.employee_profile.contracts.profile_directory import (
+from contexts.employee_master.contracts.profile_directory import (
     find_profile_view,
 )
-from contexts.employee_profile.contracts.profile_commands import (
+from contexts.employee_master.contracts.profile_commands import (
     update_profile_fields,
 )
 from contexts.documents.contracts.document_metadata import (

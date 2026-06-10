@@ -12,11 +12,11 @@ from contexts.change_requests.contracts.ports import ChangeRequestGateway
 from contexts.change_requests.infrastructure.document_lock import (
     lock_documents_for_approved_request as _lock_documents_for_approved_request,
 )
-from contexts.employee_profile.contracts.profile_directory import (
+from contexts.employee_master.contracts.profile_directory import (
     find_profile_view,
 )
 from fastapi import HTTPException
-from contexts.rbac.application.access_control import require_permissions
+from contexts.rbac.contracts.access_control import require_permissions
 from contexts.identity.contracts.user_role import get_user_role
 from contexts.identity.contracts.user_directory import (
     get_user_department_code,

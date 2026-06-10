@@ -9,9 +9,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
-import { useAuth } from "@/contexts/identity/model/authContext";
+import { useAuth } from "@/contexts/identity";
 import { canEnterEssPortal } from "@/app/layout/Layout";
-import { Permissions } from "@/contexts/identity/model/rbac";
+import { Permissions } from "@/platform/permissions";
 import { ESS, DEPT, OPS, MAIN, ADMIN } from "@/shared/lib/routes";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";
 import { fetchMyProfile } from "@/contexts/ess/model/essHomeGateway";

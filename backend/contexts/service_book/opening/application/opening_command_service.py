@@ -4,8 +4,8 @@ from datetime import datetime, timezone
 
 from fastapi import HTTPException
 
-from contexts.rbac.application.access_control import require_owner_or_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.access_control import require_owner_or_permissions
+from contexts.rbac.contracts.models import Permission
 from contexts.service_book.application.queries import get_opening_part_i_defaults
 from contexts.service_book.opening.application.commands import OpeningDocumentLink, ServiceBookOpeningPayload
 from contexts.service_book.opening.application.opening_query_service import resolve_identity_or_404

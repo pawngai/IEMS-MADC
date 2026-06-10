@@ -6,7 +6,7 @@ from contexts.documents.application import service
 from contexts.documents.application.commands import attach_document_to_entity
 from app_platform.db.runtime import get_db_optional
 from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
-from contexts.rbac.policies.operational import (
+from contexts.rbac.contracts.operational import (
 	can_manage_documents,
 	require_document_delete_permission,
 	require_legal_hold_authority,

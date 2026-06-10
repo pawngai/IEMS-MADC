@@ -22,10 +22,10 @@ from contexts.service_book.records.application.commands.verify_event import Veri
 from contexts.service_book.records.application.commands.void_event import VoidServiceEventCommand
 from contexts.service_book.records.application.service import ServiceEventApplicationService
 from contexts.service_book.records.schemas.service_event_schemas import get_service_event_form_schema
-from contexts.employee_identity.contracts.identity_directory import resolve_identity_ref
+from contexts.employee_master.contracts.identity_directory import resolve_identity_ref
 from fastapi import APIRouter, Depends, HTTPException
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import require_owner_or_permissions, require_permissions
+from contexts.rbac.contracts.models import Permission
+from contexts.rbac.contracts.access_control import require_owner_or_permissions, require_permissions
 from app_platform.auth.current_user import get_current_user
 from app_platform.db.runtime import get_db
 from contexts.service_book.records.repository.service_summary_repository import (

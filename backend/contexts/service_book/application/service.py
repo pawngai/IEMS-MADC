@@ -4,7 +4,7 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from contexts.employee_identity.contracts.employee_domain import isServiceBookEligible
+from contexts.employee_master.contracts.employee_domain import isServiceBookEligible
 from contexts.service_book.domain.service_book_rules import (
     SERVICE_BOOK_NOT_APPLICABLE_DETAIL,
     ServiceBookNotApplicableError,

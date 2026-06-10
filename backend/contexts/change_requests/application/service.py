@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from contexts.employee_identity.contracts.events import EmployeeUpdatedEvent
+from contexts.employee_master.contracts.events import EmployeeUpdatedEvent
 from app_platform.db.atomic import call_with_optional_session, run_atomic
 from app_platform.event_bus.types import EventName
 from app_platform.outbox.model import OutboxEvent

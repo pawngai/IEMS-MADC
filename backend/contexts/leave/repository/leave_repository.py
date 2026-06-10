@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from app_platform.domain_separation.data_ownership import assert_collection_ownership
-from contexts.employee_profile.contracts.profile_directory import find_profile_view
+from contexts.employee_master.contracts.profile_directory import find_profile_view
 
 
 class LeaveRuntimeRepository:

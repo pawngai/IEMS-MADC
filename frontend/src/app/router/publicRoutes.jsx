@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/app/router/guards";
-import { useAuth } from "@/contexts/identity/model/authContext";
+import { useAuth } from "@/contexts/identity";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { getDefaultLandingPath } from "@/app/router/defaultLanding";
 import LoginPage from "@/contexts/identity/ui/LoginPage";

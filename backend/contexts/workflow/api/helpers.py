@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from fastapi import HTTPException
-from contexts.rbac.application.access_control import has_authority
+from contexts.rbac.contracts.access_control import has_authority
 
 
 PENDING_STAGE_AUTHORITIES: dict[str, set[str]] = {

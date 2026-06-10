@@ -11,7 +11,7 @@ from contexts.pay.contracts.dto import (
     PaySnapshotResponseDTO,
 )
 from contexts.pay.infrastructure.gateway import PayMongoGateway
-from contexts.rbac.policies.operational import can_read_pay, require_pay_write
+from contexts.rbac.contracts.operational import can_read_pay, require_pay_write
 from fastapi import APIRouter, Depends, HTTPException, Request
 from app_platform.auth.current_user import get_current_user
 

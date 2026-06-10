@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useAuth } from "@/contexts/identity/model/authContext";
+import { useAuth } from "@/contexts/identity";
 import Layout from "@/app/layout/Layout";
 import { Skeleton } from "@/shared/ui/skeleton";
 import {

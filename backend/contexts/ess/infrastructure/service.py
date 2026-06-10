@@ -12,12 +12,12 @@ from typing import Any
 from fastapi import HTTPException
 
 from contexts.ess.infrastructure import repo
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import require_permissions
+from contexts.rbac.contracts.models import Permission
+from contexts.rbac.contracts.access_control import require_permissions
 from app_platform.reference_data.contracts.employment_rules import (
     get_available_service_book_parts,
 )
-from contexts.employee_identity.contracts.employee_domain import (
+from contexts.employee_master.contracts.employee_domain import (
     determineEmploymentType,
     isServiceBookEligible,
     normalizeEmployeeRecord,

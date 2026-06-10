@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
-import { Permissions } from "@/contexts/identity/model/rbac";
+import { Permissions } from "@/platform/permissions";
 import { ProtectedRoute } from "@/app/router/guards";
 
 const SystemAdminConsole = lazy(() => import("@/contexts/admin/pages/SystemAdminConsolePage"));

@@ -1,9 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { authAPI } from '@/contexts/identity/api/authApi';
-import { hasAuthority, hasAnyAuthority, Permissions, Authorities } from "@/contexts/identity/model/rbac";
-import { canPerformAction, resolveScopeAccess, resolveUserPermissions } from "@/contexts/access_control";
 import { getToken, getUser, setTokens, clearTokens } from "@/platform/api/httpClient";
-import { AUTHORITY_DISPLAY_NAMES, AUTHORITY_PRIORITY } from "@/contexts/identity/model/authorityMeta";
+import { createPermissionSelectors } from "@/platform/permissions";
 
 const AuthContext = createContext(null);
 const DEFAULT_MODULE_ACCESS = { mode: "deny_by_default", allowed_modules: [] };
@@ -180,47 +178,7 @@ export const AuthProvider = ({ children }) => {
 		}
 	};
 
-	const can = (permission) => canPerformAction(user, { requiredPermissions: [permission] });
-	const canAny = (permissions) => permissions.some((permission) => can(permission));
-	const is = (authority) => hasAuthority(user, authority);
-	const isAny = (authorities) => hasAnyAuthority(user, authorities);
-	const getAccessScope = () => resolveScopeAccess(user).scope;
-	const getResolvedPermissions = () => Array.from(resolveUserPermissions(user));
-	const canAccessModule = (moduleId) => {
-		if (!moduleId) return true;
-		if (moduleAccess?.mode === "allow_all") return true;
-		const allowedModules = Array.isArray(moduleAccess?.allowed_modules) ? moduleAccess.allowed_modules : [];
-		if (moduleAccess?.mode === "deny_by_default") return allowedModules.includes(moduleId);
-		return allowedModules.includes(moduleId);
-	};
-	const canAccessEssPortal = () => canAccessModule("ess_portal");
-
-	const canVerify = () => can(Permissions.SERVICE_BOOK_ENTRY_VERIFY);
-	const canApprove = () => can(Permissions.SERVICE_BOOK_ENTRY_APPROVE);
-	const canAttest = () => can(Permissions.SERVICE_BOOK_ENTRY_ATTEST);
-	const canAudit = () => can(Permissions.AUDIT_READ_ALL);
-	const canCreateEntry = () => can(Permissions.SERVICE_BOOK_ENTRY_CREATE);
-	const canSupersede = () => can(Permissions.SERVICE_BOOK_SUPERSEDE);
-
-	const canCreateProfile = () => can(Permissions.PROFILE_CREATE);
-	const canReadAllProfiles = () => can(Permissions.PROFILE_READ_ALL);
-	const canUpdateProfile = () => canAny([Permissions.PROFILE_UPDATE_ALL, Permissions.PROFILE_UPDATE_OWN_LIMITED]);
-
-	const getGlobalAuthorities = () => {
-		if (!user?.authorities?.length) return [];
-		return user.authorities.filter(a => a && a !== 'EMPLOYEE');
-	};
-
-	const getPrimaryAuthority = () => {
-		if (!user?.authorities?.length) return 'EMPLOYEE';
-		if (activeRole && user.authorities.includes(activeRole)) return activeRole;
-		for (const auth of AUTHORITY_PRIORITY) {
-			if (user.authorities.includes(auth)) return auth;
-		}
-		return user.authorities[0];
-	};
-
-	const getAuthorityDisplayName = (authority) => AUTHORITY_DISPLAY_NAMES[authority] || authority;
+	const permissionSelectors = createPermissionSelectors({ user, moduleAccess, activeRole });
 
 	return (
 		<AuthContext.Provider value={{
@@ -229,30 +187,10 @@ export const AuthProvider = ({ children }) => {
 			logout,
 			loading,
 			clearMustChangePassword,
-			can,
-			canAny,
-			is,
-			isAny,
-			canVerify,
-			canApprove,
-			canAttest,
-			canAudit,
-			canCreateEntry,
-			canSupersede,
-			canCreateProfile,
-			canReadAllProfiles,
-			canUpdateProfile,
-			canAccessModule,
-			canAccessEssPortal,
-			getAccessScope,
-			getResolvedPermissions,
-			getPrimaryAuthority,
-			getAuthorityDisplayName,
-			getGlobalAuthorities,
 			activeRole,
 			setActiveRole,
-			Permissions,
-			Authorities
+			moduleAccess,
+			...permissionSelectors
 		}}>
 			{children}
 		</AuthContext.Provider>

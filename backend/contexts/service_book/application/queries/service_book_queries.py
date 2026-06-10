@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from typing import Any
 
-from contexts.employee_identity.contracts.identity_directory import (
+from contexts.employee_master.contracts.identity_directory import (
     find_identity,
     find_identities_by_ids,
     resolve_identity_ref,
 )
-from contexts.employee_profile.contracts.profile_directory import find_profile_view
-from contexts.rbac.application.access_control import (
+from contexts.employee_master.contracts.profile_directory import find_profile_view
+from contexts.rbac.contracts.access_control import (
     require_owner_or_permissions,
     require_permissions,
 )
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.models import Permission
 from contexts.service_book.application.dto.filters import ServiceBookFilter
 from contexts.service_book.application.errors import not_found
 from contexts.service_book.application.service import (
@@ -20,7 +20,7 @@ from contexts.service_book.application.service import (
     validateServiceBookEligibility,
 )
 from contexts.service_book.repository.ports import ServiceBookEntryRepositoryPort
-from contexts.service_book.records.contracts.service_summary_directory import (
+from contexts.service_book.contracts.service_summary_directory import (
     get_employee_service_summary,
 )
 from shared_kernel.events import utc_now_iso

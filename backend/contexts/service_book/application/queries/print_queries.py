@@ -2,15 +2,15 @@ from __future__ import annotations
 
 from typing import Any
 
-from contexts.employee_identity.contracts.identity_directory import resolve_identity_ref
-from contexts.rbac.application.access_control import require_owner_or_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.employee_master.contracts.identity_directory import resolve_identity_ref
+from contexts.rbac.contracts.access_control import require_owner_or_permissions
+from contexts.rbac.contracts.models import Permission
 from contexts.service_book.application.errors import not_found
 from contexts.service_book.application.service import (
     generateServiceBookPrintModel,
     validateServiceBookEligibility,
 )
-from contexts.service_book.records.contracts.service_summary_directory import get_employee_service_summary
+from contexts.service_book.contracts.service_summary_directory import get_employee_service_summary
 from shared_kernel.events import utc_now_iso
 
 

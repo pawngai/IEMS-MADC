@@ -1,4 +1,4 @@
-import { Permissions } from "@/contexts/identity/model/rbac";
+import { Permissions } from "@/platform/permissions";
 import { ADMIN, AUTH, DEPT, ESS, MAIN, OPS } from "@/shared/lib/routes";
 
 const EMPLOYEE_AUTHORITIES = new Set(["EMPLOYEE"]);

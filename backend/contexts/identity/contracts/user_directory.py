@@ -6,7 +6,7 @@ import uuid
 
 import bcrypt
 
-from contexts.rbac.application.access_control import has_authority
+from contexts.rbac.contracts.access_control import has_authority
 
 
 async def find_user_by_email(

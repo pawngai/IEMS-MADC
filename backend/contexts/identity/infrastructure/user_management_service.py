@@ -7,12 +7,12 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException
-from contexts.rbac.domain.models import Authority
-from contexts.rbac.application.access_control import has_authority
+from contexts.rbac.contracts.models import Authority
+from contexts.rbac.contracts.access_control import has_authority
 from contexts.identity.infrastructure import repo
 from contexts.identity.contracts.schemas import UserCreate, UserPasswordUpdate, UserResponse, UserUpdate
-from contexts.employee_identity.contracts.identity_directory import find_identity
-from contexts.employee_profile.contracts.profile_directory import (
+from contexts.employee_master.contracts.identity_directory import find_identity
+from contexts.employee_master.contracts.profile_directory import (
     count_profiles as count_employee_profiles,
     find_profile_view,
     list_profiles,
@@ -24,9 +24,9 @@ from contexts.identity.infrastructure.auth_session_service import (
     validate_password_strength,
     verify_password,
 )
-from contexts.rbac.application.authorization_service import assignRole, revokeRole
-# Use canonical require_system_admin from contexts.rbac.application.access_control
-from contexts.rbac.application.access_control import prevent_self_action, require_system_admin
+from contexts.rbac.contracts.authorization_service import assignRole, revokeRole
+# Use canonical require_system_admin from contexts.rbac.contracts.access_control
+from contexts.rbac.contracts.access_control import prevent_self_action, require_system_admin
 from contexts.identity.infrastructure.user_management_audit import _log_activity, _log_role_change
 from contexts.identity.infrastructure.user_management_roles import (
     ACCOUNT_PROVISIONING_READY_STAGE,

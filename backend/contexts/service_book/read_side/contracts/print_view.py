@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.employee_identity.contracts.identity_directory import find_identity
+from contexts.employee_master.contracts.identity_directory import find_identity
 from contexts.service_book.application.service import (
     generateServiceBookPrintModel,
     validateServiceBookEligibility,

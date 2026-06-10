@@ -8,7 +8,7 @@ from app_platform.reference_data.contracts.employment_type_master import (
     list_employment_type_master,
 )
 from app_platform.reference_data.infrastructure import service as reference_data_service
-from contexts.service_book.records.contracts.service_summary_directory import (
+from contexts.service_book.contracts.service_summary_directory import (
     get_employee_current_department_code,
     list_employee_ids_by_service_summary,
 )

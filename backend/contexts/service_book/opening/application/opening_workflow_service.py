@@ -4,8 +4,8 @@ import json
 
 from fastapi import HTTPException
 
-from contexts.rbac.application.access_control import require_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.access_control import require_permissions
+from contexts.rbac.contracts.models import Permission
 from contexts.service_book.records.repository.service_summary_repository import EmployeeServiceSummaryRepository
 from contexts.service_book.opening.application.commands import OpeningRemarks
 from contexts.service_book.opening.application.opening_command_service import actor_id, now_iso

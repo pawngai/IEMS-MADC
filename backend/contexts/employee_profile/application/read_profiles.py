@@ -6,8 +6,8 @@ from typing import Any, Awaitable, Callable, Optional
 from contexts.employee_profile.application.profile_interface import get_employee_identity
 from contexts.employee_profile.application.services.workflow_engine import EmployeeWorkflowApplicationService
 from fastapi import HTTPException
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import has_permission, is_owner
+from contexts.rbac.contracts.models import Permission
+from contexts.rbac.contracts.access_control import has_permission, is_owner
 from contexts.employee_profile.contracts.workflow_status_utils import (
     normalize_employee_workflow_status,
     normalize_workflow_status,

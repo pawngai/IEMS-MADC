@@ -19,8 +19,8 @@ from contexts.employee_identity.schemas.commands import (
     EmployeeIdentityUpdate,
 )
 from contexts.identity.contracts.user_role import get_user_role
-from contexts.rbac.application.access_control import require_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.access_control import require_permissions
+from contexts.rbac.contracts.models import Permission
 
 
 write_router = APIRouter()

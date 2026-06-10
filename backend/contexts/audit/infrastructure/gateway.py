@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from contexts.audit.repository import audit_repository as repo
-from contexts.rbac.domain.models import AuditLog
+from contexts.rbac.contracts.models import AuditLog
 
 
 async def write_audit_entry(

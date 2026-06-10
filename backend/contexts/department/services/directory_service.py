@@ -7,11 +7,11 @@ from fastapi import HTTPException
 
 from contexts.department.repository import department_portal_repo as repo
 from contexts.department.services.portal_common import ALLOWED_DIRECTORY_SORT_FIELDS, _normalize
-from contexts.employee_profile.contracts.profile_directory import find_profile_view
-from contexts.employee_profile.contracts.workflow_status_utils import normalize_employee_workflow_status
+from contexts.employee_master.contracts.profile_directory import find_profile_view
+from contexts.employee_master.contracts.workflow_status_utils import normalize_employee_workflow_status
 from contexts.identity.contracts.user_directory import find_user_by_employee_id
-from contexts.rbac.application.access_control import require_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.access_control import require_permissions
+from contexts.rbac.contracts.models import Permission
 
 ResolveDepartment = Callable[[Any, dict], Awaitable[str]]
 RequireAuthority = Callable[[dict], None]

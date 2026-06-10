@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import HTTPException
 
-from contexts.employee_identity.contracts.employee_domain import isServiceBookEligible
+from contexts.employee_master.contracts.employee_domain import isServiceBookEligible
 from contexts.ess.infrastructure import service as ess_service
 
 

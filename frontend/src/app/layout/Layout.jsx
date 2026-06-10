@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/identity/model/authContext";
+import { useAuth } from "@/contexts/identity";
 import { isRegularEssEmployee } from "@/contexts/ess/services/essEligibility";
 import { canAccessEssDocuments } from "@/contexts/ess/services/essDomainService";
-import { Permissions } from "@/contexts/identity/model/rbac";
+import { Permissions } from "@/platform/permissions";
 import { ESS, DEPT, OPS, MAIN, ADMIN, AUTH } from "@/shared/lib/routes";
 import { Button } from "@/shared/ui/button";
 import { Avatar, AvatarFallback } from "@/shared/ui/avatar";

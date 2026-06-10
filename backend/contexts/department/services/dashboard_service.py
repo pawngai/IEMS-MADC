@@ -9,8 +9,8 @@ from contexts.department.services.portal_common import (
     _pending_leave_statuses,
 )
 from contexts.department.services.sanctioned_strength_service import build_sanctioned_strength_summary
-from contexts.rbac.application.access_control import require_permissions
-from contexts.rbac.domain.models import Permission
+from contexts.rbac.contracts.access_control import require_permissions
+from contexts.rbac.contracts.models import Permission
 
 ResolveDepartment = Callable[[Any, dict], Awaitable[str]]
 RequireAuthority = Callable[[dict], None]

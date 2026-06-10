@@ -1,7 +1,7 @@
 """Documents infrastructure — access control helpers."""
 from __future__ import annotations
 
-from contexts.rbac.policies.operational import can_manage_documents
+from contexts.rbac.contracts.operational import can_manage_documents
 from fastapi import HTTPException
 
 

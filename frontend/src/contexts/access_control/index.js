@@ -15,4 +15,4 @@ export {
   resolveScopeAccess,
   resolveUserPermissions,
   revokeRole,
-} from "./services/authorizationService";
+} from "@/platform/permissions";

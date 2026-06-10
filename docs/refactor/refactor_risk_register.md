@@ -27,7 +27,7 @@ and retire the old folders + old contract modules. This shapes every risk below.
 | R-13 | Migration backfill script run against prod-shaped data with unexpected keys | M | Idempotent upsert keyed on employee_id; dry-run mode; legacy_fields catch-all; report counts | OPEN |
 | R-14 | Large-file splits introduce behavior regressions | L | Split after relocation; pure mechanical extraction; rely on existing tests + new field/route tests | OPEN |
 | R-15 | Windows + Python 3.14 + Mongo local env; tests may be env-sensitive | M | Run `pytest` import-boundary/architecture suites after each phase; live-browser smoke (login global.dataentry) as end-to-end gate | OPEN |
-| R-16 | Frontend `masters` + `applications` + `access_control` contexts not in target list — ownership unclear | M | Decide: masters→organization_master, access_control→identity_access, applications→portals/admin or reporting_analytics; confirm with stakeholder before deleting | OPEN |
+| R-16 | Frontend `masters` + `applications` + `access_control` contexts not in target list — ownership unclear | M | RESOLVED 2026-06-11: masters→organization_master, access_control→identity_access, applications→portals/admin, reporting_analytics = backend `reporting` + frontend `analytics` (analytics is frontend-only). | CLOSED |
 
 ## Hard gates before any deletion (per spec)
 1. All employee_identity + employee_profile fields mapped (R-1/2/3 closed).

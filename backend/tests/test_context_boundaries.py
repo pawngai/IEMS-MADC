@@ -56,7 +56,7 @@ def _imports_from_ast(file_path: pathlib.Path) -> list[str]:
 def test_identity_does_not_import_employee_identity_internals() -> None:
     """identity may only import employee_identity.contracts, never domain/infra/repo."""
     violations: list[str] = []
-    identity_root = CONTEXTS_ROOT / "identity"
+    identity_root = CONTEXTS_ROOT / "identity_access" / "identity"
     for py_file in _iter_py_files(identity_root):
         for imp in _imports_from_ast(py_file):
             if not imp.startswith("contexts.employee_master.identity."):
@@ -76,12 +76,12 @@ def test_identity_does_not_import_employee_identity_internals() -> None:
 def test_employee_identity_does_not_import_identity_internals() -> None:
     """employee_identity may only import identity.contracts, never infra/services."""
     violations: list[str] = []
-    ei_root = CONTEXTS_ROOT / "employee_identity"
+    ei_root = CONTEXTS_ROOT / "employee_master" / "identity"
     for py_file in _iter_py_files(ei_root):
         for imp in _imports_from_ast(py_file):
-            if not imp.startswith("contexts.identity."):
+            if not imp.startswith("contexts.identity_access.identity."):
                 continue
-            suffix = imp[len("contexts.identity."):]
+            suffix = imp[len("contexts.identity_access.identity."):]
             if suffix.startswith("contracts"):
                 continue
             rel = py_file.relative_to(BACKEND_ROOT)
@@ -98,7 +98,7 @@ def test_identity_has_no_employee_master_collections() -> None:
                  "employee_profile_extensions", "employee_profile_read_models"}
     db_access = re.compile(r"\bdb\.([a-z_]+)\b|\bdb\[(?:\"|')([a-z_]+)(?:\"|')\]")
     violations: list[str] = []
-    identity_root = CONTEXTS_ROOT / "identity"
+    identity_root = CONTEXTS_ROOT / "identity_access" / "identity"
     for py_file in _iter_py_files(identity_root):
         text = py_file.read_text(encoding="utf-8")
         for m in db_access.finditer(text):
@@ -114,7 +114,7 @@ def test_identity_has_no_employee_master_collections() -> None:
 
 def test_identity_contracts_rbac_workflow_shim_deleted() -> None:
     """The dead backward-compat rbac_workflow shim must stay deleted."""
-    shim = CONTEXTS_ROOT / "identity" / "contracts" / "rbac_workflow.py"
+    shim = CONTEXTS_ROOT / "identity_access" / "identity" / "contracts" / "rbac_workflow.py"
     assert not shim.exists(), (
         f"{shim.relative_to(BACKEND_ROOT)} must not exist — "
         "ImmutableAuditLog lives in contexts.audit"
@@ -123,7 +123,7 @@ def test_identity_contracts_rbac_workflow_shim_deleted() -> None:
 
 def test_employee_identity_has_no_read_model_subscriber_shim() -> None:
     """The dead subscribers shim with dangling imports must stay deleted."""
-    shim = CONTEXTS_ROOT / "employee_identity" / "contracts" / "subscribers.py"
+    shim = CONTEXTS_ROOT / "employee_master" / "identity" / "contracts" / "subscribers.py"
     assert not shim.exists(), (
         f"{shim.relative_to(BACKEND_ROOT)} must not exist — "
         "read-model subscribers live in employee_profile"
@@ -143,15 +143,15 @@ _STANDARDIZED_CONTEXTS = {
     "leave",
     "workflow",
     "pay",
-    "identity",
 }
 
-# Employee Master uses identity/ and profile/ sub-packages internally (the merge
-# of the former employee_identity + employee_profile contexts), so the standard
-# folder layout is asserted on those sub-packages rather than the context root.
+# Employee Master and Identity Access use sub-packages internally (the merges of
+# employee_identity+employee_profile and identity+rbac respectively), so the
+# standard folder layout is asserted on those sub-packages rather than the root.
 _STANDARDIZED_SUBCONTEXTS = {
     "employee_master/identity",
     "employee_master/profile",
+    "identity_access/identity",
 }
 
 

@@ -13,7 +13,7 @@ from app_platform.reference_data.infrastructure.schemas import (
     DEFAULT_SERVICES,
 )
 from contexts.documents.domain.validation import ALLOWED_DOCUMENT_TYPES, DOCUMENT_TYPE_RECORDS
-from contexts.rbac.domain.models import AUTHORITY_PERMISSIONS, Authority, WorkflowStage
+from contexts.identity_access.rbac.domain.models import AUTHORITY_PERMISSIONS, Authority, WorkflowStage
 
 SYSTEM_SEED_CREATED_BY = "system_seed"
 
@@ -158,7 +158,7 @@ def _role_seed_records() -> list[dict[str, Any]]:
 
 
 def _workflow_stage_seed_records() -> list[dict[str, Any]]:
-    from contexts.rbac.domain.models import WORKFLOW_TRANSITIONS
+    from contexts.identity_access.rbac.domain.models import WORKFLOW_TRANSITIONS
 
     records: list[dict[str, Any]] = []
     for stage in WorkflowStage:

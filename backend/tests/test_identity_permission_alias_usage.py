@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-from contexts.rbac.domain.models import Permission
+from contexts.identity_access.rbac.domain.models import Permission
 from app_platform.forms.api import helpers as forms_helpers
-from contexts.rbac.policies import operational
+from contexts.identity_access.rbac.policies import operational
 
 
 def test_require_forms_access_uses_identity_aliases(monkeypatch) -> None:

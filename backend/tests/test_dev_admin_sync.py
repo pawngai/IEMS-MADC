@@ -5,7 +5,7 @@ from copy import deepcopy
 import pytest
 
 from app.bootstrap import dev_admin_sync
-from contexts.identity.infrastructure.auth_session_service import verify_password
+from contexts.identity_access.identity.infrastructure.auth_session_service import verify_password
 
 
 class _FakeUsersCollection:

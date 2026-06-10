@@ -32,8 +32,8 @@ import contexts.employee_master.profile.api.write_router as employee_write_modul
 from app_platform import auth as shared_auth_module
 from app_platform.config.settings import settings
 from app_platform.db.runtime import get_db, get_db_optional
-from contexts.identity.infrastructure import service as identity_service
-from contexts.rbac.domain.models import TokenResponse, UserResponse
+from contexts.identity_access.identity.infrastructure import service as identity_service
+from contexts.identity_access.rbac.domain.models import TokenResponse, UserResponse
 
 # ---------------------------------------------------------------------------
 # Fixtures

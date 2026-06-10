@@ -31,13 +31,13 @@ TRANSITION_ADAPTER_CONTRACT_FILES = {
 
 ALLOWED_WRITE_CONTRACT_MODULES = {
     "contexts/change_requests/contracts/ports.py",
-    "contexts/identity/contracts/department_authority_commands.py",
+    "contexts/identity_access/identity/contracts/department_authority_commands.py",
     "contexts/employee_master/identity/contracts/identity_commands.py",
     "contexts/employee_master/profile/contracts/immutability.py",
     "contexts/employee_master/profile/contracts/ports.py",
     "contexts/employee_master/profile/contracts/profile_commands.py",
-    "contexts/identity/contracts/system_config.py",
-    "contexts/identity/contracts/user_directory.py",
+    "contexts/identity_access/identity/contracts/system_config.py",
+    "contexts/identity_access/identity/contracts/user_directory.py",
     "contexts/leave/contracts/leave_commands.py",
     "contexts/leave/contracts/ports.py",
     "contexts/notifications/contracts/notification_commands.py",
@@ -75,30 +75,30 @@ DB_WRITE_METHODS = {
 
 ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
     "contexts/employee_identity/api/read_router.py": {
-        "contexts.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_role",
         "contexts.employee_master.profile.contracts.profile_directory",
     },
     "contexts/employee_identity/api/write_router.py": {
-        "contexts.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_role",
     },
     "contexts/employee_identity/application/identity_interface.py": {
         "contexts.service_book.records.contracts.service_summary_directory",
     },
     "contexts/employee_profile/api/admin_router.py": {
-        "contexts.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_role",
     },
     "contexts/employee_profile/api/completion_router.py": {
-        "contexts.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_role",
     },
     "contexts/employee_profile/api/read_router.py": {
-        "contexts.identity.contracts.user_role",
-        "contexts.identity.contracts.user_directory",
+        "contexts.identity_access.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_directory",
     },
     "contexts/employee_profile/api/workflow_router.py": {
-        "contexts.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_role",
     },
     "contexts/employee_profile/api/write_router.py": {
-        "contexts.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_role",
     },
     "contexts/employee_master/profile/contracts/attestation.py": {
         "contexts.employee_master.identity.contracts.designation_directory",
@@ -107,17 +107,17 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.employee_master.identity.contracts.identity_directory",
     },
     "contexts/department/services/department_portal_service.py": {
-        "contexts.identity.contracts.user_directory",
+        "contexts.identity_access.identity.contracts.user_directory",
     },
     "contexts/department/services/directory_service.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
         "contexts.employee_master.profile.contracts.workflow_status_utils",
-        "contexts.identity.contracts.user_directory",
+        "contexts.identity_access.identity.contracts.user_directory",
     },
     "contexts/department/services/portal_common.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
-        "contexts.identity.contracts.user_directory",
-        "contexts.rbac.application.authorization_service",
+        "contexts.identity_access.identity.contracts.user_directory",
+        "contexts.identity_access.rbac.application.authorization_service",
     },
     "contexts/department/services/workload_service.py": {
         "contexts.employee_master.profile.contracts.workflow_status_utils",
@@ -132,8 +132,8 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
     "contexts/change_requests/infrastructure/gateway.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
         "contexts.change_requests.infrastructure.document_lock",
-        "contexts.identity.contracts.user_role",
-        "contexts.identity.contracts.user_directory",
+        "contexts.identity_access.identity.contracts.user_role",
+        "contexts.identity_access.identity.contracts.user_directory",
         "contexts.notifications.contracts.publisher",
     },
     "contexts/change_requests/infrastructure/document_lock.py": {
@@ -155,31 +155,31 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.employee_master.identity.contracts.events",
     },
     "contexts/leave/infrastructure/gateway.py": {
-        "contexts.rbac.application.authorization_service",
+        "contexts.identity_access.rbac.application.authorization_service",
         "contexts.documents.contracts.document_metadata",
-        "contexts.identity.contracts.user_directory",
+        "contexts.identity_access.identity.contracts.user_directory",
         "contexts.employee_master.identity.contracts.identity_directory",
-        "contexts.rbac.policies.operational",
+        "contexts.identity_access.rbac.policies.operational",
         "contexts.service_book.contracts.servicebook",
     },
     "contexts/leave/infrastructure/gateway_helpers.py": {
         "contexts.documents.contracts.document_metadata",
-        "contexts.identity.contracts.user_directory",
+        "contexts.identity_access.identity.contracts.user_directory",
         "contexts.employee_master.identity.contracts.identity_directory",
-        "contexts.rbac.application.authorization_service",
+        "contexts.identity_access.rbac.application.authorization_service",
         "contexts.service_book.contracts.service_book_directory",
     },
     "contexts/leave/api/router.py": {
-        "contexts.rbac.policies.operational",
+        "contexts.identity_access.rbac.policies.operational",
     },
     "contexts/pay/api/router.py": {
-        "contexts.rbac.policies.operational",
+        "contexts.identity_access.rbac.policies.operational",
     },
     "contexts/pay/infrastructure/gateway.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
     },
     "contexts/documents/api/router.py": {
-        "contexts.rbac.policies.operational",
+        "contexts.identity_access.rbac.policies.operational",
     },
     "contexts/documents/application/commands.py": {
         "contexts.employee_master.identity.contracts.identity_directory",
@@ -187,7 +187,7 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.leave.contracts.leave_directory",
     },
     "contexts/documents/infrastructure/access_control.py": {
-        "contexts.rbac.policies.operational",
+        "contexts.identity_access.rbac.policies.operational",
     },
     "contexts/documents/infrastructure/storage_ops.py": {
         "contexts.employee_master.profile.contracts.media_directory",
@@ -203,15 +203,15 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
     },
     "contexts/service_book/read_side/application/queries/get_service_book.py": {
     },
-    "contexts/identity/infrastructure/auth_session_service.py": {
+    "contexts/identity_access/identity/infrastructure/auth_session_service.py": {
         "contexts.employee_master.identity.contracts.identity_directory",
     },
-    "contexts/identity/infrastructure/user_management_service.py": {
-        "contexts.rbac.application.authorization_service",
+    "contexts/identity_access/identity/infrastructure/user_management_service.py": {
+        "contexts.identity_access.rbac.application.authorization_service",
         "contexts.employee_master.identity.contracts.identity_directory",
         "contexts.employee_master.profile.contracts.profile_directory",
     },
-    "contexts/identity/infrastructure/user_management_roles.py": {
+    "contexts/identity_access/identity/infrastructure/user_management_roles.py": {
         "contexts.employee_master.identity.contracts.identity_directory",
     },
     "contexts/ess/services/ess_service.py": {
@@ -238,8 +238,8 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.audit.contracts.audit_directory",
         "contexts.employee_master.identity.contracts.identity_commands",
         "contexts.employee_master.profile.contracts.profile_commands",
-        "contexts.identity.contracts.user_directory",
-        "contexts.identity.contracts.system_config",
+        "contexts.identity_access.identity.contracts.user_directory",
+        "contexts.identity_access.identity.contracts.system_config",
         "contexts.employee_master.profile.contracts.profile_directory",
         "contexts.leave.contracts.leave_commands",
         "contexts.leave.contracts.leave_directory",
@@ -249,7 +249,7 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.audit.contracts.audit_directory",
     },
     "contexts/system_admin/department/api/management_router.py": {
-        "contexts.identity.contracts.department_authority_commands",
+        "contexts.identity_access.identity.contracts.department_authority_commands",
     },
     "contexts/service_book/application/service.py": {
         "contexts.employee_master.identity.contracts.employee_domain",
@@ -690,7 +690,7 @@ DEPRECATED_FOLDER_BASELINES: dict[str, int] = {
     "contexts/leave": 28,
     "contexts/notifications": 11,
     "contexts/pay": 16,
-    "contexts/rbac": 14,
+    "contexts/identity_access/rbac": 14,
     "contexts/reporting": 6,
     "contexts/seniority": 15,
     "contexts/system_admin": 17,

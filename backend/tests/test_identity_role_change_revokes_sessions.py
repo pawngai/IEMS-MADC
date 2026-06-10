@@ -7,8 +7,8 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.identity.contracts.schemas import AuthorityPatch, UserUpdate
-from contexts.identity.infrastructure import user_management_service
+from contexts.identity_access.identity.contracts.schemas import AuthorityPatch, UserUpdate
+from contexts.identity_access.identity.infrastructure import user_management_service
 
 
 async def _fake_empty_list(*_args, **_kwargs):

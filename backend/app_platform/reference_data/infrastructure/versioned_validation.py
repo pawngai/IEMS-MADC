@@ -6,7 +6,7 @@ from app_platform.reference_data.contracts.employment_rules import (
     get_available_service_book_parts,
 )
 from contexts.documents.domain.validation import ALLOWED_DOCUMENT_TYPES
-from contexts.rbac.domain.models import Authority, Permission, WorkflowStage
+from contexts.identity_access.rbac.domain.models import Authority, Permission, WorkflowStage
 
 
 class MasterMetadataValidationError(ValueError):

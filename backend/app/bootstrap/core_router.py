@@ -4,8 +4,8 @@ import asyncio
 
 from app_platform.db.runtime import get_db_optional
 from fastapi import APIRouter, Depends, HTTPException
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import get_permissions
+from contexts.identity_access.rbac.domain.models import Permission
+from contexts.identity_access.rbac.application.access_control import get_permissions
 from app_platform.auth.current_user import get_current_user
 
 core_router = APIRouter()

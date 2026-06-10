@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.rbac.domain.models import AUTHORITY_PERMISSIONS, Authority, Permission
+from contexts.identity_access.rbac.domain.models import AUTHORITY_PERMISSIONS, Authority, Permission
 
 
 def test_employee_authority_can_complete_own_profile_section() -> None:

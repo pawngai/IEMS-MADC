@@ -1,3 +1,3 @@
 """Identity Access system configuration contracts."""
 
-from contexts.identity.contracts.system_config import *  # noqa: F401,F403
+from contexts.identity_access.identity.contracts.system_config import *  # noqa: F401,F403

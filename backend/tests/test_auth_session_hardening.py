@@ -6,7 +6,7 @@ import pytest
 from fastapi import HTTPException
 
 from app_platform.auth.current_user import _validate_live_user
-from contexts.identity.infrastructure import auth_session_service
+from contexts.identity_access.identity.infrastructure import auth_session_service
 
 
 class _RefreshTokens:

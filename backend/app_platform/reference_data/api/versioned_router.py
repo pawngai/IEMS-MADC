@@ -208,7 +208,7 @@ async def get_required_active_record(collection, code: str) -> tuple[Dict[str, A
     return current_record_raw, normalize_master_record(current_record_raw)
 
 
-from contexts.rbac.application.access_control import require_system_admin
+from contexts.identity_access.rbac.application.access_control import require_system_admin
 from app_platform.auth.current_user import get_current_user
 
 

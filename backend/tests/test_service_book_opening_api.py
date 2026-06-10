@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.rbac.domain.models import Permission
+from contexts.identity_access.rbac.domain.models import Permission
 from contexts.service_book.opening.api import router as opening_router
 
 

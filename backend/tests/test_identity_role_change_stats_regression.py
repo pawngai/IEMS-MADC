@@ -8,8 +8,8 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.identity.infrastructure import activity_service
-from contexts.identity.infrastructure import service
+from contexts.identity_access.identity.infrastructure import activity_service
+from contexts.identity_access.identity.infrastructure import service
 
 
 @pytest.mark.asyncio

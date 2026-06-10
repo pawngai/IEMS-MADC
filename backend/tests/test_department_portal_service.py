@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from types import SimpleNamespace
 
 from contexts.department.services import department_portal_service
-from contexts.rbac.domain.models import Permission
+from contexts.identity_access.rbac.domain.models import Permission
 
 
 def test_require_department_authority_rejects_global_scope() -> None:

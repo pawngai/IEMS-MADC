@@ -1,3 +1,3 @@
 """Identity Access permission and authority contracts."""
 
-from contexts.rbac.contracts.models import *  # noqa: F401,F403
+from contexts.identity_access.rbac.contracts.models import *  # noqa: F401,F403

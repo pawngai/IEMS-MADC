@@ -9,7 +9,7 @@ from starlette.responses import StreamingResponse
 from app.main import app
 from app_platform.auth.current_user import get_current_user
 from app_platform.db.runtime import get_db
-from contexts.rbac.domain.models import Permission
+from contexts.identity_access.rbac.domain.models import Permission
 from contexts.reporting.api import router as reporting_router_module
 
 

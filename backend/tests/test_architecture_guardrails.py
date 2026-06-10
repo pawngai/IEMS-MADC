@@ -22,8 +22,8 @@ CROSS_CONTEXT_REPO_IMPORT = re.compile(
 )
 
 AUTH_BYPASS_ALLOWED_FILES = {
-    "contexts/rbac/application/access_control.py",
-    "contexts/rbac/application/authorization_service.py",
+    "contexts/identity_access/rbac/application/access_control.py",
+    "contexts/identity_access/rbac/application/authorization_service.py",
     # Audit logs capture caller authority label; this is metadata, not authorization logic.
     "contexts/audit/api/router.py",
 }

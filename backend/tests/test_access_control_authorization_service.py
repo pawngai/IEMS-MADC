@@ -7,14 +7,14 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.rbac.application.authorization_service import (
+from contexts.identity_access.rbac.application.authorization_service import (
     DEPARTMENT,
     EMPLOYEE,
     GLOBAL,
     canPerformAction,
     resolveScopeAccess,
 )
-from contexts.rbac.application.access_control import has_active_authority, has_authority
+from contexts.identity_access.rbac.application.access_control import has_active_authority, has_authority
 
 
 def test_department_scope_denies_when_target_department_mismatches() -> None:

@@ -1,4 +1,4 @@
-from contexts.identity.contracts.user_role import get_user_role
+from contexts.identity_access.identity.contracts.user_role import get_user_role
 
 
 def test_get_user_role_uses_priority_without_active_role() -> None:

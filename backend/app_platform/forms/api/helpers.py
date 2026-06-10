@@ -3,8 +3,8 @@ from __future__ import annotations
 from fastapi import HTTPException
 
 from app_platform.forms.infrastructure.service import EmploymentType, WorkflowStage
-from contexts.rbac.domain.models import Permission
-from contexts.rbac.application.access_control import require_permissions
+from contexts.identity_access.rbac.domain.models import Permission
+from contexts.identity_access.rbac.application.access_control import require_permissions
 
 
 EMPLOYMENT_TYPE_LABELS: dict[str, str] = {

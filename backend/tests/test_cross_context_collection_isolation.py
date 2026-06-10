@@ -22,11 +22,11 @@ CONTEXTS_ROOT = BACKEND_ROOT / "contexts"
 # Maps collection name → owning context directory name.
 COLLECTION_OWNER: dict[str, str] = {
     # identity
-    "users": "identity",
-    "refresh_tokens": "identity",
-    "user_activity_logs": "identity",
-    "role_change_audit": "identity",
-    "system_config": "identity",
+    "users": "identity_access",
+    "refresh_tokens": "identity_access",
+    "user_activity_logs": "identity_access",
+    "role_change_audit": "identity_access",
+    "system_config": "identity_access",
     # employee identity/profile (merged into employee_master)
     "employee_master": "employee_master",
     "employee_profiles": "employee_master",

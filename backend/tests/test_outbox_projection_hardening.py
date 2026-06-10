@@ -237,10 +237,10 @@ async def test_replay_sent_filters_by_event_name() -> None:
 @pytest.mark.asyncio
 async def test_employee_profile_rebuild_from_identity() -> None:
     """rebuild_projection_from_identity should project every canonical identity."""
-    from contexts.employee_profile.read_model.application.service import (
+    from contexts.employee_master.profile.read_model.application.service import (
         EmployeeProfileReadModelService,
     )
-    from contexts.employee_profile.read_model.infrastructure.repository import (
+    from contexts.employee_master.profile.read_model.infrastructure.repository import (
         EmployeeProfileReadModelRepository,
     )
 

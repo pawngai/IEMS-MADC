@@ -61,8 +61,8 @@ def test_service_book_uses_profile_contracts_not_profile_application() -> None:
         path.relative_to(BACKEND_ROOT).as_posix()
         for path in _python_files(SERVICE_BOOK_ROOT)
         for module in _imports(path)
-        if module == "contexts.employee_profile.application"
-        or module.startswith("contexts.employee_profile.application.")
+        if module == "contexts.employee_master.profile.application"
+        or module.startswith("contexts.employee_master.profile.application.")
     ]
     assert not violations, "ServiceBook must depend on employee_profile contracts only:\n" + "\n".join(violations)
 

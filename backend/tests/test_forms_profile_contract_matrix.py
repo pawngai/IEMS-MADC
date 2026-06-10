@@ -8,8 +8,8 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-from contexts.employee_identity.schemas.commands import EmployeeIdentityCreate
-from contexts.employee_profile.schemas.commands import EmployeeProfileExtensionUpsert
+from contexts.employee_master.identity.schemas.commands import EmployeeIdentityCreate
+from contexts.employee_master.profile.schemas.commands import EmployeeProfileExtensionUpsert
 from app_platform.forms.infrastructure.service import (
     EmploymentType,
     FIELD_ALIASES,

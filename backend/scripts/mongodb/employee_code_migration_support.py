@@ -4,7 +4,7 @@ from collections import defaultdict
 import re
 from typing import Any
 
-from contexts.employee_identity.domain.employee_code import (
+from contexts.employee_master.identity.domain.employee_code import (
     employment_type_initial,
     format_employee_code,
     parse_employee_code,

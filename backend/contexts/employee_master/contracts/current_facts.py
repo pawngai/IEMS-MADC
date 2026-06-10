@@ -1,6 +1,6 @@
 """Canonical Employee Master reads for current employee facts."""
 
-from contexts.employee_identity.contracts.identity_directory import (  # noqa: F401
+from contexts.employee_master.identity.contracts.identity_directory import (  # noqa: F401
     count_identities,
     find_identities_by_ids,
     find_identity,
@@ -11,7 +11,7 @@ from contexts.employee_identity.contracts.identity_directory import (  # noqa: F
     list_identities,
     resolve_identity_ref,
 )
-from contexts.employee_profile.contracts.profile_directory import (  # noqa: F401
+from contexts.employee_master.profile.contracts.profile_directory import (  # noqa: F401
     count_profiles,
     count_profiles_by_department,
     find_profile,

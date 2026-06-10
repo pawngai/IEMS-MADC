@@ -5,11 +5,11 @@ from datetime import datetime, timezone
 import pytest
 from pydantic import ValidationError
 
-from contexts.employee_identity.domain.employee_code import parse_employee_code
-from contexts.employee_identity.application.identity_interface import get_employee_identity
-from contexts.employee_identity.repository.identity_repository import EmployeeIdentityRepository
-from contexts.employee_identity.schemas.commands import EmployeeIdentityCreate, EmployeeIdentityUpdate
-from contexts.employee_identity.schemas.enums import Gender
+from contexts.employee_master.identity.domain.employee_code import parse_employee_code
+from contexts.employee_master.identity.application.identity_interface import get_employee_identity
+from contexts.employee_master.identity.repository.identity_repository import EmployeeIdentityRepository
+from contexts.employee_master.identity.schemas.commands import EmployeeIdentityCreate, EmployeeIdentityUpdate
+from contexts.employee_master.identity.schemas.enums import Gender
 
 
 class _FakeEmployeeIdentitiesCollection:

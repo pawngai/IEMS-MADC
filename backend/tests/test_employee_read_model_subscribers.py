@@ -4,7 +4,7 @@ import asyncio
 
 from app_platform.event_bus.bus import EventBus
 from app_platform.event_bus.types import BaseEvent, EventName
-from contexts.employee_profile.contracts.subscribers import (
+from contexts.employee_master.profile.contracts.subscribers import (
     register_employee_read_model_subscribers,
 )
 

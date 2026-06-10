@@ -5,7 +5,7 @@ import pytest
 from contexts.leave.application.command_service import LeaveCommandService
 from contexts.pay.application.service import PayApplicationService
 from contexts.change_requests.application.service import ChangeRequestApplicationService
-from contexts.employee_identity.repository.identity_repository import EmployeeIdentityRepository
+from contexts.employee_master.identity.repository.identity_repository import EmployeeIdentityRepository
 
 
 class _FakeSession:

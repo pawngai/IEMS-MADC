@@ -5,7 +5,7 @@ existing employee_profile read-model subscriber while Employee Master becomes th
 canonical boundary.
 """
 
-from contexts.employee_profile.contracts.subscribers import (  # noqa: F401
+from contexts.employee_master.profile.contracts.subscribers import (  # noqa: F401
     register_employee_read_model_subscribers,
 )
 

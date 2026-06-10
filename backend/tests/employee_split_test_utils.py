@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from contexts.employee_identity.schemas.commands import EmployeeIdentityCreate
-from contexts.employee_profile.contracts.profile_write import (
+from contexts.employee_master.identity.schemas.commands import EmployeeIdentityCreate
+from contexts.employee_master.profile.contracts.profile_write import (
     EmployeeProfileExtensionUpsert,
 )
 

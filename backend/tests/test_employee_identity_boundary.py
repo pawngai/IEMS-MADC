@@ -6,15 +6,15 @@ from types import SimpleNamespace
 import pytest
 from fastapi import HTTPException
 
-from contexts.employee_identity.api import write_router as identity_write_router
-from contexts.employee_identity.schemas.commands import EmployeeIdentityCreate
-from contexts.employee_identity.schemas.commands import EmployeeIdentityUpdate
+from contexts.employee_master.identity.api import write_router as identity_write_router
+from contexts.employee_master.identity.schemas.commands import EmployeeIdentityCreate
+from contexts.employee_master.identity.schemas.commands import EmployeeIdentityUpdate
 from contexts.rbac.domain.models import Permission
 
 
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 API_ROOT = BACKEND_ROOT / "contexts" / "employee_identity" / "api"
-CONTRACT_PATH = BACKEND_ROOT / "contexts" / "employee_identity" / "contracts" / "identity_directory.py"
+CONTRACT_PATH = BACKEND_ROOT / "contexts" / "employee_master" / "identity" / "contracts" / "identity_directory.py"
 
 FORBIDDEN_DIRECT_DB_PATTERNS = (
     "db.employee_identities",

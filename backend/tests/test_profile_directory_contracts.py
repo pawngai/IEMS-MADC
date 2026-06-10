@@ -4,7 +4,7 @@ import re
 
 import pytest
 
-from contexts.employee_profile.contracts import profile_directory
+from contexts.employee_master.profile.contracts import profile_directory
 
 
 class _BoolGuardCollection:

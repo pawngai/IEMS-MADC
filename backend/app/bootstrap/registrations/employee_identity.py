@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from contexts.employee_identity.api.router import employee_identities_router
+from contexts.employee_master.identity.api.router import employee_identities_router
 
 
 def register(api_router: APIRouter) -> None:

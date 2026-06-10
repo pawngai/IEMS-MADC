@@ -5,10 +5,10 @@ from types import SimpleNamespace
 import pytest
 from fastapi import HTTPException
 
-from contexts.employee_profile.application.update_profile_extension import (
+from contexts.employee_master.profile.application.update_profile_extension import (
     update_profile_extension_response,
 )
-from contexts.employee_profile.contracts.profile_write import (
+from contexts.employee_master.profile.contracts.profile_write import (
     ESS_EDITABLE_FIELDS,
     IMMUTABLE_AFTER_VERIFICATION,
     PROFILE_EXTENSION_EDITABLE_FIELDS,

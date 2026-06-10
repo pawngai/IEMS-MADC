@@ -60,8 +60,8 @@ def test_key_repositories_call_ownership_assertion() -> None:
     files = [
         BACKEND_ROOT / "contexts" / "service_book" / "repository" / "read_repository.py",
         BACKEND_ROOT / "contexts" / "service_book" / "records" / "repository" / "service_record_repository.py",
-        BACKEND_ROOT / "contexts" / "employee_identity" / "repository" / "identity_repository.py",
-        BACKEND_ROOT / "contexts" / "employee_profile" / "read_model" / "infrastructure" / "repository.py",
+        BACKEND_ROOT / "contexts" / "employee_master" / "identity" / "repository" / "identity_repository.py",
+        BACKEND_ROOT / "contexts" / "employee_master" / "profile" / "read_model" / "infrastructure" / "repository.py",
         BACKEND_ROOT / "contexts" / "department" / "repository" / "department_portal_repo.py",
         BACKEND_ROOT / "contexts" / "pay" / "infrastructure" / "pay_repository.py",
         BACKEND_ROOT / "contexts" / "leave" / "infrastructure" / "gateway.py",

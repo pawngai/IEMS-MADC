@@ -59,9 +59,9 @@ def test_identity_does_not_import_employee_identity_internals() -> None:
     identity_root = CONTEXTS_ROOT / "identity"
     for py_file in _iter_py_files(identity_root):
         for imp in _imports_from_ast(py_file):
-            if not imp.startswith("contexts.employee_identity."):
+            if not imp.startswith("contexts.employee_master.identity."):
                 continue
-            suffix = imp[len("contexts.employee_identity."):]
+            suffix = imp[len("contexts.employee_master.identity."):]
             # contracts imports are the only allowed cross-context surface
             if suffix.startswith("contracts"):
                 continue
@@ -143,16 +143,22 @@ _STANDARDIZED_CONTEXTS = {
     "leave",
     "workflow",
     "pay",
-    "employee_identity",
-    "employee_profile",
     "identity",
+}
+
+# Employee Master uses identity/ and profile/ sub-packages internally (the merge
+# of the former employee_identity + employee_profile contexts), so the standard
+# folder layout is asserted on those sub-packages rather than the context root.
+_STANDARDIZED_SUBCONTEXTS = {
+    "employee_master/identity",
+    "employee_master/profile",
 }
 
 
 def test_standardized_contexts_have_required_folders() -> None:
     """Each standardized context must contain api/, application/, contracts/, domain/."""
     violations: list[str] = []
-    for ctx_name in sorted(_STANDARDIZED_CONTEXTS):
+    for ctx_name in sorted(_STANDARDIZED_CONTEXTS | _STANDARDIZED_SUBCONTEXTS):
         ctx_dir = CONTEXTS_ROOT / ctx_name
         if not ctx_dir.is_dir():
             continue

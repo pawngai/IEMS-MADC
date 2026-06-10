@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from contexts.employee_identity.application import identity_interface
-from contexts.employee_identity.api import read_router
+from contexts.employee_master.identity.application import identity_interface
+from contexts.employee_master.identity.api import read_router
 from contexts.rbac.domain.models import Permission
 
 

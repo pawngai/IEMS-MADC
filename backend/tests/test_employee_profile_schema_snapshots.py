@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from contexts.employee_identity.schemas.enums import (
+from contexts.employee_master.identity.schemas.enums import (
     EmployeeStatus as IdentityEmployeeStatus,
     EmploymentType as IdentityEmploymentType,
     Gender as IdentityGender,
 )
-from contexts.employee_profile.schemas.profile_model import (
+from contexts.employee_master.profile.schemas.profile_model import (
     EmployeeStatus as ProfileEmployeeStatus,
     EmploymentType as ProfileEmploymentType,
     Gender as ProfileGender,

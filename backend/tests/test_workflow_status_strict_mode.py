@@ -1,4 +1,4 @@
-from contexts.employee_profile.contracts.workflow_status_utils import (
+from contexts.employee_master.profile.contracts.workflow_status_utils import (
     normalize_employee_workflow_status,
     normalize_workflow_status,
     workflow_status_filter_values,

@@ -25,7 +25,7 @@ from contexts.documents.contracts.document_metadata import (
     get_subject_document_for_current_user,
     download_subject_document_for_current_user,
 )
-from contexts.employee_profile.contracts.media_directory import employee_owns_media
+from contexts.employee_master.profile.contracts.media_directory import employee_owns_media
 
 
 # ── 1.1 Extension hygiene ───────────────────────────────────────────

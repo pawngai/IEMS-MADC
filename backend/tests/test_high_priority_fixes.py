@@ -13,7 +13,7 @@ from contexts.change_requests.infrastructure.gateway import (
     ChangeRequestMongoGateway,
     _resolve_user_department,
 )
-from contexts.employee_profile.application.dependencies import get_db as get_employee_db
+from contexts.employee_master.profile.application.dependencies import get_db as get_employee_db
 from contexts.seniority.api.router import _get_db as get_seniority_db
 from contexts.system_admin.api.shared import get_db as get_system_admin_db
 from app_platform.db.runtime import mongo_state

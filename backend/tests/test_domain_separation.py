@@ -38,7 +38,7 @@ from app_platform.domain_separation.enforcement import (
     block_service_book_delete,
     check_approved_immutability,
 )
-from contexts.employee_profile.contracts.schemas import EmployeeCompositeProfileView
+from contexts.employee_master.profile.contracts.schemas import EmployeeCompositeProfileView
 
 
 # ==================== SCHEMA SEPARATION TESTS ====================

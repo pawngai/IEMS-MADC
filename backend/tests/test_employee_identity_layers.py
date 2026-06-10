@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.employee_identity.application import identity_interface
-from contexts.employee_profile.domain.identity_layers import (
+from contexts.employee_master.identity.application import identity_interface
+from contexts.employee_master.profile.domain.identity_layers import (
     compose_employee_record_view,
     extract_identity_patch,
     extract_extension_patch,
 )
-from contexts.employee_profile.infrastructure.gateway import _refresh_profile_projection
+from contexts.employee_master.profile.infrastructure.gateway import _refresh_profile_projection
 
 
 class _FakeCollection:

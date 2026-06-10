@@ -22,18 +22,18 @@ from contexts.employee_master.schemas.value_objects import (
 )
 
 # Legacy sources
-from contexts.employee_identity.schemas.identity_model import (
+from contexts.employee_master.identity.schemas.identity_model import (
     EmployeeIdentity as LegacyIdentity,
 )
-from contexts.employee_identity.schemas.commands import EmployeeIdentityCreate
-from contexts.employee_profile.schemas.profile_model import (
+from contexts.employee_master.identity.schemas.commands import EmployeeIdentityCreate
+from contexts.employee_master.profile.schemas.profile_model import (
     EmployeeProfileExtension as LegacyExtension,
     EmployeeIdentity as LegacyProfileSnapshot,
     ContactDetails as LegacyContact,
     IdentityDocuments as LegacyIds,
 )
-from contexts.employee_profile.schemas.commands import EmployeeProfileExtensionUpsert
-from contexts.employee_profile.schemas.field_policies import (
+from contexts.employee_master.profile.schemas.commands import EmployeeProfileExtensionUpsert
+from contexts.employee_master.profile.schemas.field_policies import (
     PROFILE_EXTENSION_EDITABLE_FIELDS,
 )
 

@@ -3,8 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 from contexts.employee_master.contracts.identity_directory import resolve_identity_ref
-from contexts.rbac.contracts.access_control import require_owner_or_permissions
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import require_owner_or_permissions
+from contexts.identity_access.contracts.models import Permission
 from contexts.service_book.application.errors import not_found
 from contexts.service_book.application.service import (
     generateServiceBookPrintModel,

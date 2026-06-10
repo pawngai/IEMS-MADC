@@ -20,8 +20,8 @@ from contexts.employee_profile.infrastructure.profile_schema_gateway import (
     validate_contact_details,
     validate_identity_documents,
 )
-from contexts.rbac.contracts.access_control import is_owner, require_permissions
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import is_owner, require_permissions
+from contexts.identity_access.contracts.models import Permission
 
 EnforceProfileWriteScopeFn = Callable[..., Awaitable[Any]]
 CreateAuditLogFn = Callable[..., Awaitable[Any]]

@@ -19,7 +19,7 @@ from contexts.documents.contracts.document_metadata import (
     get_subject_document_for_employee,
     list_subject_documents_for_employee,
 )
-from contexts.leave.contracts.leave_directory import (
+from contexts.leave_attendance.contracts.leave_directory import (
     count_leave_applications_by_status,
     get_leave_balances_for_employee,
     get_leave_ledger_entry,

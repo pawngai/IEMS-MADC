@@ -10,8 +10,8 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app_platform.auth.current_user import get_current_user
 from app_platform.db.runtime import get_db
-from contexts.rbac.contracts.access_control import require_permissions
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import require_permissions
+from contexts.identity_access.contracts.models import Permission
 from contexts.reporting.queries.analytics_export import build_drilldown_csv_response
 from contexts.reporting.queries.analytics_queries import AnalyticsQueryService
 

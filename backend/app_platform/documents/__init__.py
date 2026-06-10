@@ -1,0 +1,1 @@
+"""Application-platform document support."""

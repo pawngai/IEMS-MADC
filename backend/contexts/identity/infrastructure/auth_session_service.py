@@ -43,15 +43,15 @@ def validate_password_strength(password: str) -> None:
 # â”€â”€ Login rate limiting â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 MAX_FAILED_ATTEMPTS = 5
 LOCKOUT_MINUTES = 15
-from contexts.rbac.contracts.models import (
+from contexts.identity_access.contracts.models import (
     AUTHORITY_PERMISSIONS,
     WORKFLOW_TRANSITIONS,
     Authority,
     Permission,
     TokenResponse,
 )
-from contexts.rbac.contracts.models import UserResponse as AuthUserResponse
-from contexts.rbac.contracts.models import (
+from contexts.identity_access.contracts.models import UserResponse as AuthUserResponse
+from contexts.identity_access.contracts.models import (
     WorkflowStage,
 )
 from contexts.identity.infrastructure import repo
@@ -274,8 +274,8 @@ async def _revoke_all_refresh_tokens(db, user_id: str) -> None:
         await users.update_one({"id": user_id}, {"$inc": {"token_version": 1}})
 
 
-# Use canonical require_system_admin from contexts.rbac.contracts.access_control
-from contexts.rbac.contracts.access_control import prevent_self_action, require_system_admin
+# Use canonical require_system_admin from contexts.identity_access.contracts.access_control
+from contexts.identity_access.contracts.access_control import prevent_self_action, require_system_admin
 
 # Department-scoped authorities that require the user to belong to the target department
 DEPARTMENT_SCOPED_AUTHORITIES = {"DEPT_DATA_ENTRY", "HOD"}
@@ -532,7 +532,7 @@ async def me_from_token(db_optional, current_user: dict) -> AuthUserResponse:
 
     # Offline fallback: return whatever is in the JWT
     # Derive permissions from authorities since the JWT no longer carries them
-    from contexts.rbac.contracts.access_control import get_permissions as _get_perms
+    from contexts.identity_access.contracts.access_control import get_permissions as _get_perms
 
     return AuthUserResponse(
         id=current_user["sub"],

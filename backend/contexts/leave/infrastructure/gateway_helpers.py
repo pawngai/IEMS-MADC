@@ -11,7 +11,7 @@ from contexts.documents.contracts.document_metadata import (
     get_accessible_document_metadata as _get_accessible_document_metadata,
 )
 from contexts.employee_master.contracts.identity_directory import get_employee_department_code
-from contexts.identity.contracts.user_directory import get_user_department_code
+from contexts.identity_access.contracts.user_directory import get_user_department_code
 from contexts.leave.contracts.dto import LeaveApplicationCreateDTO
 from contexts.leave.domain.leave_accounting import (
     build_account_update,
@@ -36,8 +36,8 @@ from contexts.leave.infrastructure.document_lock import (
 )
 from contexts.leave.infrastructure.leave_constants import LEAVE_LEDGER_COLLECTION
 from contexts.leave.repository.leave_repository import LeaveRuntimeRepository
-from contexts.rbac.contracts.access_control import require_permissions
-from contexts.rbac.contracts.authorization_service import EMPLOYEE, resolveScopeAccess
+from contexts.identity_access.contracts.access_control import require_permissions
+from contexts.identity_access.contracts.authorization_service import EMPLOYEE, resolveScopeAccess
 from contexts.service_book.contracts.service_book_directory import (
     get_employee_initial_appointment_date,
 )

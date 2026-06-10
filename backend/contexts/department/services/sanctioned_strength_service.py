@@ -7,8 +7,8 @@ from contexts.department.repository import department_portal_repo as repo
 from contexts.department.services.portal_common import _actor_identity, _normalize
 from fastapi import HTTPException
 
-from contexts.rbac.contracts.access_control import require_permissions, require_system_admin
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import require_permissions, require_system_admin
+from contexts.identity_access.contracts.models import Permission
 
 ResolveDepartment = Callable[[Any, dict], Awaitable[str]]
 RequireAuthority = Callable[[dict], None]

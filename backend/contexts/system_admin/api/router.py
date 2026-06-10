@@ -20,17 +20,17 @@ from contexts.employee_master.contracts.profile_directory import (
 	get_employee_ids_for_department,
 	list_profiles,
 )
-from contexts.identity.contracts.user_directory import count_users
-from contexts.identity.contracts.system_config import get_system_config as identity_get_system_config
-from contexts.identity.contracts.system_config import set_system_config_key as identity_set_system_config_key
-from contexts.leave.contracts.leave_commands import admin_cancel_leave_application
-from contexts.leave.contracts.leave_directory import (
+from contexts.identity_access.contracts.user_directory import count_users
+from contexts.identity_access.contracts.system_config import get_system_config as identity_get_system_config
+from contexts.identity_access.contracts.system_config import set_system_config_key as identity_set_system_config_key
+from contexts.leave_attendance.contracts.leave_commands import admin_cancel_leave_application
+from contexts.leave_attendance.contracts.leave_directory import (
 	count_leave_applications,
 	get_leave_application_by_id,
 	list_leave_applications,
 	list_pending_leave_applications,
 )
-from contexts.rbac.contracts.access_control import forbid_system_admin_write, require_system_admin
+from contexts.identity_access.contracts.access_control import forbid_system_admin_write, require_system_admin
 from contexts.service_book.contracts.service_book_directory import count_servicebook_entries
 from contexts.system_admin.api.shared import (
 	EmployeeDeleteRequest,

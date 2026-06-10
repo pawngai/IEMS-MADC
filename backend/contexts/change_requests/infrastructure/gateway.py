@@ -16,9 +16,9 @@ from contexts.employee_master.contracts.profile_directory import (
     find_profile_view,
 )
 from fastapi import HTTPException
-from contexts.rbac.contracts.access_control import require_permissions
-from contexts.identity.contracts.user_role import get_user_role
-from contexts.identity.contracts.user_directory import (
+from contexts.identity_access.contracts.access_control import require_permissions
+from contexts.identity_access.contracts.user_role import get_user_role
+from contexts.identity_access.contracts.user_directory import (
     get_user_department_code,
     get_user_display_name as _identity_display_name,
 )

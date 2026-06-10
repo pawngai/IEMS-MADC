@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import HTTPException
 
-from contexts.rbac.contracts.access_control import has_authority
+from contexts.identity_access.contracts.access_control import has_authority
 
 
 ROLE_DATA_ENTRY_SET = {"DEPT_DATA_ENTRY", "DEPARTMENT_DATA_ENTRY", "GLOBAL_DATA_ENTRY", "DEALING_ASSISTANT"}

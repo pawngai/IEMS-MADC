@@ -112,7 +112,7 @@ async def _require_media_access(
 	if current_user is None:
 		return
 
-	from contexts.rbac.contracts.access_control import has_active_authority
+	from contexts.identity_access.contracts.access_control import has_active_authority
 	from contexts.documents.infrastructure.access_control import can_manage_all_documents
 
 	if can_manage_all_documents(current_user):

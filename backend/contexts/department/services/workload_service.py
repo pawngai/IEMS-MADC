@@ -5,8 +5,8 @@ from typing import Any, Awaitable, Callable, Optional
 from contexts.department.repository import department_portal_repo as repo
 from contexts.department.services.portal_common import _pending_leave_statuses
 from contexts.employee_master.contracts.workflow_status_utils import normalize_workflow_status
-from contexts.rbac.contracts.access_control import require_permissions
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import require_permissions
+from contexts.identity_access.contracts.models import Permission
 
 ResolveDepartment = Callable[[Any, dict], Awaitable[str]]
 RequireAuthority = Callable[[dict], None]

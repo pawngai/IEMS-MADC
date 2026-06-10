@@ -36,7 +36,7 @@ from contexts.employee_profile.contracts.profile_write import (
     PROFILE_EXTENSION_EDITABLE_FIELDS,
     EmployeeProfileExtensionUpsert,
 )
-from contexts.identity.contracts.user_role import get_user_role
+from contexts.identity_access.contracts.user_role import get_user_role
 
 
 write_router = APIRouter()

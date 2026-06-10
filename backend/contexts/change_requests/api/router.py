@@ -10,8 +10,8 @@ from contexts.change_requests.contracts.dto import (
 )
 from contexts.change_requests.infrastructure.gateway import ChangeRequestMongoGateway
 from fastapi import APIRouter, Depends, Query, Request
-from contexts.rbac.contracts.models import Permission
-from contexts.rbac.contracts.access_control import require_permissions
+from contexts.identity_access.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import require_permissions
 from app_platform.auth.current_user import get_current_user
 
 change_request_ess_router = APIRouter(

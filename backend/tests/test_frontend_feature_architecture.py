@@ -15,13 +15,14 @@ APP_CONTEXTS_ROOT = FRONTEND_SRC / "app" / "contexts"
 APP_CONTEXTS_STAGED_BASELINE = 85
 
 REQUIRED_CONTEXTS = {
-    "employee_identity",
-    "employee_profile",
+    "employee_master",
+    "identity_access",
+    "leave_attendance",
+    "organization_master",
+    "pay_benefits",
+    "reporting_analytics",
     "service_book",
-    "leave",
-    "pay",
-    "documents",
-    "audit",
+    "workflow",
 }
 
 LEGACY_CONTEXT_IMPORTS = {
@@ -56,6 +57,25 @@ REQUIRED_FRONTEND_TOP_LEVEL = {
 }
 
 FRONTEND_ARCH_ENFORCEMENT_MODE = os.getenv("FRONTEND_ARCH_ENFORCEMENT_MODE", "final").strip().lower()
+
+DEPRECATED_CONTEXT_BASELINES = {
+    "access_control": 2,
+    "admin": 25,
+    "analytics": 9,
+    "audit": 5,
+    "change_requests": 16,
+    "department": 18,
+    "documents": 5,
+    "employee_identity": 8,
+    "employee_profile": 16,
+    "ess": 8,
+    "identity": 11,
+    "leave": 11,
+    "masters": 2,
+    "notifications": 3,
+    "pay": 3,
+    "seniority": 6,
+}
 
 
 def _iter_frontend_source_files():
@@ -100,6 +120,28 @@ def test_only_target_frontend_top_level_directories_exist_in_final_mode() -> Non
 def test_required_context_directories_exist() -> None:
     missing = [name for name in sorted(REQUIRED_CONTEXTS) if not (CONTEXTS_ROOT / name).exists()]
     assert not missing, f"Missing required frontend contexts: {missing}"
+
+
+def test_deprecated_frontend_contexts_do_not_grow() -> None:
+    violations: list[str] = []
+    for context_name, baseline in DEPRECATED_CONTEXT_BASELINES.items():
+        context_root = CONTEXTS_ROOT / context_name
+        if not context_root.exists():
+            continue
+        current = sum(
+            1
+            for f in context_root.rglob("*")
+            if f.is_file()
+            and f.suffix in {".js", ".jsx", ".ts", ".tsx"}
+            and "__tests__" not in f.parts
+        )
+        if current > baseline:
+            violations.append(f"{context_name}: {current} source files (baseline={baseline})")
+
+    assert not violations, (
+        "Deprecated frontend contexts have grown beyond their baseline:\n"
+        + "\n".join(sorted(violations))
+    )
 
 
 def test_legacy_modules_root_is_removed() -> None:

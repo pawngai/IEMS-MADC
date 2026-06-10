@@ -23,7 +23,7 @@ from contexts.employee_master.contracts.profile_directory import (
     list_profiles_by_department,
 )
 from contexts.employee_master.contracts.workflow_status_utils import workflow_status_filter_values
-from contexts.leave.contracts.leave_directory import (
+from contexts.leave_attendance.contracts.leave_directory import (
     count_pending_leave_applications,
     list_pending_leave_applications,
 )

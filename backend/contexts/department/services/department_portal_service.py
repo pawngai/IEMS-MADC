@@ -21,7 +21,7 @@ from contexts.department.services.portal_common import (
     _require_department_authority,
     _resolve_department,
 )
-from contexts.identity.contracts.user_directory import find_user_by_employee_id
+from contexts.identity_access.contracts.user_directory import find_user_by_employee_id
 
 
 async def _build_sanctioned_strength_summary(

@@ -5,10 +5,10 @@ from typing import Optional
 from fastapi import HTTPException
 
 from contexts.employee_master.contracts.profile_directory import find_profile_view
-from contexts.identity.contracts.user_directory import get_user_department_code
-from contexts.rbac.contracts.access_control import has_permission
-from contexts.rbac.contracts.authorization_service import DEPARTMENT, resolveScopeAccess
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.user_directory import get_user_department_code
+from contexts.identity_access.contracts.access_control import has_permission
+from contexts.identity_access.contracts.authorization_service import DEPARTMENT, resolveScopeAccess
+from contexts.identity_access.contracts.models import Permission
 
 WORKFLOW_STATUSES = ["DRAFT", "SUBMITTED", "VERIFIED", "APPROVED", "LOCKED", "REJECTED"]
 EMPLOYMENT_TYPES = ["REGULAR", "CONTRACTUAL", "DAILY_WAGE", "DEPUTATION", "REEMPLOYED", "OUTSOURCED"]

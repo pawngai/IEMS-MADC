@@ -15,7 +15,7 @@ from contexts.employee_profile.application.dependencies import get_current_user,
 from contexts.employee_profile.application.factory import build_employee_workflow_service
 from contexts.employee_profile.application.policy import DEPARTMENT_SCOPED_ROLES
 from contexts.employee_profile.application.services.workflow_engine import EmployeeWorkflowApplicationService
-from contexts.identity.contracts.user_role import get_user_role
+from contexts.identity_access.contracts.user_role import get_user_role
 
 completion_router = APIRouter()
 

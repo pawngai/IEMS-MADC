@@ -7,8 +7,8 @@ from datetime import datetime, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException
-from contexts.rbac.contracts.models import Authority
-from contexts.rbac.contracts.access_control import has_authority
+from contexts.identity_access.contracts.models import Authority
+from contexts.identity_access.contracts.access_control import has_authority
 from contexts.identity.infrastructure import repo
 from contexts.identity.contracts.schemas import UserCreate, UserPasswordUpdate, UserResponse, UserUpdate
 from contexts.employee_master.contracts.identity_directory import find_identity
@@ -24,9 +24,9 @@ from contexts.identity.infrastructure.auth_session_service import (
     validate_password_strength,
     verify_password,
 )
-from contexts.rbac.contracts.authorization_service import assignRole, revokeRole
-# Use canonical require_system_admin from contexts.rbac.contracts.access_control
-from contexts.rbac.contracts.access_control import prevent_self_action, require_system_admin
+from contexts.identity_access.contracts.authorization_service import assignRole, revokeRole
+# Use canonical require_system_admin from contexts.identity_access.contracts.access_control
+from contexts.identity_access.contracts.access_control import prevent_self_action, require_system_admin
 from contexts.identity.infrastructure.user_management_audit import _log_activity, _log_role_change
 from contexts.identity.infrastructure.user_management_roles import (
     ACCOUNT_PROVISIONING_READY_STAGE,

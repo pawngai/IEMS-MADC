@@ -24,11 +24,11 @@ from contexts.system_admin.department.api.management_helpers import (
 )
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from contexts.identity.contracts.department_authority_commands import (
+from contexts.identity_access.contracts.department_authority_commands import (
     revoke_department_authority,
     sync_department_authority,
 )
-from contexts.rbac.contracts.access_control import require_system_admin
+from contexts.identity_access.contracts.access_control import require_system_admin
 from app_platform.auth.current_user import get_current_user
 
 

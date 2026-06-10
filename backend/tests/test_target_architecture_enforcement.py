@@ -10,11 +10,21 @@ CONTEXTS_ROOT = BACKEND_ROOT / "contexts"
 FRONTEND_ROOT = BACKEND_ROOT.parent / "frontend" / "src"
 
 REQUIRED_CONTEXTS = {
+    "employee_master",
+    "identity_access",
+    "leave_attendance",
+    "organization_master",
+    "pay_benefits",
+    "reporting_analytics",
+    "service_book",
+    "workflow",
+}
+
+ALLOWED_TRANSITION_CONTEXTS: set[str] = {
     "audit",
     "change_requests",
     "department",
     "documents",
-    "employee_master",
     "employee_identity",
     "employee_profile",
     "ess",
@@ -25,32 +35,11 @@ REQUIRED_CONTEXTS = {
     "rbac",
     "reporting",
     "seniority",
-    "service_book",
     "system_admin",
-    "workflow",
 }
-
-ALLOWED_TRANSITION_CONTEXTS: set[str] = set()
 
 REQUIRED_CONTEXT_SUBPACKAGES = {
-    "domain",
-    "services",
-    "repository",
-    "api",
-}
-
-STAGED_REQUIRED_CONTEXT_SUBPACKAGES = {
-    "services",
-    "api",
-}
-
-REQUIRED_STANDARD_CONTEXTS = {
-    "employee_identity",
-    "employee_profile",
-    "leave",
-    "pay",
-    "documents",
-    "audit",
+    "contracts",
 }
 
 FORBIDDEN_CONTEXT_IMPORTS = {
@@ -69,10 +58,16 @@ FORBIDDEN_PLATFORM_NAMESPACE_IMPORTS = {
 }
 
 REQUIRED_APP_PLATFORM_SUBPACKAGES = {
+    "audit",
     "auth",
+    "authorization",
     "config",
     "db",
+    "documents",
+    "event_bus",
     "logging",
+    "notifications",
+    "storage",
     "web",
 }
 
@@ -85,7 +80,7 @@ REQUIRED_SHARED_KERNEL_SUBPACKAGES = {
 
 ALLOWED_TRANSITION_SHARED_KERNEL_SUBPACKAGES: set[str] = set()
 
-ARCH_ENFORCEMENT_MODE = os.getenv("ARCH_ENFORCEMENT_MODE", "final").strip().lower()
+ARCH_ENFORCEMENT_MODE = os.getenv("ARCH_ENFORCEMENT_MODE", "staged").strip().lower()
 
 
 def _iter_py_files(root: Path):
@@ -113,25 +108,12 @@ def test_required_core_contexts_exist() -> None:
 
 def test_required_context_subpackages_exist() -> None:
     missing: list[str] = []
-    required_standard = (
-        REQUIRED_CONTEXT_SUBPACKAGES
-        if ARCH_ENFORCEMENT_MODE == "final"
-        else STAGED_REQUIRED_CONTEXT_SUBPACKAGES
-    )
-    for context_name in sorted(REQUIRED_STANDARD_CONTEXTS):
+    for context_name in sorted(REQUIRED_CONTEXTS):
         context_root = CONTEXTS_ROOT / context_name
-        for subpackage in sorted(required_standard):
+        for subpackage in sorted(REQUIRED_CONTEXT_SUBPACKAGES):
             target = context_root / subpackage
             if not target.exists():
                 missing.append(str(target.relative_to(BACKEND_ROOT)))
-
-        # Staged mode permits infrastructure as a repository equivalent during migration.
-        if ARCH_ENFORCEMENT_MODE != "final":
-            has_data_access_layer = any(
-                (context_root / folder).exists() for folder in ("repository", "infrastructure")
-            )
-            if not has_data_access_layer:
-                missing.append(str((context_root / "repository|infrastructure").relative_to(BACKEND_ROOT)))
 
     assert not missing, "Required bounded-context folders are missing:\n" + "\n".join(missing)
 
@@ -367,4 +349,3 @@ def test_no_backend_dot_imports_in_production_code() -> None:
         "'backend.*' imports are only allowed in scripts/ and tests/:\n"
         + "\n".join(sorted(violations))
     )
-

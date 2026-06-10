@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.leave.contracts.leave_directory import get_leave_ledger_entry
+from contexts.leave_attendance.contracts.leave_directory import get_leave_ledger_entry
 from contexts.service_book.read_side.application.part_vi_projection import (
     PART_VI_CODE,
     merge_part_vi_entries,

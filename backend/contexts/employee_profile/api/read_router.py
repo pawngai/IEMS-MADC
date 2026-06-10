@@ -19,9 +19,9 @@ from contexts.employee_profile.application.router_support import (
     normalize_department_code as _normalize_department_code,
 )
 from contexts.employee_profile.application.services.workflow_engine import EmployeeWorkflowApplicationService
-from contexts.identity.contracts.user_directory import find_user_by_employee_id
+from contexts.identity_access.contracts.user_directory import find_user_by_employee_id
 from fastapi import APIRouter, Depends, Query, Request
-from contexts.identity.contracts.user_role import get_user_role
+from contexts.identity_access.contracts.user_role import get_user_role
 
 read_router = APIRouter()
 

@@ -4,7 +4,7 @@ from fastapi import HTTPException
 
 from contexts.employee_master.contracts.identity_directory import get_employee_department_code
 from contexts.identity.infrastructure import repo
-from contexts.rbac.contracts.models import Authority
+from contexts.identity_access.contracts.models import Authority
 
 DEPARTMENT_SCOPED_AUTHORITIES = {"DEPT_DATA_ENTRY", "HOD"}
 ACCOUNT_PROVISIONING_READY_STAGE = "ACTIVE"

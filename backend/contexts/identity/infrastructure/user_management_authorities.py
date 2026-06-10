@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from contexts.identity.infrastructure import repo
 from contexts.identity.infrastructure.user_management_roles import NON_EXCLUSIVE_AUTHORITIES, _valid_authorities
-from contexts.rbac.contracts.access_control import require_system_admin
+from contexts.identity_access.contracts.access_control import require_system_admin
 
 async def list_authorities(*, current_user: dict) -> dict:
     require_system_admin(current_user)

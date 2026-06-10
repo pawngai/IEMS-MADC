@@ -625,7 +625,7 @@ async def test_owner_can_attach_document_to_own_leave(monkeypatch):
         assert leave_id == "LV-SELF"
         return {"id": leave_id, "employee_id": "EMP-SELF"}
 
-    import contexts.leave.contracts.leave_directory as leave_directory
+    import contexts.leave_attendance.contracts.leave_directory as leave_directory
 
     monkeypatch.setattr(
         leave_directory,

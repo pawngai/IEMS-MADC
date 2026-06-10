@@ -12,8 +12,8 @@ from typing import Any
 from fastapi import HTTPException
 
 from contexts.ess.infrastructure import repo
-from contexts.rbac.contracts.models import Permission
-from contexts.rbac.contracts.access_control import require_permissions
+from contexts.identity_access.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import require_permissions
 from app_platform.reference_data.contracts.employment_rules import (
     get_available_service_book_parts,
 )
@@ -23,7 +23,7 @@ from contexts.employee_master.contracts.employee_domain import (
     normalizeEmployeeRecord,
     updateEmployeeStatus,
 )
-from contexts.leave.contracts.leave_commands import ensure_initial_leave_account
+from contexts.leave_attendance.contracts.leave_commands import ensure_initial_leave_account
 from contexts.service_book.contracts.servicebook.part_constants import SB_LEDGER_PART_KEY_BY_ROMAN
 
 

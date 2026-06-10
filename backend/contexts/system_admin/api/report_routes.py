@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import APIRouter, Depends, Query
 
 from app_platform.auth.current_user import get_current_user
-from contexts.rbac.contracts.access_control import require_system_admin
+from contexts.identity_access.contracts.access_control import require_system_admin
 from contexts.system_admin.api.workflow_config_helpers import _csv_response
 
 

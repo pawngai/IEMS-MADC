@@ -126,7 +126,7 @@ async def _validate_entity_access(
 				extra={"entity_type": entity_type, "entity_id": entity_id},
 			))
 	elif normalized == "LEAVE":
-		from contexts.leave.contracts.leave_directory import get_leave_application_by_id
+		from contexts.leave_attendance.contracts.leave_directory import get_leave_application_by_id
 		leave_doc = await get_leave_application_by_id(db, leave_id=entity_id)
 		if not leave_doc:
 			raise HTTPException(status_code=404, detail=_error_detail(

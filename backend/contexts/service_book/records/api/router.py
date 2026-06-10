@@ -24,8 +24,8 @@ from contexts.service_book.records.application.service import ServiceEventApplic
 from contexts.service_book.records.schemas.service_event_schemas import get_service_event_form_schema
 from contexts.employee_master.contracts.identity_directory import resolve_identity_ref
 from fastapi import APIRouter, Depends, HTTPException
-from contexts.rbac.contracts.models import Permission
-from contexts.rbac.contracts.access_control import require_owner_or_permissions, require_permissions
+from contexts.identity_access.contracts.models import Permission
+from contexts.identity_access.contracts.access_control import require_owner_or_permissions, require_permissions
 from app_platform.auth.current_user import get_current_user
 from app_platform.db.runtime import get_db
 from contexts.service_book.records.repository.service_summary_repository import (

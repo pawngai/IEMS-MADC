@@ -8,7 +8,7 @@ from pydantic import ValidationError
 from app_platform.config.settings import settings
 from app_platform.db.runtime import get_db, get_db_optional
 from app_platform.web.rate_limit import limiter
-from contexts.rbac.contracts.models import TokenResponse, UserResponse as AuthUserResponse
+from contexts.identity_access.contracts.models import TokenResponse, UserResponse as AuthUserResponse
 from app_platform.auth.current_user import get_current_user
 
 from contexts.identity.infrastructure import service

@@ -4,7 +4,7 @@ from pydantic import BaseModel, EmailStr, Field
 from typing import Any, List, Optional
 
 # Re-export existing RBAC primitives for compatibility across the codebase.
-from contexts.rbac.contracts.models import Authority, Permission  # noqa: F401
+from contexts.identity_access.contracts.models import Authority, Permission  # noqa: F401
 
 
 class LoginRequest(BaseModel):

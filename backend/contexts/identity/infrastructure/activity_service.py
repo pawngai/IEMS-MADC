@@ -5,7 +5,7 @@ from typing import Any, Optional
 
 from contexts.identity.infrastructure import repo
 from contexts.identity.contracts.schemas import ActivityLogResponse
-from contexts.rbac.contracts.access_control import require_system_admin
+from contexts.identity_access.contracts.access_control import require_system_admin
 
 
 def _window_start_iso(days: int) -> str:

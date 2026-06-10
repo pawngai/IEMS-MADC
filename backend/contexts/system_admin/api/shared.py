@@ -5,7 +5,7 @@ from typing import Any, List
 from fastapi import HTTPException
 from pydantic import BaseModel, Field
 
-from contexts.rbac.contracts.access_control import require_system_admin
+from contexts.identity_access.contracts.access_control import require_system_admin
 from contexts.service_book.contracts.service_book_directory import count_service_book_parts
 
 

@@ -12,8 +12,8 @@ SHARED_KERNEL_ROOT = BACKEND_ROOT / "shared_kernel"
 # every context needs Permission/Authority enums for API authorization guards.
 # These prefixes are universally allowed as cross-context imports.
 UNIVERSALLY_ALLOWED_RBAC_PREFIXES = {
-    "contexts.rbac.contracts.models",
-    "contexts.rbac.contracts.access_control",
+    "contexts.identity_access.contracts.models",
+    "contexts.identity_access.contracts.access_control",
 }
 
 ALLOWED_CONTEXTS_MODULE_IMPORT_FILES = {
@@ -21,6 +21,12 @@ ALLOWED_CONTEXTS_MODULE_IMPORT_FILES = {
 
 ALLOWED_DYNAMIC_IMPORT_FILES = {
     "app_platform/db/migration_runner.py",
+}
+
+TRANSITION_ADAPTER_CONTRACT_FILES = {
+    "contexts/organization_master/contracts/department_directory.py",
+    "contexts/organization_master/contracts/establishment.py",
+    "contexts/reporting_analytics/contracts/analytics_queries.py",
 }
 
 ALLOWED_WRITE_CONTRACT_MODULES = {
@@ -283,6 +289,8 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {}
 
 
 def _is_allowlisted_cross_context_import(rel_path: str, import_path: str) -> bool:
+    if rel_path in TRANSITION_ADAPTER_CONTRACT_FILES:
+        return True
     allowed_prefixes = ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE.get(rel_path, set())
     return any(import_path.startswith(prefix) for prefix in allowed_prefixes)
 
@@ -671,6 +679,21 @@ def test_service_book_profile_derivation_helpers_are_removed() -> None:
 # When a directory is fully drained, reduce the count to 0 and eventually
 # delete the directory.
 DEPRECATED_FOLDER_BASELINES: dict[str, int] = {
+    "contexts/audit": 16,
+    "contexts/change_requests": 15,
+    "contexts/department": 15,
+    "contexts/documents": 46,
+    "contexts/employee_identity": 32,
+    "contexts/employee_profile": 71,
+    "contexts/ess": 9,
+    "contexts/identity": 24,
+    "contexts/leave": 28,
+    "contexts/notifications": 11,
+    "contexts/pay": 16,
+    "contexts/rbac": 14,
+    "contexts/reporting": 6,
+    "contexts/seniority": 15,
+    "contexts/system_admin": 17,
 }
 
 

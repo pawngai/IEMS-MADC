@@ -17,7 +17,7 @@ from contexts.employee_profile.application.router_support import get_user_id
 from contexts.employee_profile.application.services.workflow_engine import EmployeeWorkflowApplicationService
 from contexts.employee_profile.contracts.workflow import WorkflowAction, WorkflowActionResponse
 from fastapi import APIRouter, Depends, Request
-from contexts.identity.contracts.user_role import get_user_role
+from contexts.identity_access.contracts.user_role import get_user_role
 
 workflow_router = APIRouter()
 

@@ -34,15 +34,15 @@ from contexts.leave.infrastructure.document_lock import (
     lock_documents_for_finalized_leave as _lock_documents_for_finalized_leave,
 )
 from contexts.leave.repository.leave_repository import LeaveRuntimeRepository
-from contexts.rbac.contracts.operational import require_leave_listing_permission
+from contexts.identity_access.contracts.operational import require_leave_listing_permission
 from fastapi import HTTPException
-from contexts.rbac.contracts.access_control import has_authority, require_permissions
-from contexts.rbac.contracts.authorization_service import (
+from contexts.identity_access.contracts.access_control import has_authority, require_permissions
+from contexts.identity_access.contracts.authorization_service import (
     EMPLOYEE,
     canPerformAction,
     resolveScopeAccess,
 )
-from contexts.identity.contracts.user_directory import get_user_department_code, get_user_display_name
+from contexts.identity_access.contracts.user_directory import get_user_department_code, get_user_display_name
 from contexts.employee_master.contracts.identity_directory import (
     get_employee_department_code,
     get_employee_ids_for_department,

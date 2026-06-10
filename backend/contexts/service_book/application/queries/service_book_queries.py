@@ -8,11 +8,11 @@ from contexts.employee_master.contracts.identity_directory import (
     resolve_identity_ref,
 )
 from contexts.employee_master.contracts.profile_directory import find_profile_view
-from contexts.rbac.contracts.access_control import (
+from contexts.identity_access.contracts.access_control import (
     require_owner_or_permissions,
     require_permissions,
 )
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.models import Permission
 from contexts.service_book.application.dto.filters import ServiceBookFilter
 from contexts.service_book.application.errors import not_found
 from contexts.service_book.application.service import (

@@ -14,9 +14,9 @@ from contexts.employee_identity.application.identity_interface import (
     resolve_employee_department_code,
 )
 from contexts.employee_profile.contracts.profile_directory import list_profile_workflow_statuses
-from contexts.identity.contracts.user_role import get_user_role
-from contexts.rbac.contracts.access_control import has_permission, is_owner
-from contexts.rbac.contracts.models import Permission
+from contexts.identity_access.contracts.user_role import get_user_role
+from contexts.identity_access.contracts.access_control import has_permission, is_owner
+from contexts.identity_access.contracts.models import Permission
 
 
 read_router = APIRouter()

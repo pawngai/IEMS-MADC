@@ -48,6 +48,7 @@ async def refresh_profile_projection(
     )
     if identity is not None and not allow_identity_workflow and not _identity_can_seed_profile(identity):
         await db.employee_profile_read_models.delete_one({"employee_id": employee_id})
+        await db.employee_master.delete_one({"employee_id": employee_id})
         return
 
     extension = None
@@ -59,6 +60,7 @@ async def refresh_profile_projection(
     composed = compose_employee_record_view(identity, extension)
     if not composed:
         await db.employee_profile_read_models.delete_one({"employee_id": employee_id})
+        await db.employee_master.delete_one({"employee_id": employee_id})
         return
 
     payload = dict(composed)
@@ -97,6 +99,7 @@ async def archive_and_delete_profile(
         await db.employee_profile_extensions.delete_one({"employee_id": employee_id})
     if getattr(db, "employee_profile_read_models", None) is not None:
         await db.employee_profile_read_models.delete_one({"employee_id": employee_id})
+        await db.employee_master.delete_one({"employee_id": employee_id})
 
     return archived
 

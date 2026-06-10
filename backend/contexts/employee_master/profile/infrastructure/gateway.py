@@ -113,6 +113,7 @@ async def _backfill_missing_profile_projections(db) -> int:
         if not _identity_can_seed_profile(row):
             if employee_id in projected_ids:
                 await db.employee_profile_read_models.delete_one({"employee_id": employee_id})
+                await db.employee_master.delete_one({"employee_id": employee_id})
             continue
         if employee_id in projected_ids:
             projected = await db.employee_profile_read_models.find_one(
@@ -187,6 +188,7 @@ async def _refresh_profile_projection(
     )
     if not composed:
         await db.employee_profile_read_models.delete_one({"employee_id": employee_id})
+        await db.employee_master.delete_one({"employee_id": employee_id})
         return
 
     payload = dict(composed)
@@ -442,6 +444,7 @@ class EmployeeProfileRepositoryMongoGateway(EmployeeProfileRepositoryGateway):
             await self._db.employee_profile_extensions.delete_one({"employee_id": employee_id})
         if _has_collection(self._db, "employee_profile_read_models"):
             await self._db.employee_profile_read_models.delete_one({"employee_id": employee_id})
+            await self._db.employee_master.delete_one({"employee_id": employee_id})
 
     async def count_profiles(self, *, query: dict) -> int:
         if _has_collection(self._db, "employee_profile_read_models"):

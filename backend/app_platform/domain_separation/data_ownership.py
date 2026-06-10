@@ -4,6 +4,7 @@ import re
 
 
 COLLECTION_OWNERSHIP: dict[str, str] = {
+    r"^employee_master$": "employee_master",
     r"^employee_profiles$": "employee_master",
     r"^employee_identities$": "employee_master",
     r"^counters$": "employee_master",

@@ -154,13 +154,62 @@ def run(mongo_url: str, db_name: str, dry_run: bool) -> dict:
     return report
 
 
+READ_MODEL_COLLECTION = "employee_profile_read_models"
+
+
+def run_from_read_models(mongo_url: str, db_name: str, dry_run: bool) -> dict:
+    """Backfill employee_master by copying the composed read-model docs verbatim.
+
+    This guarantees shape parity with what the app's projection produces, so the
+    EMPLOYEE_MASTER_READ switch returns identical count/list results. Use this for
+    the live expand/contract cutover; use run() for a raw identity+extension merge.
+    """
+    client = MongoClient(mongo_url)
+    db = client[db_name]
+    docs = list(db[READ_MODEL_COLLECTION].find({}, {"_id": 0}))
+    report = {
+        "mode": "from_read_models",
+        "db": db_name,
+        "dry_run": dry_run,
+        "generated_at": _utcnow(),
+        "read_models": len(docs),
+        "upserted": 0,
+    }
+    ops = [
+        UpdateOne({"employee_id": d.get("employee_id")}, {"$set": d}, upsert=True)
+        for d in docs
+        if d.get("employee_id")
+    ]
+    if not dry_run and ops:
+        result = db[TARGET_COLLECTION].bulk_write(ops, ordered=False)
+        report["upserted"] = result.upserted_count
+        report["modified"] = result.modified_count
+    report["employee_master_after"] = int(db[TARGET_COLLECTION].count_documents({}))
+    client.close()
+    return report
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--mongo-url", default=os.getenv("MONGO_URL") or "mongodb://localhost:27017")
     parser.add_argument("--db", default=os.getenv("DB_NAME") or "iems_db")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument(
+        "--from-read-models",
+        action="store_true",
+        help="Backfill employee_master by copying composed read-model docs "
+        "(shape parity for the EMPLOYEE_MASTER_READ cutover).",
+    )
     parser.add_argument("--report", default=str(ROOT / "docs" / "refactor" / "employee_master_migration_report.json"))
     args = parser.parse_args()
+
+    if args.from_read_models:
+        report = run_from_read_models(args.mongo_url, args.db, args.dry_run)
+        Path(args.report).write_text(json.dumps(report, indent=2, default=str))
+        print(json.dumps(report, indent=2, default=str))
+        print(f"\nOK: employee_master now has {report['employee_master_after']} docs "
+              f"(from {report['read_models']} read-model docs). Report -> {args.report}")
+        return
 
     report = run(args.mongo_url, args.db, args.dry_run)
     Path(args.report).write_text(json.dumps(report, indent=2, default=str))

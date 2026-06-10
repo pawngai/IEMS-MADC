@@ -27,7 +27,8 @@ COLLECTION_OWNER: dict[str, str] = {
     "user_activity_logs": "identity",
     "role_change_audit": "identity",
     "system_config": "identity",
-    # employee identity/profile
+    # employee identity/profile (merged into employee_master)
+    "employee_master": "employee_master",
     "employee_profiles": "employee_master",
     "employee_identities": "employee_master",
     "employee_profile_extensions": "employee_master",

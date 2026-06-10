@@ -1,4 +1,4 @@
-import { EmployeeProfileSummary } from "@/contexts/employee_profile";
+import { EmployeeProfileSummary } from "@/contexts/employee_master";
 
 const DepartmentEmployeeProfileSummary = (props) => <EmployeeProfileSummary {...props} />;
 

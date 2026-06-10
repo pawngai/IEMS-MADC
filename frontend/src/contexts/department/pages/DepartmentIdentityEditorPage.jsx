@@ -1,4 +1,4 @@
-import { EmployeeIdentityEditorPage } from "@/contexts/employee_identity";
+import { EmployeeIdentityEditorPage } from "@/contexts/employee_master";
 
 const DepartmentIdentityEditorPage = () => <EmployeeIdentityEditorPage />;
 

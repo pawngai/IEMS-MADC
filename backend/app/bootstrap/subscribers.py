@@ -13,7 +13,7 @@ def register_app_subscribers(app) -> None:
     try:
         from contexts.audit.application.subscribers import register_audit_subscribers
         from contexts.documents.application.subscribers import register_documents_subscribers
-        from contexts.employee_profile.contracts.subscribers import (
+        from contexts.employee_master.contracts.subscribers import (
             register_employee_read_model_subscribers,
         )
         from contexts.notifications.application.subscribers import (

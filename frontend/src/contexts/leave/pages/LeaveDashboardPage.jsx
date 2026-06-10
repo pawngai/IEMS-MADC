@@ -5,7 +5,7 @@ import { documentsAPI } from "@/contexts/documents";
 import { useAuth } from "@/contexts/identity";
 import { essAPI } from "@/contexts/ess";
 import { leaveAPI } from "@/contexts/leave/api/leaveApi";
-import { employeeIdentityApi } from "@/contexts/employee_identity";
+import { employeeIdentityApi } from "@/contexts/employee_master";
 import { Permissions } from "@/platform/permissions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";

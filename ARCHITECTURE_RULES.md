@@ -27,9 +27,9 @@ Status: Current implementation
 - Documents metadata cannot define service-history truth.
 
 5. Department ownership split
-- Department context owns department-scoped portal orchestration and `/department/*` routing.
-- Department context owns the sanctioned-strength establishment aggregate and its Department-scoped write model.
-- EmployeeProfile remains the owner of employee profile enrichment and projections used by department flows.
+- OrganizationMaster context owns department-scoped portal orchestration and `/department/*` routing.
+- OrganizationMaster context owns the sanctioned-strength establishment aggregate and its Department-scoped write model.
+- EmployeeMaster remains the owner of employee profile enrichment and projections used by department flows.
 - SystemAdmin owns department governance CRUD at `/departments/manage/*` and must not write sanctioned strength.
 
 ## Access-Control Model
@@ -42,7 +42,7 @@ Scopes are mandatory in both backend authorization and frontend capability routi
 
 Authorization logic must use canonical access-control services:
 
-- Backend: `contexts.rbac.application.access_control` and `contexts.rbac.application.authorization_service`
+- Backend: `contexts.identity_access.rbac.application.access_control` and `contexts.identity_access.rbac.application.authorization_service`
 - Frontend: `contexts/access_control/services/authorizationService.js`
 
 Authorities, permissions, and module visibility must stay separate:
@@ -57,8 +57,7 @@ Authorities, permissions, and module visibility must stay separate:
 
 Backend target structure:
 
-- `backend/contexts/employee_identity/{domain,application,contracts,services,repository,api,schemas}`
-- `backend/contexts/employee_profile/{domain,services,repository,api,schemas,read_model}`
+- `backend/contexts/employee_master/{identity,profile,contracts,api}`
 - `backend/contexts/organization_master/{domain,services,repository,api}`
 - `backend/contexts/service_book/{domain,application,repository,api,schemas,mappers,read_side,records,opening,parts,projection,queries,verification,corrections,pdf}`
 - `backend/contexts/leave_attendance/{domain,services,repository,api,schemas}`
@@ -73,7 +72,7 @@ Backend target structure:
 Frontend target structure:
 
 - `frontend/src/app`
-- `frontend/src/contexts/{department,employee_identity,employee_profile,service_book,leave,pay,documents,audit,...}`
+- `frontend/src/contexts/{organization_master,employee_master,service_book,leave_attendance,pay_benefits,reporting_analytics,documents,audit,...}`
 - `frontend/src/shared/{ui,lib,api,types}`
 - `frontend/src/features`
 - `frontend/src/platform/{api,auth,errors,permissions}`
@@ -103,8 +102,8 @@ Identity domain services (owned by `employee_identity`):
 - `updateEmployeeStatus`
 
 These contracts are the single source for employment-type normalization and service-book eligibility semantics.
-The canonical definitions live in `contexts.employee_identity.domain.identity_normalization` and are
-published via `contexts.employee_identity.contracts.employee_domain`. The previous
+The canonical definitions live in `contexts.employee_master.identity.domain.identity_normalization` and are
+published via `contexts.employee_master.contracts.employee_domain`. The previous
 `employee_profile.domain.profile_normalization` mirror has been retired
 (enforced by `test_employee_profile_profile_normalization_mirror_stays_deleted`).
 
@@ -116,7 +115,7 @@ mechanism, the registry, and the domain-neutral `LenientEventPayload` primitive.
 
 | Event family | Owning context | Module |
 |--------------|----------------|--------|
-| Employee identity lifecycle (Created, IdentityCreated, Updated, StatusChanged, Promoted) | `employee_identity` | `contexts.employee_identity.contracts.events` |
+| Employee identity lifecycle (Created, IdentityCreated, Updated, StatusChanged, Promoted) | `employee_identity` | `contexts.employee_master.contracts.events` |
 | Service-event lifecycle (Approved, Recorded, Corrected, Voided, Lifecycle, DocumentAttached) | `service_book` (records) | `contexts.service_book.records.contracts.events` |
 | Document lifecycle (Uploaded, Locked, MetadataUpdated, Deleted) | `documents` | `contexts.documents.contracts.events` |
 
@@ -148,6 +147,6 @@ Enforcement: `test_policy_engine_is_platform_primitive_only`,
 A context's domain layer must never import another context's modules — not
 even another context's `contracts`. Cross-context coupling belongs in the
 **application layer** (orchestration) or the **contracts layer** (anti-
-corruption). The RBAC enums in `contexts.rbac.domain.models` and
-`contexts.rbac.application.access_control` are the only platform-wide
+corruption). The RBAC enums in `contexts.identity_access.rbac.domain.models` and
+`contexts.identity_access.rbac.application.access_control` are the only platform-wide
 exception. Enforcement: `test_domain_layer_has_no_cross_context_imports`.

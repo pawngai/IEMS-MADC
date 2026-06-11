@@ -46,11 +46,11 @@ deleting the old contract modules** (replacing remaining old-name imports first)
 
 app_platform should be domain-neutral but currently imports:
 ```
-from contexts.rbac            ×6     → becomes app_platform/authorization
+from contexts.identity_access.rbac            ×6     → becomes app_platform/authorization
 from contexts.documents       ×3     → documents moves INTO app_platform
 from contexts.service_book    ×2     → REVIEW: platform should not need a context
 from contexts.identity_access ×2     → becomes app_platform/authorization
-from contexts.employee_identity ×1   → REVIEW
+from contexts.employee_master.identity ×1   → REVIEW
 ```
 Tracked in risk register R-7. Most resolve naturally when rbac→authorization and
 documents/audit/notifications move into app_platform (Phase 6).

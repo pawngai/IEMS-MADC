@@ -74,7 +74,7 @@ Notes:
 
 Authentication routes live under:
 
-- `backend/contexts/identity/api/auth_router.py`
+- `backend/contexts/identity_access/identity/api/auth_router.py`
 
 The current identity session implementation separates three concepts:
 
@@ -84,8 +84,8 @@ The current identity session implementation separates three concepts:
 
 `GET /api/auth/module-access` is implemented in:
 
-- `backend/contexts/identity/infrastructure/auth_session_service.py`
-- `backend/contexts/identity/domain/module_access_policy.py`
+- `backend/contexts/identity_access/identity/infrastructure/auth_session_service.py`
+- `backend/contexts/identity_access/identity/domain/module_access_policy.py`
 
 Current behavior:
 
@@ -152,7 +152,7 @@ Platform eventing components:
 
 Event payload ownership (Published Language per context):
 
-- Employee identity events → `contexts.employee_identity.contracts.events`
+- Employee identity events → `contexts.employee_master.contracts.events`
 - Service-event lifecycle payloads -> `contexts.service_book.records.contracts.events`
 - Document lifecycle payloads → `contexts.documents.contracts.events`
 - Only `LenientEventPayload` (domain-neutral primitive) lives in `app_platform.contracts.events.core_events`.
@@ -160,7 +160,7 @@ Event payload ownership (Published Language per context):
 Current subscriber registration includes:
 
 - Audit subscribers (`contexts.audit.application.subscribers`).
-- Employee read-model subscribers (`contexts.employee_profile.contracts.subscribers`).
+- Employee read-model subscribers (`contexts.employee_master.contracts.subscribers`).
 - Notification subscribers (`contexts.notifications.application.subscribers`).
 - Service book subscribers (`contexts.service_book.contracts.subscribers`).
 - Service book record subscribers (`contexts.service_book.records.contracts.subscribers`).
@@ -208,10 +208,10 @@ Department portal note:
 
 Employee Directory note:
 
-- The global Employee Directory page is `frontend/src/contexts/employee_identity/pages/EmployeeDirectoryPage.jsx`.
+- The global Employee Directory page is `frontend/src/contexts/employee_master/pages/EmployeeDirectoryPage.jsx`.
 - `Regular Employee` and `Non-Regular Employee` creation actions are shown to `GLOBAL_DATA_ENTRY` and `DEALING_ASSISTANT` users with `PROFILE_CREATE`.
 - Those actions intentionally do not depend on the `data_entry` module flag; the create route and backend command still enforce authority and permission.
-- Regression coverage is in `frontend/src/contexts/employee_identity/pages/__tests__/EmployeeDirectoryPage.serviceEvents.test.jsx`.
+- Regression coverage is in `frontend/src/contexts/employee_master/pages/__tests__/EmployeeDirectoryPage.serviceEvents.test.jsx`.
 
 ### 3.3 Context structure (frontend)
 

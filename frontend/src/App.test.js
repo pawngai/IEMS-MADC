@@ -59,6 +59,16 @@ jest.mock('@/contexts/identity_access', () => ({
     hasAnyAuthority: () => false,
     moduleAccess: { mode: 'allow_all', allowed_modules: null },
   }),
+  usePermissions: () => ({
+    can: () => false,
+    canAny: () => false,
+    canAll: () => false,
+    isAny: () => false,
+    canAccessModule: () => true,
+    canAccessEssPortal: () => false,
+    getPrimaryAuthority: () => null,
+    getAuthorityDisplayName: () => '',
+  }),
 }));
 
 describe('App', () => {

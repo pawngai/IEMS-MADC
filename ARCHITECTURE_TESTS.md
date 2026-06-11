@@ -28,7 +28,7 @@ File: `backend/tests/test_architecture_guardrails.py`
 - Blocks business event payload classes (Employee*, ServiceEvent*, Document*) from being defined under `app_platform/contracts/events/`.
 
 7. `test_employee_event_schemas_live_in_employee_identity_context`
-- Requires the canonical Employee*Event schemas to live in `contexts.employee_identity.contracts.events`.
+- Requires the canonical Employee*Event schemas to live in `contexts.employee_master.contracts.events`.
 
 8. `test_service_event_approved_payload_lives_in_service_book_records`
 - Requires `ServiceEventApprovedPayload` to live in `contexts.service_book.records.contracts.events`.
@@ -135,7 +135,7 @@ File: `backend/tests/test_architecture_guardrails.py`
 - Verifies employee and department editor route composition.
 - Guards department portal wrappers and gateway usage from regressing to direct employee-profile imports.
 
-3. `frontend/src/contexts/employee_identity/pages/__tests__/EmployeeDirectoryPage.serviceEvents.test.jsx`
+3. `frontend/src/contexts/employee_master/pages/__tests__/EmployeeDirectoryPage.serviceEvents.test.jsx`
 - Verifies global Employee Directory behavior, including regular/non-regular create actions for `GLOBAL_DATA_ENTRY`/`DEALING_ASSISTANT` users with `PROFILE_CREATE`.
 - Guards the create actions from depending on the `data_entry` module visibility flag.
 

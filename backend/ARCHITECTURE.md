@@ -8,15 +8,14 @@ The backend uses bounded contexts under `contexts/`, cross-cutting infrastructur
 
 Reference target ownership is enforced through `domain_separation/context_responsibilities.py` and collection ownership checks:
 
-- `employee_identity`: Canonical employee identity (employee code, name, DOB, employment type)
-- `employee_profile`: Profile enrichment and employee read projections
-- `department`: Department-scoped portal orchestration over employee/profile/leave operations
+- `employee_master`: Canonical employee identity (employee code, name, DOB, employment type) plus profile enrichment and employee read projections (`identity/` and `profile/` subpackages)
+- `organization_master`: Departments, designations, masters/reference structures, sanctioned strength, and department-scoped portal orchestration over employee/profile/leave operations
 - `service_book`: Canonical service-history bounded context for official records, read-side engine, and print surface (Parts I-VIII)
-- `pay`: Financial ledger — owns `pay_ledger_entries` (pay revisions, allowance changes). Emits `PayRevised`/`AllowanceChanged` events via outbox. Service book Part VII consumes pay data indirectly via events/projections, not by direct write.
-- `leave`: Leave ledger
+- `pay_benefits`: Financial ledger — owns `pay_ledger_entries` (pay revisions, allowance changes). Emits `PayRevised`/`AllowanceChanged` events via outbox. Service book Part VII consumes pay data indirectly via events/projections, not by direct write.
+- `leave_attendance`: Leave ledger
 - `ess`: Self-service portal
 - `audit`: Immutable compliance log
-- `reporting`: Read-only analytics — pure projection context with no owned collections. Runs aggregation pipelines against canonical context collections (`employee_identities`, `employee_profile_extensions`, `leave_applications`, `service_book_records`). Never writes.
+- `reporting_analytics`: Read-only analytics — pure projection context with no owned collections. Runs aggregation pipelines against canonical context collections (`employee_identities`, `employee_profile_extensions`, `leave_applications`, `service_book_records`). Never writes.
 - `seniority`: Seniority list management — owns `seniority_lists` (generated snapshots with rank overrides and DRAFT→PROVISIONAL→FINAL workflow). Reads canonical sources (`employee_identities`, `employee_profile_extensions`, `service_book_part_ii_a`) at generation time via cross-context queries in the application service layer.
 
 ## Boundary Rules
@@ -38,7 +37,7 @@ These are enforced by `backend/tests/test_import_boundaries.py`.
 
 Business event payload schemas are owned by their publishing bounded context:
 
-- Employee identity events (`Employee*Event`): `contexts.employee_identity.contracts.events`
+- Employee identity events (`Employee*Event`): `contexts.employee_master.contracts.events`
 - Service-event lifecycle payloads (`ServiceEvent*Payload`): `contexts.service_book.records.contracts.events`
 - Document lifecycle payloads (`Document*Payload`): `contexts.documents.contracts.events`
 - Domain-neutral fallback (`LenientEventPayload`): `app_platform.contracts.events.core_events`
@@ -98,7 +97,7 @@ Flow:
 - Approval emits `ServiceEventLifecycleApproved.v1` through outbox.
 - Service-book reads consume projected collections only; ledger write APIs are retired.
 
-## Department Context
+## Organization Master Context
 
 - `contexts/organization_master`: department-scoped portal API and orchestration for `/department/*` routes.
 - Owns portal behavior such as dashboard, employee directory/snapshot, pending work, pending leaves, department-scoped employee actions, and the sanctioned-strength establishment aggregate.
@@ -108,8 +107,8 @@ Flow:
 
 ## Identity / RBAC / Module Access
 
-- `contexts/identity` owns login, refresh/logout, password flows, user sessions, and `/api/auth/module-access`.
-- `contexts/rbac` owns authority and permission definitions.
+- `contexts/identity_access/identity` owns login, refresh/logout, password flows, user sessions, and `/api/auth/module-access`.
+- `contexts/identity_access/rbac` owns authority and permission definitions.
 - Authorities such as `GLOBAL_DATA_ENTRY` and `DEPT_DATA_ENTRY` are roles.
 - Permissions such as `PROFILE_CREATE` and `SERVICE_BOOK_READ_ALL` are action grants.
 - Module ids such as `data_entry`, `service_book`, `leave`, `audit`, `verification`, `approval`, and `attestation` are module visibility flags.
@@ -131,7 +130,7 @@ Dispatcher starts/stops with FastAPI startup/shutdown hooks in `app/main.py`.
 ### Current Subscribers
 
 - `contexts.audit.application.subscribers`: writes audit entries for domain events.
-- `contexts.employee_profile.contracts.subscribers`: maintains employee read-model projections.
+- `contexts.employee_master.contracts.subscribers`: maintains employee read-model projections.
 - `contexts.notifications.application.subscribers`: writes employee notifications on `LeaveApproved`.
 - `contexts.service_book.contracts.subscribers`: updates service book projections from events.
 - `contexts.service_book.records.contracts.subscribers`: processes service event lifecycle transitions.

@@ -2,8 +2,7 @@
 
 ## Architecture rules
 - Use bounded contexts only.
-- EmployeeIdentity owns canonical employee identity.
-- EmployeeProfile owns employee profile enrichment and projections.
+- EmployeeMaster owns canonical employee identity and profile enrichment/projections (its `identity/` and `profile/` subpackages).
 - ServiceBook owns the current service-history runtime under `service_book/records`.
 - There is no standalone `service_events` bounded context in the current implementation.
 - Only regular employees have ServiceBook.

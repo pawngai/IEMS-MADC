@@ -45,7 +45,7 @@ This section records additional hardening work completed after the initial 2026-
 
 3. **Authentication input validation hardening**
    - Login endpoint now validates against typed schema (`LoginRequest`) and returns structured validation errors.
-   - File: `backend/contexts/identity/api/auth_router.py` (migrated from `backend/modules/identity/router.py`).
+   - File: `backend/contexts/identity_access/identity/api/auth_router.py` (migrated from `backend/modules/identity/router.py`).
 
 4. **Bootstrap credential hardening**
    - Removed hardcoded default bootstrap passwords (`admin123` / `employee123`) from active bootstrap paths.
@@ -59,7 +59,7 @@ This section records additional hardening work completed after the initial 2026-
    - Replaced selected silent `except Exception: pass` blocks with structured logging in critical startup/auth/change-request paths.
    - Files (migrated paths):
      - `backend/app/bootstrap/` (startup)
-     - `backend/contexts/identity/` (auth)
+     - `backend/contexts/identity_access/identity/` (auth)
      - `backend/contexts/change_requests/infrastructure/gateway.py`
 
 6. **Architecture drift guardrails in tests**
@@ -91,7 +91,7 @@ This section records additional hardening work completed after the initial 2026-
 ### Current recommendation
 
 - Treat this report as additive: historical findings remain valid, and the 2026-03-01 section reflects current enforced controls.
-- Next security milestone: remove allowlisted deprecated authorization imports by migrating those call-sites to `contexts.rbac.application.access_control` / `contexts.rbac.application.authorization_service`, then tighten the allowlist to empty.
+- Next security milestone: remove allowlisted deprecated authorization imports by migrating those call-sites to `contexts.identity_access.rbac.application.access_control` / `contexts.identity_access.rbac.application.authorization_service`, then tighten the allowlist to empty.
 
 ## Critical Security Issues Fixed
 
@@ -103,14 +103,14 @@ This section records additional hardening work completed after the initial 2026-
 - **Status:** FIXED
 
 ### 2. ✅ Plain-Text Demo User Passwords (CRITICAL)
-- **File:** `backend/contexts/identity/` (migrated from `backend/modules/identity/service.py`)
+- **File:** `backend/contexts/identity_access/identity/` (migrated from `backend/modules/identity/service.py`)
 - **Issue:** 10 demo user accounts had plain-text passwords stored in code
 - **Fix:** Converted all passwords to bcrypt hashes, updated login logic to use bcrypt verification
 - **Impact:** Protects demo accounts from credential theft and memory dumps
 - **Status:** FIXED - All passwords now hashed with bcrypt
 
 ### 3. ✅ Plain-Text Password Comparison (CRITICAL)
-- **File:** `backend/contexts/identity/` (migrated from `backend/modules/identity/service.py`)
+- **File:** `backend/contexts/identity_access/identity/` (migrated from `backend/modules/identity/service.py`)
 - **Issue:** Demo users authenticated with `password == demo_user["password"]`
 - **Fix:** Updated to use `verify_password(password, demo_user["password_hash"])`
 - **Impact:** Eliminates plain-text password handling in authentication flow
@@ -134,7 +134,7 @@ This section records additional hardening work completed after the initial 2026-
 ## High-Priority Security Enhancements
 
 ### 6. ✅ Input Validation on Login
-- **File:** `backend/contexts/identity/api/auth_router.py` (migrated from `backend/modules/identity/router.py`)
+- **File:** `backend/contexts/identity_access/identity/api/auth_router.py` (migrated from `backend/modules/identity/router.py`)
 - **Issue:** Login endpoint accepted untyped `dict`, allowing injection attacks
 - **Fix:** Updated to use `LoginRequest` Pydantic schema with EmailStr validation
 - **Impact:** Prevents malformed login requests and injection attempts

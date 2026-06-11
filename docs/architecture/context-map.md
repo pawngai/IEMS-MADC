@@ -35,9 +35,9 @@ and route registrations are being migrated safely.
 ## Organization Master
 
 Organization Master is the final owner for departments, offices, designations,
-posts, hierarchy, reporting structure, and sanctioned strength. Legacy
-`department` and frontend `masters` implementation remains transitional until
-imports and route registrations can move without breaking API contracts.
+posts, hierarchy, reporting structure, and sanctioned strength. The legacy
+`department` and frontend `masters` implementations have been absorbed into
+`organization_master` on both layers (2026-06-12); the legacy roots are deleted.
 
 ## Identity Access
 
@@ -50,10 +50,10 @@ required.
 
 | Deprecated name | Canonical name | Current status |
 | --- | --- | --- |
-| `leave` | `leave_attendance` | Backend route registration and frontend app/portal composition use canonical entrypoints; implementation and many context-internal imports still live in `leave`. |
-| `pay` | `pay_benefits` | Backend route registration uses the canonical entrypoint; implementation and many imports still live in `pay`. |
-| `reporting`, `analytics` | `reporting_analytics` | Backend route registration and frontend app/portal composition use canonical entrypoints; implementation still lives in reporting/analytics modules. |
-| `department`, `masters` | `organization_master` | Backend route registration and frontend app/portal composition use canonical entrypoints; implementation still lives in department/masters modules. |
+| `leave` | `leave_attendance` | Migration complete (2026-06-12): implementation lives in `leave_attendance` on both layers; legacy root deleted. |
+| `pay` | `pay_benefits` | Migration complete (2026-06-12): implementation lives in `pay_benefits` on both layers; legacy root deleted. |
+| `reporting`, `analytics` | `reporting_analytics` | Migration complete (2026-06-12): implementation lives in `reporting_analytics` on both layers; legacy roots deleted. |
+| `department`, `masters` | `organization_master` | Migration complete (2026-06-12): implementation lives in `organization_master` on both layers; legacy roots deleted. |
 
 ## Route Migration Policy
 
@@ -63,13 +63,13 @@ required.
 
 Current route entrypoint status:
 
-| Route area | Old implementation module | Canonical registration module | API path changed | Compatibility alias |
+| Route area | Implementation module | Canonical registration module | API path changed | Compatibility alias |
 | --- | --- | --- | --- | --- |
-| Leave | `contexts.leave_attendance.api.router` | `contexts.leave_attendance.api.router` | No, still `/leave` | Canonical router imports legacy implementation temporarily. |
-| Pay | `contexts.pay_benefits.api.router` | `contexts.pay_benefits.api.router` | No, still `/pay` | Canonical router imports legacy implementation temporarily. |
-| Reporting | `contexts.reporting_analytics.api.router` | `contexts.reporting_analytics.api.router` | No, still `/reporting` | Canonical router imports legacy implementation temporarily. |
-| Department portal | `contexts.organization_master.api.router` | `contexts.organization_master.api.router` | No, still `/department` | Canonical router imports legacy implementation temporarily. |
-| Department establishment admin | `contexts.organization_master.api.admin_establishment_router` | `contexts.organization_master.api.admin_establishment_router` | No, existing prefix retained | Canonical router imports legacy implementation temporarily. |
+| Leave | `contexts.leave_attendance.api.router` | `contexts.leave_attendance.api.router` | No, still `/leave` | None needed; router owns the implementation. |
+| Pay | `contexts.pay_benefits.api.router` | `contexts.pay_benefits.api.router` | No, still `/pay` | None needed; router owns the implementation. |
+| Reporting | `contexts.reporting_analytics.api.router` | `contexts.reporting_analytics.api.router` | No, still `/reporting` | None needed; router owns the implementation. |
+| Department portal | `contexts.organization_master.api.router` | `contexts.organization_master.api.router` | No, still `/department` | None needed; router owns the implementation. |
+| Department establishment admin | `contexts.organization_master.api.admin_establishment_router` | `contexts.organization_master.api.admin_establishment_router` | No, existing prefix retained | None needed; router owns the implementation. |
 
 ## Large Frontend Files
 

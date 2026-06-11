@@ -2,13 +2,15 @@
 
 Generated: 2026-06-11 (Phase 0). Severity: H/M/L. Status updated each phase.
 
-## Context: this is a MID-FLIGHT migration
+## Context: this WAS a mid-flight migration (renames now complete)
 
-The repo already contains target contexts as **shim layers** (new
-`*/contracts/` backend modules and `*/index.js` frontend façades that re-export
-old implementations). The running app's bootstrap still wires the OLD context
-routers. The work remaining is to relocate implementations into the new contexts
-and retire the old folders + old contract modules. This shapes every risk below.
+Update 2026-06-12: the context renames are complete. `leave`, `pay`,
+`reporting`, and `department`/`masters` have been absorbed into
+`leave_attendance`, `pay_benefits`, `reporting_analytics`, and
+`organization_master` on both backend and frontend; the shim layers and the
+legacy folders are deleted, and bootstrap registers the canonical routers
+directly. Remaining work tracked below concerns the employee_master field
+mapping, platform moves, and portal shell splits.
 
 | ID | Risk | Sev | Mitigation | Status |
 |---|---|---|---|---|
@@ -16,13 +18,13 @@ and retire the old folders + old contract modules. This shapes every risk below.
 | R-2 | `address_line1/line2` (write path) vs `address` (model) mismatch silently drops address data | H | employee_master ContactDetails declares both forms; migration backfills; see mapping §B | OPEN |
 | R-3 | 35 employment-type fields persisted but undeclared → lost if model uses `extra="forbid"` | H | Declare all 35 as optional employee_master fields (mapping §C); never forbid-strip them | OPEN |
 | R-4 | Two `ContactDetails` definitions (identity value_objects.py + profile profile_model.py) diverge | M | Unify into one employee_master value object; assert field-set equality in test | OPEN |
-| R-5 | Both old + new contract names imported across backend (109 identity_access, 15 identity, etc.) | M | Replace remaining old-name imports BEFORE deleting old contracts; grep gate in CI | OPEN |
-| R-6 | Bootstrap wires old routers; moving impl could unregister routes / 404 the app | H | Keep route prefixes identical; flip registration to new module only after import smoke passes; verify with live-browser login each phase | OPEN |
+| R-5 | Both old + new contract names imported across backend (109 identity_access, 15 identity, etc.) | M | CLOSED 2026-06-12: legacy roots deleted; grep confirms zero `contexts.identity.*`/`contexts.rbac.*`/other old-name imports remain in backend or frontend | CLOSED |
+| R-6 | Bootstrap wires old routers; moving impl could unregister routes / 404 the app | H | CLOSED 2026-06-12: registrations import canonical contexts (`leave_attendance`/`pay_benefits`/`reporting_analytics`/`organization_master`); legacy roots deleted; route prefixes unchanged; verified with live-browser admin login + leave/analytics pages | CLOSED |
 | R-7 | app_platform imports contexts (rbac×6, documents×3, service_book×2, identity_access×2, employee_identity×1) violating platform neutrality | M | rbac→app_platform/authorization, documents/audit/notifications→app_platform (Phase 6); review service_book/employee_identity couplings individually | OPEN |
 | R-8 | identity_access is contracts-only; merging identity+rbac impl is large (user_management_service 749L, policy_engine 670L, models 496L) | M | Move in sub-steps: users/sessions, then roles/permissions, then module/portal access; keep `/auth` + `/users` prefixes | OPEN |
 | R-9 | AuthContext minimization may break consumers reading removed fields | M | Inventory AuthContext consumers first; expose removed data via permissionSelectors; keep `user, loading, login, logout, activeRole, setActiveRole, moduleAccess` | OPEN |
 | R-10 | Portal moves (ESS/Dept/Admin → portals/) break deep imports & lazy route paths | M | Move shells only; data stays in contexts; update router lazy imports; portals import contexts via index.js only | OPEN |
-| R-11 | department split (organization_master master-data vs portals/department UI) entangled with system_admin/department + masters | M | Map department endpoints (`/department`, `/departments/manage`, `/masters`) to owner before moving; establishment aggregate → organization_master | OPEN |
+| R-11 | department split (organization_master master-data vs portals/department UI) entangled with system_admin/department + masters | M | PARTIAL 2026-06-12: department + masters merged into organization_master on both layers (rename complete). Remaining: extracting portal UI shells to portals/department (P3 scope) | OPEN |
 | R-12 | change_requests → workflow merge may collide with ess/change-requests routes | L | Keep `/change-requests` + `/ess/change-requests` prefixes; move under workflow/change_requests namespace | OPEN |
 | R-13 | Migration backfill script run against prod-shaped data with unexpected keys | M | Idempotent upsert keyed on employee_id; dry-run mode; legacy_fields catch-all; report counts | OPEN |
 | R-14 | Large-file splits introduce behavior regressions | L | Split after relocation; pure mechanical extraction; rely on existing tests + new field/route tests | OPEN |
@@ -38,8 +40,10 @@ and retire the old folders + old contract modules. This shapes every risk below.
 ## Phasing principle
 Incremental, app-working-after-each-phase, safe commit per phase. Order:
 P1 employee_master → P2 identity_access → P3 portals → P4 renames
-(leave_attendance/pay_benefits/reporting_analytics) → P5 organization_master split
-→ P6 platform moves (documents/audit/notifications) + change_requests→workflow →
+(leave_attendance/pay_benefits/reporting_analytics) **[DONE 2026-06-12]** →
+P5 organization_master split **[rename/merge DONE 2026-06-12; portal-shell
+extraction remains under P3]** → P6 platform moves
+(documents/audit/notifications) + change_requests→workflow →
 P7 boundary tests → P8 large-file splits → P9 migration report.
 
 ## Open questions for stakeholder (R-16)

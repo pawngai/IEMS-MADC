@@ -102,7 +102,7 @@ Current structured metadata-validation error codes include:
 
 ### 3.3 Delete flow
 
-1. Delete endpoints require `require_document_delete_permission()` from `backend/contexts/rbac/policies/operational.py`.
+1. Delete endpoints require `require_document_delete_permission()` from `backend/contexts/identity_access/rbac/policies/operational.py`.
 2. The infrastructure service rejects deletion when metadata shows the document is locked.
 3. Unlocked files are removed from storage and metadata is deleted.
 4. Documents that already have a newer successor version cannot be deleted; the service returns `DOCUMENT_VERSION_HISTORY_PROTECTED` instead.
@@ -167,7 +167,7 @@ Repository indexes cover:
 
 ## 5. Authorization and Access Rules
 
-Document-management authority is defined in `backend/contexts/rbac/policies/operational.py`.
+Document-management authority is defined in `backend/contexts/identity_access/rbac/policies/operational.py`.
 
 Authorities allowed to manage/delete documents:
 
@@ -274,7 +274,7 @@ Other direct consumers:
 - `frontend/src/contexts/service_book/records/components/RecordServiceBookRecordDialog.jsx`
   - can upload supporting documents while recording a new Service Book record.
 - `frontend/src/contexts/ess/api/essApi.js`
-- `frontend/src/contexts/identity/api/essApi.js`
+- `frontend/src/contexts/ess/api/essApi.js`
   - both still post to `/documents/document` for upload flows.
 
 The frontend document metadata adapter now mirrors backend support for `category` and `supersedes_document_id`, and the shared error formatter handles the new structured document metadata and version-history failure codes.

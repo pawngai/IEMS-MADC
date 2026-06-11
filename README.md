@@ -8,13 +8,12 @@ MyIEMS is a bounded-context HRMS for MADC. The current implementation is a modul
 - Frontend app entrypoint: `frontend/src/index.jsx`
 - Backend API base: `/api`
 - Health endpoints: `/health/live`, `/health/ready`
-- Backend contexts currently present: `audit`, `change_requests`, `department`, `documents`, `employee_identity`, `employee_profile`, `ess`, `identity`, `leave`, `notifications`, `pay`, `rbac`, `reporting`, `seniority`, `service_book`, `system_admin`, `workflow`
-- Frontend contexts currently present: `access_control`, `admin`, `analytics`, `applications`, `audit`, `change_requests`, `department`, `documents`, `employee_identity`, `employee_profile`, `ess`, `forms`, `identity`, `leave`, `masters`, `notifications`, `pay`, `seniority`, `service_book`, `workflow`
+- Backend contexts currently present: `audit`, `change_requests`, `documents`, `employee_master`, `ess`, `identity_access`, `leave_attendance`, `notifications`, `organization_master`, `pay_benefits`, `reporting_analytics`, `seniority`, `service_book`, `system_admin`, `workflow`
+- Frontend contexts currently present: `access_control`, `admin`, `applications`, `audit`, `change_requests`, `documents`, `employee_master`, `ess`, `forms`, `identity_access`, `leave_attendance`, `notifications`, `organization_master`, `pay_benefits`, `reporting_analytics`, `seniority`, `service_book`, `workflow`
 
 ## What The App Currently Ships
 
-- Employee identity management with canonical identity ownership in `employee_identity`
-- Employee profile enrichment and read-side file views in `employee_profile`
+- Employee identity management and profile enrichment with canonical ownership in `employee_master` (its `identity/` and `profile/` subpackages)
 - Workflow queue and staged approval flows in `workflow`
 - Service Book read, opening, verification, correction, print, and records surfaces under `service_book`
 - Service history mutation lifecycle surfaced through Service Book Records
@@ -33,14 +32,13 @@ Employee Directory creation note:
 
 The repo is organized around bounded contexts and thin APIs.
 
-- `employee_identity` owns canonical employee identity and the employee event Published Language (`contexts.employee_identity.contracts.events`)
-- `employee_profile` owns profile enrichment and read projections; employment-type / service-book-eligibility predicates are delegated to `employee_identity` (no local mirror)
-- `department` owns department-scoped portal orchestration and sanctioned-strength establishment data
+- `employee_master` owns canonical employee identity, profile enrichment, read projections, and the employee event Published Language (`contexts.employee_master.contracts.events`)
+- `organization_master` owns departments, designations, masters/reference structures, department-scoped portal orchestration, and sanctioned-strength establishment data
 - `documents` owns document storage and metadata and its own event payloads (`contexts.documents.contracts.events`)
-- `leave` and `pay` own their ledgers
+- `leave_attendance` and `pay_benefits` own their ledgers
 - `service_book` owns the service-event payloads under `contexts.service_book.records.contracts.events`
 - `audit` is append-only
-- `reporting` is read-only and runs aggregation queries against canonical collections
+- `reporting_analytics` is read-only and runs aggregation queries against canonical collections
 - `shared_kernel` and `app_platform` contain technical primitives only — no business event schemas, no domain truth, no business policies. `app_platform.policy_engine` hosts only the `Decision` primitive; leave-rule and change-request policies live in their owning contexts
 - Cross-context DB writes are not allowed; cross-context coupling goes through `contracts/` modules only (Published Language / ACL pattern)
 

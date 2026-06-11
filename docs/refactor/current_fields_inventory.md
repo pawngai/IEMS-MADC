@@ -17,7 +17,7 @@ MAP = renamed/moved with mapping, LEGACY = preserved under `legacy_fields`.
 ## 1. employee_identity context
 
 ### 1.1 `EmployeeIdentity` (canonical identity document)
-Source: `backend/contexts/employee_identity/schemas/identity_model.py`
+Source: `backend/contexts/employee_master/identity/schemas/identity_model.py`
 Collection: canonical employee identity.
 
 | Field | Type | Req | Validation / Default | New owner | Status |

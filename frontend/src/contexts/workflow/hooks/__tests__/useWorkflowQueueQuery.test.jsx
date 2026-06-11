@@ -12,7 +12,7 @@ const mockListServiceBookOpeningQueue = vi.fn();
 const mockListChangeRequestsByStatus = vi.fn();
 const mockToProfileItems = vi.fn();
 
-vi.mock("@/contexts/identity/model/authContext", () => ({
+vi.mock("@/contexts/identity_access/model/authContext", () => ({
   useAuth: () => mockUseAuth(),
 }));
 

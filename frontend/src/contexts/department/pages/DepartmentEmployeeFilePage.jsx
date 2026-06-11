@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
 import { DEPT } from "@/shared/lib/routes";
 import DepartmentEmployeeProfileSummary from "@/contexts/department/components/DepartmentEmployeeProfileSummary";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { useDepartmentScope } from "@/contexts/department/hooks/useDepartmentScope";
 import {

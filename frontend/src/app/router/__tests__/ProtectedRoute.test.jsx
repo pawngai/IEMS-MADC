@@ -7,13 +7,9 @@ import { ProtectedRoute } from "@/app/router/guards";
 const mockUseAuth = jest.fn();
 const mockUsePermissions = jest.fn();
 
-jest.mock("@/contexts/identity/model/authContext", () => ({
-  __esModule: true,
-  useAuth: () => mockUseAuth(),
-}));
-
 jest.mock("@/contexts/identity_access", () => ({
   __esModule: true,
+  useAuth: () => mockUseAuth(),
   usePermissions: () => mockUsePermissions(),
 }));
 

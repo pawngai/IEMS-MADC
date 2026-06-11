@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Layout from "@/app/layout/Layout";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { documentsAPI } from "@/contexts/documents";
 import { cn } from "@/shared/lib/utils";

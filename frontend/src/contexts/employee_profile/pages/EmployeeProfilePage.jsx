@@ -7,7 +7,7 @@ import EmployeeProfileExtensionEditor from "@/contexts/employee_profile/componen
 import { employeeProfileApi } from "@/contexts/employee_profile/api/employeeProfileApi";
 import { serviceBookAPI } from "@/contexts/service_book";
 import { isServiceBookEligible } from "@/contexts/service_book";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess";
 import { Permissions } from "@/platform/permissions";

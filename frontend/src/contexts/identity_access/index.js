@@ -1,8 +1,12 @@
-export * from "@/contexts/identity";
+export { Permissions, Authorities } from "./model/rbac";
+export { AuthProvider, useAuth } from "./model/authContext";
+export { authAPI } from "./api/authApi";
+export { essAPI as identityEssAPI } from "./api/essApi";
+export { userManagementAPI } from "./api/userManagementApi";
 export * from "@/platform/permissions";
-export { usePermissions, createPermissionSelectors } from "@/contexts/identity_access/model/permissionSelectors";
+export { usePermissions, createPermissionSelectors } from "./model/permissionSelectors";
 export {
   getEssHomePath,
   canEnterEssPortal,
   getDefaultLandingPath,
-} from "@/contexts/identity_access/model/portalAccessRules";
+} from "./model/portalAccessRules";

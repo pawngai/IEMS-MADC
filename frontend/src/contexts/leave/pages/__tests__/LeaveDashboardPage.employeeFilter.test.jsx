@@ -28,7 +28,7 @@ jest.mock("@/app/layout/Layout", () => ({
   default: ({ children }) => <div data-testid="layout">{children}</div>,
 }));
 
-jest.mock("@/contexts/identity/model/authContext", () => ({
+jest.mock("@/contexts/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => ({
     user: { sub: "u-1" },

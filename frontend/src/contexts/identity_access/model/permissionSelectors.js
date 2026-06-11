@@ -8,7 +8,7 @@
  * Usage:
  *   const { can, canAny, canAccessModule, getPrimaryAuthority } = usePermissions();
  */
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { createPermissionSelectors } from "@/platform/permissions";
 
 /**

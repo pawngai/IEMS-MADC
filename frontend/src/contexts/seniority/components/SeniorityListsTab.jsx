@@ -42,7 +42,7 @@ import {
   TableRow,
 } from "@/shared/ui/table";
 import { Textarea } from "@/shared/ui/textarea";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { hasAuthority } from "@/contexts/access_control";
 import { getReadablePersonName } from "@/shared/lib/readablePersonName";
 

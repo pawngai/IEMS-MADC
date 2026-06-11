@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { hasAuthority } from "@/contexts/access_control";
 
 const TAB_OWNERSHIP = {

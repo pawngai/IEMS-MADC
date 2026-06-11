@@ -24,7 +24,7 @@ jest.mock("@/contexts/service_book/containers/ServiceBookPrintScreen", () => ({
 
 const mockUseAuth = jest.fn();
 
-jest.mock("@/contexts/identity/model/authContext", () => ({
+jest.mock("@/contexts/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));

@@ -33,7 +33,7 @@ jest.mock('react-router-dom', () => ({
 
 const mockUseAuth = jest.fn();
 
-jest.mock('@/contexts/identity/model/authContext', () => ({
+jest.mock('@/contexts/identity_access/model/authContext', () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
@@ -45,7 +45,7 @@ const mockGetMyServiceBook = jest.fn();
 const mockListMyLeaves = jest.fn();
 const mockGetMyProfileAuditTrail = jest.fn();
 
-jest.mock('@/contexts/identity/model/rbac', () => ({
+jest.mock('@/contexts/identity_access/model/rbac', () => ({
   __esModule: true,
   Permissions: {
     PROFILE_UPDATE_OWN_LIMITED: 'PROFILE_UPDATE_OWN_LIMITED',

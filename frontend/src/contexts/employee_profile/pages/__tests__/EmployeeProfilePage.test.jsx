@@ -67,12 +67,12 @@ jest.mock("@/contexts/ess/api/essApi", () => ({
   },
 }));
 
-jest.mock("@/contexts/identity/model/authContext", () => ({
+jest.mock("@/contexts/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock("@/contexts/identity/model/rbac", () => ({
+jest.mock("@/contexts/identity_access/model/rbac", () => ({
   __esModule: true,
   Permissions: {
     PROFILE_READ_OWN: "PROFILE_READ_OWN",

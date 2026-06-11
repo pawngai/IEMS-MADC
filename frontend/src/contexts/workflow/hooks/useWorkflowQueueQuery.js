@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Permissions } from "@/platform/permissions";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { getEmployeeCompletionStatus } from "@/shared/lib/utils";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";

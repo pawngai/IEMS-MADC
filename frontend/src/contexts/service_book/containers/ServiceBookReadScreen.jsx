@@ -14,7 +14,7 @@ import { Button } from "@/shared/ui/button";
 import { CardSkeleton, PageHeaderSkeleton, TableSkeleton } from "@/shared/ui/skeletons";
 import { BookOpen, Printer, User, UserRound } from "lucide-react";
 import { toast } from "sonner";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess";
 import {
   generateServiceBookPrintModel,

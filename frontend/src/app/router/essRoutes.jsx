@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { Permissions } from "@/platform/permissions";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { ESS_DOCUMENTS_REQUIRED_PERMISSIONS, hasEssEmployeeIdentity } from "@/contexts/ess/services/essDomainService";
 import { EssDashboardPage as EssDashboard, EssDocumentsPage } from "@/portals/ess";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";

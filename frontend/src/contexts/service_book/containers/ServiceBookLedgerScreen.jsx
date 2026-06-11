@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AlertCircle, BookOpen, X } from "lucide-react";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { mastersAPI } from "@/contexts/masters";
 import { Badge } from "@/shared/ui/badge";

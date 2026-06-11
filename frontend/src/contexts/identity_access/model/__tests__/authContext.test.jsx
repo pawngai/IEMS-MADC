@@ -9,7 +9,7 @@ const mockLogout = vi.fn();
 const mockRefresh = vi.fn();
 const mockClearTokens = vi.fn();
 
-vi.mock("@/contexts/identity/api/authApi", () => ({
+vi.mock("@/contexts/identity_access/api/authApi", () => ({
   __esModule: true,
   authAPI: {
     getMe: (...args) => mockGetMe(...args),
@@ -20,7 +20,7 @@ vi.mock("@/contexts/identity/api/authApi", () => ({
   },
 }));
 
-vi.mock("@/contexts/identity/model/rbac", () => ({
+vi.mock("@/contexts/identity_access/model/rbac", () => ({
   __esModule: true,
   Permissions: {},
   Authorities: {},
@@ -35,7 +35,7 @@ vi.mock("@/contexts/access_control/services/authorizationService", () => ({
   resolveUserPermissions: () => new Set(),
 }));
 
-vi.mock("@/contexts/identity/model/authorityMeta", () => ({
+vi.mock("@/contexts/identity_access/model/authorityMeta", () => ({
   __esModule: true,
   AUTHORITY_DISPLAY_NAMES: {},
   AUTHORITY_PRIORITY: ["SYSTEM_ADMIN", "GLOBAL_DATA_ENTRY", "DEPT_DATA_ENTRY", "EMPLOYEE"],
@@ -63,7 +63,7 @@ vi.mock("@/platform/api/httpClient", () => ({
   },
 }));
 
-import { AuthProvider, useAuth } from "@/contexts/identity/model/authContext";
+import { AuthProvider, useAuth } from "@/contexts/identity_access/model/authContext";
 
 const AuthStateProbe = () => {
   const { user, loading } = useAuth();

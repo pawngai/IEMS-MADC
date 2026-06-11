@@ -18,12 +18,12 @@ jest.mock('sonner', () => ({
 
 const mockUseAuth = jest.fn();
 
-jest.mock('@/contexts/identity/model/authContext', () => ({
+jest.mock('@/contexts/identity_access/model/authContext', () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock('@/contexts/identity/model/rbac', () => ({
+jest.mock('@/contexts/identity_access/model/rbac', () => ({
   __esModule: true,
   Permissions: {
     LEAVE_APPLY_OWN: 'LEAVE_APPLY_OWN',

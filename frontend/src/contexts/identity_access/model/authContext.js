@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { authAPI } from '@/contexts/identity/api/authApi';
+import { authAPI } from '@/contexts/identity_access/api/authApi';
 import { getToken, getUser, setTokens, clearTokens } from "@/platform/api/httpClient";
 
 const AuthContext = createContext(null);

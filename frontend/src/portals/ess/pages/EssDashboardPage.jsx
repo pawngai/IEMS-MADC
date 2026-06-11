@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import Layout from "@/app/layout/Layout";
 import { ESS } from "@/shared/lib/routes";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess";
 import { leaveAPI } from "@/contexts/leave";

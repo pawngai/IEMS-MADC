@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
 import EmployeeProfile from "@/contexts/employee_profile/components/EmployeeProfileSummary";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import {
   buildIdentityEditPath,

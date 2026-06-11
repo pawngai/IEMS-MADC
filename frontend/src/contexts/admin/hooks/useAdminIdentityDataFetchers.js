@@ -1,5 +1,5 @@
 import { useCallback } from "react";
-import { userManagementAPI } from "@/contexts/identity";
+import { userManagementAPI } from "@/contexts/identity_access";
 import { normalizeAuthorityList } from "@/contexts/admin/hooks/authorityNormalization";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/shared/lib/utils";

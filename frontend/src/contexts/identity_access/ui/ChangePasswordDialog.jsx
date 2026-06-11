@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { authAPI } from "@/contexts/identity/api/authApi";
+import { authAPI } from "@/contexts/identity_access/api/authApi";
 import { getApiErrorMessage } from "@/shared/lib/utils";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";

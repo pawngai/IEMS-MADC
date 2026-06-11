@@ -61,21 +61,20 @@ There is no standalone `backend/contexts/service_events` context. Current servic
 | employee_profile | `frontend/src/contexts/employee_profile/` | Legacy source of truth; pending migration into `employee_master` |
 | ess | `frontend/src/contexts/ess/` | |
 | forms | `frontend/src/contexts/forms/` | |
-| identity | `frontend/src/contexts/identity/` | Legacy source of truth; pending migration into `identity_access` |
-| identity_access | `frontend/src/contexts/identity_access/` | Facade (`export * from "@/contexts/identity"`) plus permission/portal selectors |
+| identity_access | `frontend/src/contexts/identity_access/` | Owns auth/session, RBAC, and permission/portal selectors (legacy `identity` context retired) |
 | leave | `frontend/src/contexts/leave/` | |
-| leave_attendance | `frontend/src/contexts/leave_attendance/` | Scaffold/stub for later consolidation |
+| leave_attendance | `frontend/src/contexts/leave_attendance/` | Forwarding contract boundary over `leave` |
 | masters | `frontend/src/contexts/masters/` | |
 | notifications | `frontend/src/contexts/notifications/` | |
-| organization_master | `frontend/src/contexts/organization_master/` | Scaffold/stub for later consolidation |
+| organization_master | `frontend/src/contexts/organization_master/` | Forwarding contract boundary |
 | pay | `frontend/src/contexts/pay/` | |
-| pay_benefits | `frontend/src/contexts/pay_benefits/` | Scaffold/stub for later consolidation |
+| pay_benefits | `frontend/src/contexts/pay_benefits/` | Forwarding contract boundary over `pay` |
 | reporting_analytics | `frontend/src/contexts/reporting_analytics/` | |
 | seniority | `frontend/src/contexts/seniority/` | |
 | service_book | `frontend/src/contexts/service_book/` | |
 | workflow | `frontend/src/contexts/workflow/` | |
 
-The frontend identity/employee consolidation trails the backend. `identity_access` and `employee_master` exist as thin facades, but the real implementations remain in the legacy `identity`, `employee_identity`, and `employee_profile` contexts, which are still the active import targets. Retiring those legacy contexts is a pending phase.
+The frontend identity consolidation is complete: the `identity` context has been retired and its implementation relocated into `identity_access`, which is now the source of truth and sole import target. The employee consolidation still trails — `employee_master` is a thin facade while the real implementations remain in the legacy `employee_identity` and `employee_profile` contexts, which are still the active import targets. Retiring those two legacy contexts is the remaining pending phase.
 
 There is no standalone `frontend/src/contexts/service_events` context. Service record UI lives under `frontend/src/contexts/service_book/records`.
 
@@ -147,6 +146,6 @@ platform layer references context-owned event types.
 ## Remaining Known Issues
 
 1. Some historical reference docs may still use `service_events` as terminology for service-history lifecycle events. That should not be read as a standalone bounded context.
-2. The identity/employee consolidation is partially complete and asymmetric across layers. The backend has fully merged `identity`/`rbac` into `identity_access` and relocated `employee_identity`/`employee_profile` into `employee_master`, removing the legacy roots. The frontend still ships those legacy contexts as the active source of truth, with `identity_access`/`employee_master` present only as facades. Retiring the legacy frontend contexts is a pending phase.
-3. The backend `leave_attendance`, `pay_benefits`, and `reporting_analytics` contexts are scaffolds for a later consolidation phase and are not wired into the runtime router. The `leave`, `pay`, and `reporting` contexts remain live.
+2. The employee consolidation is still asymmetric across layers. Both layers have merged identity (`identity_access`) and relocated its implementation. For employee data, the backend has relocated `employee_identity`/`employee_profile` into `employee_master`, but the frontend still ships those two legacy contexts as the active source of truth, with `employee_master` present only as a facade. Retiring the legacy frontend `employee_identity`/`employee_profile` contexts is the remaining pending phase.
+3. The backend `leave_attendance`, `pay_benefits`, and `reporting_analytics` contexts expose forwarding contract boundaries over `leave`/`pay`/`reporting` and are not wired into the runtime router. `leave_attendance.contracts` is already consumed by several contexts as a boundary; `pay_benefits`/`reporting_analytics` forward but have no consumers yet. The `leave`, `pay`, and `reporting` contexts remain the live runtime.
 4. Compatibility route redirects (`/service-events/*` -> `/service-book/records`) remain in the runtime for older clients. Callers should prefer canonical Service Book Records routes. Legacy event-name strings (`ServiceEventCreated`, `ServiceEventProposed`, `ServiceEventApproved`) have been retired from the event contract registry.

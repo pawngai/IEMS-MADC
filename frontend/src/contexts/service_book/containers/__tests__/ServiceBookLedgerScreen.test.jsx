@@ -8,9 +8,13 @@ const mockUseAuth = jest.fn();
 const mockUseServiceBookProjection = jest.fn();
 const mockLedgerShell = jest.fn(() => <div data-testid="service-book-ledger-shell" />);
 
-jest.mock("@/contexts/identity", () => ({
+jest.mock("@/contexts/identity_access", () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
+  usePermissions: () => {
+    const auth = mockUseAuth();
+    return { can: auth.can, Permissions: auth.Permissions };
+  },
 }));
 
 jest.mock("@/contexts/masters", () => ({

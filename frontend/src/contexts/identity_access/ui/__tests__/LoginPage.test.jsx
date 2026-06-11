@@ -2,7 +2,7 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import LoginPage from "@/contexts/identity/ui/LoginPage";
+import LoginPage from "@/contexts/identity_access/ui/LoginPage";
 
 const mockNavigate = vi.fn();
 const mockLogin = vi.fn();
@@ -19,7 +19,7 @@ vi.mock("sonner", () => ({
   },
 }));
 
-vi.mock("@/contexts/identity/model/authContext", () => ({
+vi.mock("@/contexts/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));

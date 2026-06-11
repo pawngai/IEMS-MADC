@@ -122,7 +122,7 @@ jest.mock("@/contexts/employee_identity/api/employeeIdentityApi", () => ({
   },
 }));
 
-jest.mock("@/contexts/identity/api/userManagementApi", () => ({
+jest.mock("@/contexts/identity_access/api/userManagementApi", () => ({
   __esModule: true,
   userManagementAPI: {
     getEmployees: (...args) => mockGetEmployees(...args),
@@ -130,7 +130,7 @@ jest.mock("@/contexts/identity/api/userManagementApi", () => ({
   },
 }));
 
-jest.mock("@/contexts/identity/model/authContext", () => ({
+jest.mock("@/contexts/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => ({
     can: mockCan,

@@ -42,6 +42,21 @@ def test_no_committed_runtime_logs() -> None:
     )
 
 
+def test_no_committed_python_cache_artifacts() -> None:
+    files = _tracked_files()
+    violations = [
+        path
+        for path in files
+        if "/__pycache__/" in f"/{path}"
+        or path.endswith((".pyc", ".pyo"))
+        or "/.pytest_cache/" in f"/{path}"
+    ]
+    assert not violations, (
+        "Generated Python cache artifacts must not be committed:\n"
+        + "\n".join(sorted(violations))
+    )
+
+
 def test_no_committed_test_reports_or_uploads() -> None:
     files = _tracked_files()
     forbidden_prefixes = ("test_reports/", "uploads/")

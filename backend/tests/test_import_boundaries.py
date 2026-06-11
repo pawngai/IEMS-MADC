@@ -24,8 +24,13 @@ ALLOWED_DYNAMIC_IMPORT_FILES = {
 }
 
 TRANSITION_ADAPTER_CONTRACT_FILES = {
+    "contexts/leave_attendance/api/router.py",
+    "contexts/organization_master/api/admin_establishment_router.py",
+    "contexts/organization_master/api/router.py",
     "contexts/organization_master/contracts/department_directory.py",
     "contexts/organization_master/contracts/establishment.py",
+    "contexts/pay_benefits/api/router.py",
+    "contexts/reporting_analytics/api/router.py",
     "contexts/reporting_analytics/contracts/analytics_queries.py",
 }
 

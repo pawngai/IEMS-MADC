@@ -17,6 +17,12 @@ const NON_WRAPPER_LAYER_PREFIXES = [
 ];
 const API_RESTRICTED_LAYER_PREFIXES = ["app/", "hooks/", "shared/"];
 const FEATURE_WRAPPER_ALLOWLIST_PREFIXES = ["app/router/"];
+const TRANSITION_CONTEXT_WRAPPER_FILES = new Set([
+  "leave_attendance/index.js",
+  "organization_master/index.js",
+  "pay_benefits/index.js",
+  "reporting_analytics/index.js",
+]);
 const SPLIT_FRONTEND_SHELL_MAX_LINES = 1200;
 const SPLIT_FRONTEND_SHELLS = [
   "contexts/analytics/pages/AnalyticsDashboardPage.jsx",
@@ -82,6 +88,9 @@ describe("Frontend context boundaries", () => {
     for (const filePath of files) {
       const source = fs.readFileSync(filePath, "utf8");
       const relative = path.relative(CONTEXTS_ROOT, filePath).replace(/\\/g, "/");
+      if (TRANSITION_CONTEXT_WRAPPER_FILES.has(relative)) {
+        continue;
+      }
       const currentContext = relative.split("/")[0];
 
       const imports = source.match(/from\s+["']@\/contexts\/[^"']+["']/g) || [];

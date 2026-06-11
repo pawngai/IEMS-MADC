@@ -1,14 +1,5 @@
 import { useEffect, useState } from "react";
-import { serviceBookRecordsAPI } from "@/contexts/service_book/records/api/serviceBookRecordsApi";
 import {
-  getFallbackServiceRecordSchema,
-  normalizeServiceRecordSchema,
-  buildAttachDocumentCommand,
-  buildRecordCommand,
-  buildCpcChangeFixationCommand,
-} from "@/contexts/service_book/records/model/serviceBookRecordsModel";
-import {
-  AUTO_PAY_FIELDS,
   CPC_PAY_FIXATION_EVENT_DETAIL_EXCLUSIONS,
   CPC_PAY_FIXATION_FITMENT_EXCLUSIONS,
   CPC_PAY_FIXATION_PAY_STRUCTURE_EXCLUSIONS,
@@ -21,24 +12,19 @@ import {
   GRADE_PAY_OPTIONS_BY_PAY_BAND,
   OPTIONAL_EVENT_DETAIL_KEYS_BY_CATEGORY,
   createEmptyCustomDetailRow,
-  getAutoCalculatedPayValue,
   getBusinessRequiredKeys,
   getCurrentPayStructureValue,
   getEffectiveCpcFieldValues,
   getLatestPayContext,
-  getMatchingSelectValue,
   getNextPayCommission,
   getResolvedCpcFieldValue,
-  getSelectOptionLabel,
-  getSelectOptionValue,
   isActuallyRequiredField,
   isPresent,
-  isSystemManagedSourcePayField,
-  pickNonEmptyValues,
-  validateFormState,
 } from "@/contexts/service_book/records/model/recordServiceBookRecordDialogModel";
 import RecordServiceBookRecordDocumentUploadSection from "@/contexts/service_book/records/components/RecordServiceBookRecordDocumentUploadSection";
 import RecordServiceBookRecordEventDetailsSection from "@/contexts/service_book/records/components/RecordServiceBookRecordEventDetailsSection";
+import RecordServiceBookRecordPayCommissionSection from "@/contexts/service_book/records/components/RecordServiceBookRecordPayCommissionSection";
+import { useRecordServiceBookRecordSubmit } from "@/contexts/service_book/records/hooks/useRecordServiceBookRecordSubmit";
 import {
   AuthorityField,
   EventCategorySelect,
@@ -46,11 +32,7 @@ import {
   RecordDialogActions,
   RemarksField,
 } from "@/contexts/service_book/records/components/RecordServiceBookRecordFormControls";
-import {
-  getFieldLabel,
-  getInputPlaceholder,
-  getSelectPlaceholder,
-} from "@/contexts/service_book/records/lib/recordServiceBookRecordDialogUiHelpers";
+import { useRecordServiceBookRecordData } from "@/contexts/service_book/records/hooks/useRecordServiceBookRecordData";
 import {
   Sheet,
   SheetContent,
@@ -58,29 +40,25 @@ import {
   SheetTitle,
   SheetDescription,
 } from "@/shared/ui/sheet";
-import { Button } from "@/shared/ui/button";
-import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
-import { formatDocumentMetadataErrorMessage, getApiErrorMessage } from "@/shared/lib/utils";
-import { toast } from "sonner";
 
 const RecordServiceBookRecordDialog = ({ employeeId, onSuccess, onClose }) => {
-  const [schema, setSchema] = useState(() => getFallbackServiceRecordSchema());
-  const [eventCategory, setEventCategory] = useState(() => getFallbackServiceRecordSchema().canonicalCategoryOptions[0].value);
+  const [eventCategory, setEventCategory] = useState("APPOINTMENT");
   const [selectedFromCpc, setSelectedFromCpc] = useState("");
   const [selectedCpc, setSelectedCpc] = useState("7TH_CPC");
   const [effectiveTo, setEffectiveTo] = useState("");
   const [fieldValues, setFieldValues] = useState({});
   const [customDetailRows, setCustomDetailRows] = useState(() => [createEmptyCustomDetailRow()]);
   const [cpcFieldValues, setCpcFieldValues] = useState({});
-  const [employeeEvents, setEmployeeEvents] = useState([]);
   const [uploadFile, setUploadFile] = useState(null);
   const [uploadDocumentType, setUploadDocumentType] = useState("ORDER");
   const [uploadCategory, setUploadCategory] = useState("");
-  const [saving, setSaving] = useState(false);
-  const [usingFallbackSchema, setUsingFallbackSchema] = useState(false);
   const [fieldErrors, setFieldErrors] = useState(new Set());
   const [customDetailError, setCustomDetailError] = useState("");
+  const { employeeEvents, schema, usingFallbackSchema } = useRecordServiceBookRecordData({
+    employeeId,
+    eventCategory,
+    setEventCategory,
+  });
 
   const canonicalCategoryOptions = schema.canonicalCategoryOptions || [];
   const selectedPartCode = schema.categoryToPartCode?.[eventCategory] || null;
@@ -169,57 +147,6 @@ const RecordServiceBookRecordDialog = ({ employeeId, onSuccess, onClose }) => {
     };
   };
 
-  const buildCpcFixationSections = () => {
-    const preRevisedPay = pickNonEmptyValues({
-      pay_scale: currentPayMatchesSelectedFromCpc ? currentPayContext?.payScale : "",
-      pay_band: currentPayMatchesSelectedFromCpc ? currentPayContext?.payBand : "",
-      grade_pay: currentPayMatchesSelectedFromCpc ? currentPayContext?.gradePay : "",
-      pay_level: currentPayMatchesSelectedFromCpc ? currentPayContext?.payLevel : "",
-      pay_cell_index: currentPayMatchesSelectedFromCpc ? currentPayContext?.payCellIndex : "",
-      basic_pay: preRevisedBasicPay,
-    });
-    const fitment = pickNonEmptyValues(
-      Object.fromEntries(cpcFixationFitmentFields.map((key) => [key, getResolvedCpcFieldValue(key, cpcValueContext)]))
-    );
-    const postRevisedPay = pickNonEmptyValues({
-      ...fitment,
-      basic_pay: dynamicPayFixationValue,
-    });
-
-    return {
-      preRevisedPay,
-      fitment,
-      postRevisedPay,
-    };
-  };
-
-  useEffect(() => {
-    let active = true;
-
-    const loadSchema = async () => {
-      try {
-        const response = await serviceBookRecordsAPI.getRecordSchema();
-        const normalizedSchema = normalizeServiceRecordSchema(response?.data);
-        if (!active) return;
-        setSchema(normalizedSchema);
-        setUsingFallbackSchema(false);
-        if (!normalizedSchema.canonicalCategoryOptions.some((item) => item.value === eventCategory)) {
-          setEventCategory(normalizedSchema.canonicalCategoryOptions[0]?.value || eventCategory);
-        }
-      } catch {
-        // Keep local fallback schema.
-        if (active) {
-          setUsingFallbackSchema(true);
-        }
-      }
-    };
-
-    loadSchema();
-    return () => {
-      active = false;
-    };
-  }, []);
-
   useEffect(() => {
     if (!showEffectiveTo && effectiveTo) {
       setEffectiveTo("");
@@ -273,98 +200,6 @@ const RecordServiceBookRecordDialog = ({ employeeId, onSuccess, onClose }) => {
     currentPayContext?.gradePay,
     currentPayMatchesSelectedCpc,
   ]);
-
-  useEffect(() => {
-    let active = true;
-
-    const loadEmployeeEvents = async () => {
-      if (!employeeId) {
-        setEmployeeEvents([]);
-        return;
-      }
-      try {
-        const response = await serviceBookRecordsAPI.getEventStream(employeeId);
-        const data = response?.data || response;
-        if (!active) return;
-        setEmployeeEvents(Array.isArray(data) ? data : data.events || []);
-      } catch {
-        if (active) {
-          setEmployeeEvents([]);
-        }
-      }
-    };
-
-    loadEmployeeEvents();
-    return () => {
-      active = false;
-    };
-  }, [employeeId]);
-
-  const buildPayload = () => {
-    const payload = {};
-
-    if (!isCustomEvent && selectedCpc) {
-      payload.cpc = selectedCpc;
-    }
-
-    if (eventCategory === "CPC_PAY_FIXATION" && selectedFromCpc) {
-      payload.from_cpc = selectedFromCpc;
-    }
-
-    if (isCustomEvent) {
-      customDetailRows.forEach((row) => {
-        const key = String(row.key || "").trim();
-        const value = String(row.value || "").trim();
-        if (!key || !value) {
-          return;
-        }
-        payload[key] = value;
-      });
-    }
-
-    for (const key of eventDetailKeys) {
-      if (key === "order_no" || key === "order_date") {
-        continue;
-      }
-      const value = String(fieldValues[key] || "").trim();
-      if (value) {
-        payload[key] = value;
-      }
-    }
-
-    // CPC-specific pay structure fields
-    for (const key of cpcFields) {
-      const value = getResolvedCpcFieldValue(key, cpcValueContext);
-      if (value) {
-        payload[key] = value;
-      }
-    }
-
-    const optionalKeys = ["order_no", "order_date", "authority", "remarks"];
-    for (const key of optionalKeys) {
-      const value = String(fieldValues[key] || "").trim();
-      if (value) {
-        payload[key] = value;
-      }
-    }
-
-    if (isAppointmentEvent) {
-      const appointmentOrderNo = String(fieldValues.appointment_order_no || "").trim();
-      const appointmentOrderDate = String(fieldValues.appointment_order_date || "").trim();
-      const effectiveDate = String(fieldValues.effective_date || "").trim();
-      if (appointmentOrderNo) {
-        payload.order_no = appointmentOrderNo;
-      }
-      if (appointmentOrderDate) {
-        payload.order_date = appointmentOrderDate;
-      }
-      if (effectiveDate) {
-        payload.effective_date = effectiveDate;
-      }
-    }
-
-    return payload;
-  };
 
   const onFieldChange = (key, value) => {
     setFieldValues((prev) => ({ ...prev, [key]: value }));
@@ -436,6 +271,34 @@ const RecordServiceBookRecordDialog = ({ employeeId, onSuccess, onClose }) => {
     }
   };
 
+  const handleFromCpcChange = (nextFromCpc) => {
+    setSelectedFromCpc(nextFromCpc);
+    const nextToCpc = getNextPayCommission(cpcOptions, nextFromCpc);
+    if (nextToCpc) {
+      setSelectedCpc(nextToCpc);
+      setCpcFieldValues({});
+    }
+    if (fieldErrors.has("from_cpc")) {
+      setFieldErrors((prev) => {
+        const next = new Set(prev);
+        next.delete("from_cpc");
+        return next;
+      });
+    }
+  };
+
+  const handleSelectedCpcChange = (nextCpc, options = {}) => {
+    setSelectedCpc(nextCpc);
+    setCpcFieldValues({});
+    if (options.clearToCpcError && fieldErrors.has("to_cpc")) {
+      setFieldErrors((prev) => {
+        const next = new Set(prev);
+        next.delete("to_cpc");
+        return next;
+      });
+    }
+  };
+
   const getCpcSelectOptions = (key, def, cpcOverride = selectedCpc) => {
     const parentField = GRADE_PAY_PARENT_FIELD[key];
     if (parentField) {
@@ -456,146 +319,37 @@ const RecordServiceBookRecordDialog = ({ employeeId, onSuccess, onClose }) => {
   const dynamicPayFixationValue = eventCategory === "CPC_PAY_FIXATION"
     ? getResolvedCpcFieldValue("to_basic_pay", cpcValueContext)
     : "";
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (isCustomEvent) {
-      const populatedRows = customDetailRows
-        .map((row) => ({
-          key: String(row.key || "").trim(),
-          value: String(row.value || "").trim(),
-        }))
-        .filter((row) => row.key || row.value);
-
-      if (populatedRows.length === 0) {
-        setCustomDetailError("Add at least one custom event detail field.");
-        toast.error("Add at least one custom event detail field.");
-        return;
-      }
-
-      if (populatedRows.some((row) => !row.key || !row.value)) {
-        setCustomDetailError("Complete or remove any partially filled custom event detail rows.");
-        toast.error("Complete or remove any partially filled custom event detail rows.");
-        return;
-      }
-
-      setCustomDetailError("");
-    }
-
-    const validationResult = validateFormState({
-      ...baseValidationContext,
-      businessRequiredKeys,
-      eventCategory,
-      selectedPartCode,
-      eventDetailKeys,
-      fieldValues,
-      cpcFieldValues,
-      selectedCpc,
-      selectedFromCpc,
-      currentPayContext,
-      currentPayMatchesSelectedCpc,
-      currentPayMatchesSelectedFromCpc,
-      preRevisedBasicPay,
-      dynamicPayFixationValue,
-    });
-    setFieldErrors(validationResult.fieldErrors);
-    if (validationResult.message) {
-      toast.error(validationResult.message);
-      return;
-    }
-
-    const payload = isCpcPayFixationEvent ? null : buildPayload();
-    if (!isCpcPayFixationEvent && Object.keys(payload).length === 0) {
-      toast.error("At least one payload field is required");
-      return;
-    }
-
-    setSaving(true);
-    try {
-      const cmd = isCpcPayFixationEvent
-        ? (() => {
-            const { preRevisedPay, fitment, postRevisedPay } = buildCpcFixationSections();
-            return buildCpcChangeFixationCommand({
-              employeeId,
-              partCode: selectedPartCode,
-              effectiveDate: String(fieldValues.effective_date || "").trim(),
-              orderNo: String(fieldValues.order_no || "").trim(),
-              orderDate: String(fieldValues.order_date || "").trim(),
-              fromCpc: selectedFromCpc,
-              toCpc: selectedCpc,
-              preRevisedPay,
-              fitment,
-              postRevisedPay,
-              option: {},
-              remarks: String(fieldValues.remarks || "").trim(),
-            });
-          })()
-        : buildRecordCommand({
-            employeeId,
-            eventType: eventCategory,
-            partCode: selectedPartCode,
-            payload,
-            effectiveFrom: null,
-            effectiveTo: effectiveTo || null,
-          });
-      const recordResponse = await serviceBookRecordsAPI.recordEvent(cmd);
-      const createdEvent = recordResponse?.data || recordResponse || {};
-      const createdEventId = String(createdEvent.service_event_id || "").trim();
-
-      if (uploadFile) {
-        if (!createdEventId) {
-          toast.error("Service Book record created, but document attachment could not start because the new record ID was unavailable.");
-          onSuccess(createdEvent);
-          return;
-        }
-
-        try {
-          const uploadResponse = await serviceBookRecordsAPI.uploadLinkedDocument(uploadFile, {
-            entity_type: "SERVICE_RECORD",
-            entity_id: createdEventId,
-            document_type: uploadDocumentType || undefined,
-            category: uploadCategory || undefined,
-            source_context: "service_book.records.attach",
-          });
-          const uploadData = uploadResponse?.data || {};
-          const uploadedDocumentId = String(uploadData.document_id || uploadData.filename || "").trim();
-          const uploadedDocumentType = String(
-            uploadData?.metadata?.document_type || uploadDocumentType || ""
-          ).trim() || null;
-
-          if (!uploadedDocumentId) {
-            throw new Error("Uploaded document did not return a document ID");
-          }
-
-          await serviceBookRecordsAPI.attachDocument(
-            createdEventId,
-            buildAttachDocumentCommand({
-              serviceEventId: createdEventId,
-              documentId: uploadedDocumentId,
-              documentType: uploadedDocumentType,
-            })
-          );
-        } catch (uploadError) {
-          const metadataMessage = formatDocumentMetadataErrorMessage(uploadError);
-          if (metadataMessage) {
-            toast.error(`${metadataMessage} The Service Book record was recorded successfully.`);
-          } else {
-            toast.error(getApiErrorMessage(uploadError, "Service Book record recorded, but document upload or attachment failed"));
-          }
-          onSuccess(createdEvent);
-          return;
-        }
-      }
-
-      onSuccess(createdEvent);
-    } catch (err) {
-      const msg =
-        err?.response?.data?.detail || err.message || "Failed to record event";
-      toast.error(msg);
-    } finally {
-      setSaving(false);
-    }
-  };
+  const { handleSubmit, saving } = useRecordServiceBookRecordSubmit({
+    baseValidationContext,
+    businessRequiredKeys,
+    cpcFieldValues,
+    cpcFields,
+    cpcFixationFitmentFields,
+    cpcValueContext,
+    currentPayContext,
+    currentPayMatchesSelectedCpc,
+    currentPayMatchesSelectedFromCpc,
+    customDetailRows,
+    dynamicPayFixationValue,
+    effectiveTo,
+    employeeId,
+    eventCategory,
+    eventDetailKeys,
+    fieldValues,
+    isAppointmentEvent,
+    isCpcPayFixationEvent,
+    isCustomEvent,
+    onSuccess,
+    preRevisedBasicPay,
+    selectedCpc,
+    selectedFromCpc,
+    selectedPartCode,
+    setCustomDetailError,
+    setFieldErrors,
+    uploadCategory,
+    uploadDocumentType,
+    uploadFile,
+  });
 
   return (
     <Sheet open onOpenChange={(open) => !open && onClose()}>
@@ -649,327 +403,30 @@ const RecordServiceBookRecordDialog = ({ employeeId, onSuccess, onClose }) => {
             />
           )}
 
-          {!isCustomEvent && (isCpcPayFixationEvent ? (
-            <div className="space-y-3">
-              <p className="text-sm font-semibold">Pay Commission</p>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label htmlFor="fromCpc">{getFieldLabel("From Pay Commission (CPC)", isRequiredField("from_cpc"))}</Label>
-                  <select
-                    id="fromCpc"
-                    className={`flex h-9 w-full rounded-md border ${fieldErrors.has("from_cpc") ? "border-destructive ring-1 ring-destructive" : "border-input"} bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring`}
-                    value={selectedFromCpc}
-                    onChange={(e) => {
-                      const nextFromCpc = e.target.value;
-                      setSelectedFromCpc(nextFromCpc);
-                      const nextToCpc = getNextPayCommission(cpcOptions, nextFromCpc);
-                      if (nextToCpc) {
-                        setSelectedCpc(nextToCpc);
-                        setCpcFieldValues({});
-                      }
-                      if (fieldErrors.has("from_cpc")) {
-                        setFieldErrors((prev) => {
-                          const next = new Set(prev);
-                          next.delete("from_cpc");
-                          return next;
-                        });
-                      }
-                    }}
-                  >
-                    <option value="">Select from pay commission</option>
-                    {fromCpcOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  {fieldErrors.has("from_cpc") && (
-                    <p className="text-xs text-destructive">This field is required.</p>
-                  )}
-                </div>
-                <div className="space-y-1.5">
-                  <Label htmlFor="cpcSelector">{getFieldLabel("To Pay Commission (CPC)", isRequiredField("to_cpc"))}</Label>
-                  <select
-                    id="cpcSelector"
-                    className={`flex h-9 w-full rounded-md border ${fieldErrors.has("to_cpc") ? "border-destructive ring-1 ring-destructive" : "border-input"} bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring`}
-                    value={selectedCpc}
-                    onChange={(e) => {
-                      setSelectedCpc(e.target.value);
-                      setCpcFieldValues({});
-                      if (fieldErrors.has("to_cpc")) {
-                        setFieldErrors((prev) => {
-                          const next = new Set(prev);
-                          next.delete("to_cpc");
-                          return next;
-                        });
-                      }
-                    }}
-                  >
-                    {cpcOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                  {fieldErrors.has("to_cpc") && (
-                    <p className="text-xs text-destructive">This field is required.</p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-sm font-semibold">Pay Commission</p>
-              <div className="space-y-1.5">
-                <Label htmlFor="cpcSelector">Pay Commission (CPC)</Label>
-                <select
-                  id="cpcSelector"
-                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                  value={selectedCpc}
-                  onChange={(e) => {
-                    setSelectedCpc(e.target.value);
-                    setCpcFieldValues({});
-                  }}
-                >
-                  {cpcOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              {cpcFields.length > 0 && (
-                <div className="space-y-3 rounded-md border border-border p-3">
-                  <p className="text-sm font-semibold">Pay Structure · {selectedCpcLabel}</p>
-                  <div className="grid grid-cols-2 gap-2">
-                    {cpcFields.map((key) => {
-                      const def = cpcFieldDefs[key] || {
-                        label: key.replaceAll("_", " "),
-                        type: "text",
-                      };
-                      const hasError = fieldErrors.has(key);
-                      const isRequired = isRequiredField(key);
-                      const isSystemManaged = isSystemManagedSourcePayField(key, cpcValueContext);
-                      return (
-                        <div key={key} className="space-y-1">
-                          <Label htmlFor={`cpc_${key}`} className="text-xs text-muted-foreground">{getFieldLabel(def.label, isRequired)}</Label>
-                          {def.type === "select" ? (
-                            (() => {
-                              const options = getCpcSelectOptions(key, def);
-                                const resolvedValue = getMatchingSelectValue(
-                                  key,
-                                  getResolvedCpcFieldValue(key, cpcValueContext),
-                                  options
-                                );
-                              return (
-                                <select
-                                  id={`cpc_${key}`}
-                                  className={`flex h-9 w-full rounded-md border ${hasError ? "border-destructive ring-1 ring-destructive" : "border-input"} bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring`}
-                                  value={resolvedValue}
-                                  onChange={(e) => onCpcFieldChange(key, e.target.value)}
-                                  disabled={isSystemManaged}
-                                  required={isRequired}
-                                >
-                                  <option value="">{getSelectPlaceholder(def.label)}</option>
-                                  {options.map((opt) => (
-                                    <option key={getSelectOptionValue(opt)} value={getSelectOptionValue(opt)}>
-                                      {getSelectOptionLabel(opt)}
-                                    </option>
-                                  ))}
-                                </select>
-                              );
-                            })()
-                          ) : (
-                            <Input
-                              id={`cpc_${key}`}
-                              type={def.type === "number" ? "number" : "text"}
-                              placeholder={getInputPlaceholder(key, def)}
-                              value={getResolvedCpcFieldValue(key, cpcValueContext)}
-                              onChange={(e) => onCpcFieldChange(key, e.target.value)}
-                              required={isRequired}
-                                readOnly={isSystemManaged || Boolean(getAutoCalculatedPayValue(key, cpcValueContext))}
-                              className={hasError ? "border-destructive ring-1 ring-destructive" : undefined}
-                            />
-                          )}
-                          {isSystemManaged && (
-                            <p className="text-xs text-muted-foreground">Derived automatically from the employee's latest recorded pay structure.</p>
-                          )}
-                          {hasError && (
-                            <p className="text-xs text-destructive">This field is required.</p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-
-          {isCpcPayFixationEvent && (
-            <>
-              <div className="space-y-3 rounded-md border border-border p-3">
-                <p className="text-sm font-semibold">
-                  Pre-Revised Pay{selectedFromCpc ? ` · ${getCpcLabel(selectedFromCpc)}` : ""}
-                </p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  {cpcFixationSourceFields.map((key) => {
-                    const def = cpcFieldDefs[key] || {
-                      label: key.replaceAll("_", " "),
-                      type: "text",
-                    };
-                    const resolvedValue = getResolvedCpcFieldValue(key, cpcValueContext);
-                    const hasError = fieldErrors.has(key);
-                    const options = getCpcSelectOptions(key, def, selectedFromCpc);
-
-                    return (
-                      <div key={`pre_${key}`} className="space-y-1">
-                        <Label htmlFor={`pre_${key}`} className="text-xs text-muted-foreground">
-                          {def.label}
-                        </Label>
-                        {def.type === "select" ? (
-                          <select
-                            id={`pre_${key}`}
-                            className={`flex h-9 w-full rounded-md border ${hasError ? "border-destructive ring-1 ring-destructive" : "border-input"} bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring`}
-                            value={getMatchingSelectValue(key, resolvedValue, options)}
-                            disabled
-                          >
-                            <option value="">{getSelectPlaceholder(def.label)}</option>
-                            {options.map((opt) => (
-                              <option key={getSelectOptionValue(opt)} value={getSelectOptionValue(opt)}>
-                                {getSelectOptionLabel(opt)}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <Input
-                            id={`pre_${key}`}
-                            type={def.type === "number" ? "number" : "text"}
-                            value={resolvedValue}
-                            readOnly
-                            className={hasError ? "border-destructive ring-1 ring-destructive" : undefined}
-                          />
-                        )}
-                      </div>
-                    );
-                  })}
-                  <div className="space-y-1">
-                    <Label htmlFor="cpc_from_basic_pay" className="text-xs text-muted-foreground">
-                      {getFieldLabel("From Basic Pay", isRequiredField("from_basic_pay"))}
-                    </Label>
-                    <Input
-                      id="cpc_from_basic_pay"
-                      type="number"
-                      placeholder="Derived from the latest recorded basic pay"
-                      value={preRevisedBasicPay}
-                      readOnly
-                      required={isRequiredField("from_basic_pay")}
-                      className={fieldErrors.has("from_basic_pay") ? "border-destructive ring-1 ring-destructive" : undefined}
-                    />
-                    <p className="text-xs text-muted-foreground">Derived automatically from the employee's latest recorded pay structure.</p>
-                    {fieldErrors.has("from_basic_pay") && (
-                      <p className="text-xs text-destructive">This field is required.</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-3 rounded-md border border-border p-3">
-                <p className="text-sm font-semibold">Fitment · {selectedCpcLabel}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {cpcFixationFitmentFields.map((key) => {
-                    const def = cpcFieldDefs[key] || {
-                      label: key.replaceAll("_", " "),
-                      type: "text",
-                    };
-                    const hasError = fieldErrors.has(key);
-                    const isRequired = isRequiredField(key);
-                    return (
-                      <div key={key} className="space-y-1">
-                        <Label htmlFor={`cpc_${key}`} className="text-xs text-muted-foreground">{getFieldLabel(def.label, isRequired)}</Label>
-                        {def.type === "select" ? (
-                          (() => {
-                            const options = getCpcSelectOptions(key, def);
-                            return (
-                              <select
-                                id={`cpc_${key}`}
-                                className={`flex h-9 w-full rounded-md border ${hasError ? "border-destructive ring-1 ring-destructive" : "border-input"} bg-background px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring`}
-                                value={cpcFieldValues[key] || ""}
-                                onChange={(e) => onCpcFieldChange(key, e.target.value)}
-                                required={isRequired}
-                              >
-                                <option value="">{getSelectPlaceholder(def.label)}</option>
-                                {options.map((opt) => (
-                                  <option key={getSelectOptionValue(opt)} value={getSelectOptionValue(opt)}>
-                                    {getSelectOptionLabel(opt)}
-                                  </option>
-                                ))}
-                              </select>
-                            );
-                          })()
-                        ) : (
-                          <Input
-                            id={`cpc_${key}`}
-                            type={def.type === "number" ? "number" : "text"}
-                            placeholder={getInputPlaceholder(key, def)}
-                            value={getResolvedCpcFieldValue(key, cpcValueContext)}
-                            onChange={(e) => onCpcFieldChange(key, e.target.value)}
-                            required={isRequired}
-                            className={hasError ? "border-destructive ring-1 ring-destructive" : undefined}
-                          />
-                        )}
-                        {hasError && (
-                          <p className="text-xs text-destructive">This field is required.</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="space-y-3 rounded-md border border-border p-3">
-                <p className="text-sm font-semibold">Post-Revised Pay · {selectedCpcLabel}</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {cpcFixationFitmentFields.map((key) => {
-                    const def = cpcFieldDefs[key] || {
-                      label: key.replaceAll("_", " "),
-                      type: "text",
-                    };
-                    return (
-                      <div key={`post_${key}`} className="space-y-1">
-                        <Label htmlFor={`post_${key}`} className="text-xs text-muted-foreground">{def.label}</Label>
-                        <Input
-                          id={`post_${key}`}
-                          type={def.type === "number" ? "number" : "text"}
-                          value={cpcFieldValues[key] || ""}
-                          readOnly
-                        />
-                      </div>
-                    );
-                  })}
-                  <div className="space-y-1 sm:col-span-2">
-                    <Label htmlFor="dynamicPayFixation" className="text-xs text-muted-foreground">
-                      {getFieldLabel("Basic Pay", isRequiredField("to_basic_pay"))}
-                    </Label>
-                    <Input
-                      id="dynamicPayFixation"
-                      value={dynamicPayFixationValue}
-                      placeholder="Calculated automatically from the fitment values"
-                      readOnly
-                      required={isRequiredField("to_basic_pay")}
-                      className={fieldErrors.has("to_basic_pay") ? "border-destructive ring-1 ring-destructive" : undefined}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      The post-revised basic pay is calculated automatically from the fitment values.
-                    </p>
-                    {fieldErrors.has("to_basic_pay") && (
-                      <p className="text-xs text-destructive">This field is required.</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
+          <RecordServiceBookRecordPayCommissionSection
+            cpcFieldDefs={cpcFieldDefs}
+            cpcFields={cpcFields}
+            cpcFieldValues={cpcFieldValues}
+            cpcFixationFitmentFields={cpcFixationFitmentFields}
+            cpcFixationSourceFields={cpcFixationSourceFields}
+            cpcOptions={cpcOptions}
+            cpcValueContext={cpcValueContext}
+            dynamicPayFixationValue={dynamicPayFixationValue}
+            fieldErrors={fieldErrors}
+            fromCpcOptions={fromCpcOptions}
+            getCpcLabel={getCpcLabel}
+            getCpcSelectOptions={getCpcSelectOptions}
+            isCpcPayFixationEvent={isCpcPayFixationEvent}
+            isCustomEvent={isCustomEvent}
+            isRequiredField={isRequiredField}
+            onCpcFieldChange={onCpcFieldChange}
+            onFromCpcChange={handleFromCpcChange}
+            onSelectedCpcChange={handleSelectedCpcChange}
+            preRevisedBasicPay={preRevisedBasicPay}
+            selectedCpc={selectedCpc}
+            selectedCpcLabel={selectedCpcLabel}
+            selectedFromCpc={selectedFromCpc}
+          />
 
           <RemarksField
             value={fieldValues.remarks}

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.leave.api.router import leave_router
+from contexts.leave_attendance.api.router import leave_router
 from fastapi import APIRouter
 
 

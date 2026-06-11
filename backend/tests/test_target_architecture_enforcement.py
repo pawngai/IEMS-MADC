@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import ast
 import os
+import re
 from pathlib import Path
 
 
@@ -79,6 +80,28 @@ REQUIRED_SHARED_KERNEL_SUBPACKAGES = {
 }
 
 ALLOWED_TRANSITION_SHARED_KERNEL_SUBPACKAGES: set[str] = set()
+
+TRANSITION_WRAPPER_FILES = {
+    "backend/contexts/leave_attendance/api/router.py",
+    "backend/contexts/leave_attendance/contracts/dto.py",
+    "backend/contexts/leave_attendance/contracts/leave_commands.py",
+    "backend/contexts/leave_attendance/contracts/leave_directory.py",
+    "backend/contexts/leave_attendance/contracts/ports.py",
+    "backend/contexts/pay_benefits/api/router.py",
+    "backend/contexts/pay_benefits/contracts/dto.py",
+    "backend/contexts/pay_benefits/contracts/pay_operations.py",
+    "backend/contexts/pay_benefits/contracts/ports.py",
+    "backend/contexts/reporting_analytics/api/router.py",
+    "backend/contexts/reporting_analytics/contracts/analytics_queries.py",
+    "backend/contexts/organization_master/api/admin_establishment_router.py",
+    "backend/contexts/organization_master/api/router.py",
+    "backend/contexts/organization_master/contracts/department_directory.py",
+    "backend/contexts/organization_master/contracts/establishment.py",
+    "frontend/src/contexts/leave_attendance/index.js",
+    "frontend/src/contexts/pay_benefits/index.js",
+    "frontend/src/contexts/reporting_analytics/index.js",
+    "frontend/src/contexts/organization_master/index.js",
+}
 
 ARCH_ENFORCEMENT_MODE = os.getenv("ARCH_ENFORCEMENT_MODE", "staged").strip().lower()
 
@@ -347,5 +370,72 @@ def test_no_backend_dot_imports_in_production_code() -> None:
                 violations.append(f"{rel.as_posix()}: imports {imp}")
     assert not violations, (
         "'backend.*' imports are only allowed in scripts/ and tests/:\n"
+        + "\n".join(sorted(violations))
+    )
+
+
+def test_transition_wrappers_are_explicitly_marked() -> None:
+    repo_root = BACKEND_ROOT.parent
+    violations: list[str] = []
+    for rel in sorted(TRANSITION_WRAPPER_FILES):
+        path = repo_root / rel
+        if not path.exists():
+            violations.append(f"{rel}: missing")
+            continue
+        text = path.read_text(encoding="utf-8")
+        if "TODO(context-migration)" not in text:
+            violations.append(f"{rel}: missing TODO(context-migration)")
+
+    assert not violations, (
+        "Transition compatibility wrappers must be explicit and temporary:\n"
+        + "\n".join(violations)
+    )
+
+
+def test_backend_router_registration_uses_canonical_contexts() -> None:
+    registration_root = BACKEND_ROOT / "app" / "bootstrap" / "registrations"
+    forbidden_modules = {
+        "contexts.department.api",
+        "contexts.leave.api",
+        "contexts.pay.api",
+        "contexts.reporting.api",
+    }
+    violations: list[str] = []
+    for py_file in _iter_py_files(registration_root):
+        rel = py_file.relative_to(BACKEND_ROOT).as_posix()
+        for imp in _imports(py_file):
+            if imp in forbidden_modules or any(
+                imp.startswith(f"{module}.") for module in forbidden_modules
+            ):
+                violations.append(f"{rel}: imports {imp}")
+
+    assert not violations, (
+        "Backend router registration must use canonical context entrypoints:\n"
+        + "\n".join(sorted(violations))
+    )
+
+
+def test_frontend_app_and_portals_use_canonical_context_imports() -> None:
+    frontend_root = BACKEND_ROOT.parent / "frontend"
+    scan_roots = [
+        frontend_root / "src" / "app",
+        frontend_root / "src" / "portals",
+    ]
+    forbidden = re.compile(r'@/contexts/(leave|pay|analytics|reporting|department|masters)(?:/|")')
+    violations: list[str] = []
+    for root in scan_roots:
+        for file_path in root.rglob("*"):
+            if not file_path.is_file() or file_path.suffix not in {".js", ".jsx", ".ts", ".tsx"}:
+                continue
+            if "__tests__" in file_path.parts:
+                continue
+            text = file_path.read_text(encoding="utf-8")
+            for lineno, line in enumerate(text.splitlines(), 1):
+                if forbidden.search(line):
+                    rel = file_path.relative_to(frontend_root).as_posix()
+                    violations.append(f"{rel}:{lineno}: {line.strip()}")
+
+    assert not violations, (
+        "Frontend app/portal composition must import canonical context entrypoints:\n"
         + "\n".join(sorted(violations))
     )

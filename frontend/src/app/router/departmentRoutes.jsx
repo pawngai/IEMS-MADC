@@ -1,4 +1,3 @@
-import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import {
   DEPARTMENT_IDENTITY_DATA_ENTRY_AUTHORITIES,
@@ -6,15 +5,16 @@ import {
 } from "@/platform/permissions";
 import { Permissions } from "@/platform/permissions";
 import { ProtectedRoute } from "@/app/router/guards";
-
-const DeptDashboard = lazy(() => import("@/contexts/department/pages/DeptDashboardPage"));
-const DeptDirectoryPage = lazy(() => import("@/contexts/department/pages/DeptDirectoryPage"));
-const DeptPendingWorkPage = lazy(() => import("@/contexts/department/pages/DeptPendingWorkPage"));
-const DeptLeavePage = lazy(() => import("@/contexts/department/pages/DeptLeavePage"));
-const DeptSanctionedStrengthPage = lazy(() => import("@/contexts/department/pages/DeptSanctionedStrengthPage"));
-const DepartmentEmployeeFile = lazy(() => import("@/contexts/department/pages/DepartmentEmployeeFilePage"));
-const DepartmentIdentityEditorPage = lazy(() => import("@/contexts/department/pages/DepartmentIdentityEditorPage"));
-const DepartmentProfileEditorPage = lazy(() => import("@/contexts/department/pages/DepartmentProfileEditorPage"));
+import {
+  DepartmentEmployeeFilePage as DepartmentEmployeeFile,
+  DepartmentIdentityEditorPage,
+  DepartmentProfileEditorPage,
+  DeptDashboardPage as DeptDashboard,
+  DeptDirectoryPage,
+  DeptLeavePage,
+  DeptPendingWorkPage,
+  DeptSanctionedStrengthPage,
+} from "@/contexts/organization_master";
 
 const IDENTITY_EDITOR_PERMISSIONS = [
   Permissions.IDENTITY_READ_ALL,

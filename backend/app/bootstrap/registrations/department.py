@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from contexts.department.api.router import department_portal_router
+from contexts.organization_master.api.router import department_portal_router
 
 
 def register(api_router: APIRouter) -> None:

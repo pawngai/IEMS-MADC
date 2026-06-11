@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.reporting.api.router import reporting_router
+from contexts.reporting_analytics.api.router import reporting_router
 from fastapi import APIRouter
 
 

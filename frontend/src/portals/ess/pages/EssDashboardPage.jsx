@@ -6,7 +6,7 @@ import { ESS } from "@/shared/lib/routes";
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { essAPI } from "@/contexts/ess";
-import { leaveAPI } from "@/contexts/leave";
+import { leaveAPI } from "@/contexts/leave_attendance";
 import {
   assertEssPortalSession,
   assertEssSelfScope,

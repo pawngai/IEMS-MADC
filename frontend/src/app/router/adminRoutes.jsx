@@ -1,13 +1,11 @@
-import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { Permissions } from "@/platform/permissions";
 import { ProtectedRoute } from "@/app/router/guards";
-
-const SystemAdminConsole = lazy(() => import("@/contexts/admin/pages/SystemAdminConsolePage"));
-const SeniorityPage = lazy(() => import("@/contexts/seniority/pages/SeniorityPage"));
-const AuditorDashboard = lazy(() => import("@/contexts/audit/pages/AuditorDashboardPage"));
-const LeaveDashboard = lazy(() => import("@/contexts/leave/pages/LeaveDashboardPage"));
-const AnalyticsDashboard = lazy(() => import("@/contexts/analytics/pages/AnalyticsDashboardPage"));
+import { LeaveDashboardPage as LeaveDashboard } from "@/contexts/leave_attendance";
+import { AnalyticsDashboardPage as AnalyticsDashboard } from "@/contexts/reporting_analytics";
+import { SystemAdminConsolePage as SystemAdminConsole } from "@/contexts/admin";
+import { SeniorityPage } from "@/contexts/seniority";
+import { AuditorDashboardPage as AuditorDashboard } from "@/contexts/audit";
 
 export const AdminRoutes = () => (
   <>

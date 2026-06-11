@@ -7,10 +7,10 @@ import { EssDashboardPage as EssDashboard, EssDocumentsPage } from "@/portals/es
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { ProtectedRoute } from "@/app/router/guards";
 import { PageLoader } from "@/app/router/routeLoading";
+import { EssLeavePage } from "@/contexts/leave_attendance";
 
 const EssProfilePage = lazy(() => import("@/contexts/employee_master/pages/EmployeeProfilePage"));
 const EssServiceBookPage = lazy(() => import("@/contexts/service_book/pages/EssServiceBookPage"));
-const EssLeavePage = lazy(() => import("@/contexts/leave/pages/EssLeavePage"));
 const EssNotificationsPage = lazy(() => import("@/contexts/notifications/pages/EssNotificationsPage"));
 const EssChangeRequestsPage = lazy(() => import("@/contexts/change_requests/pages/EssChangeRequestsPage"));
 

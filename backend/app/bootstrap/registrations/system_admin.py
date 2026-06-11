@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 
-from contexts.department.api.admin_establishment_router import department_admin_establishment_router
+from contexts.organization_master.api.admin_establishment_router import department_admin_establishment_router
 from contexts.system_admin.department.api.management_router import dept_management_router
 from contexts.system_admin.api.router import system_admin_router
 

@@ -1,1 +1,1 @@
-export { DeptDashboardPage, DeptDirectoryPage, DeptPendingWorkPage } from "@/contexts/department";
+export { DeptDashboardPage, DeptDirectoryPage, DeptPendingWorkPage } from "@/contexts/organization_master";

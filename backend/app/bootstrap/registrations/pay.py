@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.pay.api.router import pay_router
+from contexts.pay_benefits.api.router import pay_router
 from fastapi import APIRouter
 
 

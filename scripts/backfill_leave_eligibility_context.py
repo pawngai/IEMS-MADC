@@ -14,7 +14,7 @@ BACKEND_ROOT = ROOT / "backend"
 if str(BACKEND_ROOT) not in sys.path:
     sys.path.insert(0, str(BACKEND_ROOT))
 
-from contexts.leave.domain.eligibility_backfill import build_leave_eligibility_backfill_update
+from contexts.leave_attendance.domain.eligibility_backfill import build_leave_eligibility_backfill_update
 
 
 async def run_backfill(*, mongo_uri: str, db_name: str, limit: int | None = None) -> None:

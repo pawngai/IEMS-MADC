@@ -1,1 +1,0 @@
-"""Department bounded context."""

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.department.api import router as department_router
+from contexts.organization_master.api import router as department_router
 
 
 @pytest.mark.asyncio

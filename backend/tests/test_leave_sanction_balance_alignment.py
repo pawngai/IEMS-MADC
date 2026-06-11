@@ -8,9 +8,9 @@ from fastapi import HTTPException
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.leave.contracts.dto import LeaveActionDTO
-from contexts.leave.infrastructure import gateway as leave_gateway
-from contexts.leave.infrastructure.gateway import LeaveMongoGateway, _record_leave_debit
+from contexts.leave_attendance.contracts.dto import LeaveActionDTO
+from contexts.leave_attendance.infrastructure import gateway as leave_gateway
+from contexts.leave_attendance.infrastructure.gateway import LeaveMongoGateway, _record_leave_debit
 
 
 class _FakeDb:

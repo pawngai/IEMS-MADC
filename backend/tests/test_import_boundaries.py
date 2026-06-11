@@ -43,8 +43,8 @@ ALLOWED_WRITE_CONTRACT_MODULES = {
     "contexts/employee_master/profile/contracts/profile_commands.py",
     "contexts/identity_access/identity/contracts/system_config.py",
     "contexts/identity_access/identity/contracts/user_directory.py",
-    "contexts/leave/contracts/leave_commands.py",
-    "contexts/leave/contracts/ports.py",
+    "contexts/leave_attendance/contracts/leave_commands.py",
+    "contexts/leave_attendance/contracts/ports.py",
     "contexts/notifications/contracts/notification_commands.py",
     "contexts/notifications/contracts/publisher.py",
     "contexts/service_book/contracts/servicebook/revisions.py",
@@ -111,27 +111,27 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
     "contexts/employee_master/profile/contracts/profile_commands.py": {
         "contexts.employee_master.identity.contracts.identity_directory",
     },
-    "contexts/department/services/department_portal_service.py": {
+    "contexts/organization_master/services/department_portal_service.py": {
         "contexts.identity_access.identity.contracts.user_directory",
     },
-    "contexts/department/services/directory_service.py": {
+    "contexts/organization_master/services/directory_service.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
         "contexts.employee_master.profile.contracts.workflow_status_utils",
         "contexts.identity_access.identity.contracts.user_directory",
     },
-    "contexts/department/services/portal_common.py": {
+    "contexts/organization_master/services/portal_common.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
         "contexts.identity_access.identity.contracts.user_directory",
         "contexts.identity_access.rbac.application.authorization_service",
     },
-    "contexts/department/services/workload_service.py": {
+    "contexts/organization_master/services/workload_service.py": {
         "contexts.employee_master.profile.contracts.workflow_status_utils",
     },
-    "contexts/department/repository/department_portal_repo.py": {
+    "contexts/organization_master/repository/department_portal_repo.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
         "contexts.employee_master.profile.contracts.workflow_status_utils",
         "contexts.employee_master.identity.contracts.identity_directory",
-        "contexts.leave.contracts.leave_directory",
+        "contexts.leave_attendance.contracts.leave_directory",
         "contexts.audit.contracts.audit_directory",
     },
     "contexts/change_requests/infrastructure/gateway.py": {
@@ -144,7 +144,7 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
     "contexts/change_requests/infrastructure/document_lock.py": {
         "contexts.documents.contracts.document_lock",
     },
-    "contexts/leave/infrastructure/document_lock.py": {
+    "contexts/leave_attendance/infrastructure/document_lock.py": {
         "contexts.documents.contracts.document_lock",
     },
     "contexts/change_requests/application/apply_handler.py": {
@@ -159,7 +159,7 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
     "contexts/employee_profile/application/services/workflow_engine.py": {
         "contexts.employee_master.identity.contracts.events",
     },
-    "contexts/leave/infrastructure/gateway.py": {
+    "contexts/leave_attendance/infrastructure/gateway.py": {
         "contexts.identity_access.rbac.application.authorization_service",
         "contexts.documents.contracts.document_metadata",
         "contexts.identity_access.identity.contracts.user_directory",
@@ -167,20 +167,20 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.identity_access.rbac.policies.operational",
         "contexts.service_book.contracts.servicebook",
     },
-    "contexts/leave/infrastructure/gateway_helpers.py": {
+    "contexts/leave_attendance/infrastructure/gateway_helpers.py": {
         "contexts.documents.contracts.document_metadata",
         "contexts.identity_access.identity.contracts.user_directory",
         "contexts.employee_master.identity.contracts.identity_directory",
         "contexts.identity_access.rbac.application.authorization_service",
         "contexts.service_book.contracts.service_book_directory",
     },
-    "contexts/leave/api/router.py": {
+    "contexts/leave_attendance/api/router.py": {
         "contexts.identity_access.rbac.policies.operational",
     },
-    "contexts/pay/api/router.py": {
+    "contexts/pay_benefits/api/router.py": {
         "contexts.identity_access.rbac.policies.operational",
     },
-    "contexts/pay/infrastructure/gateway.py": {
+    "contexts/pay_benefits/infrastructure/gateway.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
     },
     "contexts/documents/api/router.py": {
@@ -189,7 +189,7 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
     "contexts/documents/application/commands.py": {
         "contexts.employee_master.identity.contracts.identity_directory",
         "contexts.change_requests.contracts.change_request_directory",
-        "contexts.leave.contracts.leave_directory",
+        "contexts.leave_attendance.contracts.leave_directory",
     },
     "contexts/documents/infrastructure/access_control.py": {
         "contexts.identity_access.rbac.policies.operational",
@@ -198,7 +198,7 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.employee_master.profile.contracts.media_directory",
     },
 
-    "contexts/leave/repository/leave_repository.py": {
+    "contexts/leave_attendance/repository/leave_repository.py": {
         "contexts.employee_master.profile.contracts.profile_directory",
     },
 
@@ -226,14 +226,14 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.documents.contracts.document_metadata",
         "contexts.employee_master.profile.contracts.profile_commands",
         "contexts.employee_master.profile.contracts.profile_directory",
-        "contexts.leave.contracts.leave_directory",
+        "contexts.leave_attendance.contracts.leave_directory",
         "contexts.notifications.contracts.notification_commands",
         "contexts.notifications.contracts.notification_directory",
         "contexts.service_book.contracts.service_book_directory",
     },
     "contexts/ess/infrastructure/service.py": {
         "contexts.employee_master.identity.contracts.employee_domain",
-        "contexts.leave.contracts.leave_commands",
+        "contexts.leave_attendance.contracts.leave_commands",
         "contexts.service_book.contracts.servicebook",
     },
     "contexts/system_admin/api/shared.py": {
@@ -246,8 +246,8 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.identity_access.identity.contracts.user_directory",
         "contexts.identity_access.identity.contracts.system_config",
         "contexts.employee_master.profile.contracts.profile_directory",
-        "contexts.leave.contracts.leave_commands",
-        "contexts.leave.contracts.leave_directory",
+        "contexts.leave_attendance.contracts.leave_commands",
+        "contexts.leave_attendance.contracts.leave_directory",
         "contexts.service_book.contracts.service_book_directory",
     },
     "contexts/system_admin/api/audit_helpers.py": {
@@ -276,7 +276,7 @@ ALLOWED_CROSS_CONTEXT_IMPORT_PREFIXES_BY_FILE = {
         "contexts.service_book.records.contracts.service_summary_directory",
     },
     "contexts/service_book/read_side/read_model/projectors/part_vi_leave_projection.py": {
-        "contexts.leave.contracts.leave_directory",
+        "contexts.leave_attendance.contracts.leave_directory",
     },
     "contexts/service_book/read_side/application/projection_rebuilder.py": {
         "contexts.service_book.records.contracts.approved_event_records",
@@ -686,17 +686,13 @@ def test_service_book_profile_derivation_helpers_are_removed() -> None:
 DEPRECATED_FOLDER_BASELINES: dict[str, int] = {
     "contexts/audit": 16,
     "contexts/change_requests": 15,
-    "contexts/department": 15,
     "contexts/documents": 46,
     "contexts/employee_identity": 32,
     "contexts/employee_profile": 71,
     "contexts/ess": 9,
     "contexts/identity": 24,
-    "contexts/leave": 28,
     "contexts/notifications": 11,
-    "contexts/pay": 16,
     "contexts/identity_access/rbac": 14,
-    "contexts/reporting": 6,
     "contexts/seniority": 15,
     "contexts/system_admin": 17,
 }

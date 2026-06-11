@@ -42,7 +42,7 @@ jest.mock("@/contexts/employee_master/components/EmployeeProfileSummary", () => 
   default: () => <div data-testid="employee-profile-summary">summary</div>,
 }));
 
-jest.mock("@/contexts/masters/api/mastersApi", () => ({
+jest.mock("@/contexts/organization_master/api/mastersApi", () => ({
   __esModule: true,
   mastersAPI: {
     getDepartments: (...args) => mockGetDepartments(...args),

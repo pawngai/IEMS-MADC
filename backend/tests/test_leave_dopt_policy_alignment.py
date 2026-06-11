@@ -5,7 +5,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.leave.domain.leave_rules import compute_leave_balances, normalize_leave_type_record
+from contexts.leave_attendance.domain.leave_rules import compute_leave_balances, normalize_leave_type_record
 
 
 def test_compute_leave_balances_uses_lifetime_cap_for_child_care_leave() -> None:

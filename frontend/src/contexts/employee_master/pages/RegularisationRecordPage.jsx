@@ -4,7 +4,7 @@ import { ArrowLeft, CheckCircle2, FileText, Loader2, Upload, X } from "lucide-re
 import Layout from "@/app/layout/Layout";
 import { documentsAPI } from "@/contexts/documents";
 import { employeeProfileApi } from "@/contexts/employee_master";
-import { mastersAPI } from "@/contexts/masters";
+import { mastersAPI } from "@/contexts/organization_master";
 import { serviceRecordsApi } from "@/contexts/service_book";
 import { buildEmployeeFilePath, getEmployeeEditorScope } from "@/shared/lib/employeeEditorRoutes";
 import { appendNoticeToPath } from "@/shared/lib/routeNotice";

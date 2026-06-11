@@ -65,16 +65,10 @@ Guards already in place:
 - `frontend/src/app/router/__tests__/routesImportGuard.test.js`.
 
 ### New-context frontend shims (re-export façades)
-| Shim | Re-exports |
-|---|---|
-| contexts/employee_master/index.js | employee_identity + employee_profile |
-| contexts/identity_access/index.js | identity + platform/permissions |
-| contexts/leave_attendance/index.js | leave |
-| contexts/pay_benefits/index.js | pay |
-| contexts/organization_master/index.js | department + selected masters APIs |
-| contexts/reporting_analytics/index.js | analytics |
-
-These let external imports adopt the new names before the implementation moves.
+All former shims have been absorbed: `leave_attendance`, `pay_benefits`,
+`organization_master`, and `reporting_analytics` now own their implementations
+directly (the legacy `leave`, `pay`, `department`, `masters`, and `analytics`
+contexts were deleted).
 **Phase rule:** a context may import another only through `@/contexts/<name>`;
 portals only through public `@/contexts/<name>`; `shared`/`platform` never import
 contexts or portals; contexts never import portals.

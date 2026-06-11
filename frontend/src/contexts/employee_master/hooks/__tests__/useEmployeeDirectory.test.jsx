@@ -34,7 +34,7 @@ vi.mock("@/contexts/employee_master", () => ({
   formatDirectoryEnumLabel: (value) => value,
 }));
 
-vi.mock("@/contexts/masters", () => ({
+vi.mock("@/contexts/organization_master", () => ({
   __esModule: true,
   mastersAPI: {
     getDepartments: (...args) => mockGetDepartments(...args),

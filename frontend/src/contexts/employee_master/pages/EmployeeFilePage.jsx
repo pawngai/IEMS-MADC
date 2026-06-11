@@ -11,7 +11,7 @@ import {
 import { readNoticeFromSearch, stripNoticeFromSearch } from "@/shared/lib/routeNotice";
 import { cn, formatServiceBookPartsIncompleteMessage, getApiErrorMessage } from "@/shared/lib/utils";
 import { employeeProfileApi } from "@/contexts/employee_master/api/employeeProfileApi";
-import { mastersAPI } from "@/contexts/masters";
+import { mastersAPI } from "@/contexts/organization_master";
 import { serviceBookAPI } from "@/contexts/service_book";
 import { serviceRecordsApi } from "@/contexts/service_book";
 import { normalizeWorkflowStage } from "@/platform/permissions";

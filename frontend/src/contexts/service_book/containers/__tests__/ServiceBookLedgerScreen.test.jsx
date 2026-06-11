@@ -17,7 +17,7 @@ jest.mock("@/contexts/identity_access", () => ({
   },
 }));
 
-jest.mock("@/contexts/masters", () => ({
+jest.mock("@/contexts/organization_master", () => ({
   __esModule: true,
   mastersAPI: {
     getServiceEventTypes: jest.fn(() => Promise.resolve({ data: [] })),

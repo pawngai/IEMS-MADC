@@ -100,7 +100,7 @@ Flow:
 
 ## Department Context
 
-- `contexts/department`: department-scoped portal API and orchestration for `/department/*` routes.
+- `contexts/organization_master`: department-scoped portal API and orchestration for `/department/*` routes.
 - Owns portal behavior such as dashboard, employee directory/snapshot, pending work, pending leaves, department-scoped employee actions, and the sanctioned-strength establishment aggregate.
 - Department-owned sanctioned strength is persisted in `department_establishments` with append-only change logs in `department_establishment_logs`.
 - Consumes employee/profile/leave behavior through contracts and approved adapters rather than owning employee truth.

@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.leave.application.command_service import LeaveCommandService
-from contexts.pay.application.service import PayApplicationService
+from contexts.leave_attendance.application.command_service import LeaveCommandService
+from contexts.pay_benefits.application.service import PayApplicationService
 from contexts.change_requests.application.service import ChangeRequestApplicationService
 from contexts.employee_master.identity.repository.identity_repository import EmployeeIdentityRepository
 

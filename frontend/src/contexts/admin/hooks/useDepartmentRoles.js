@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { departmentManagementAPI, mastersAPI } from "@/contexts/masters";
+import { departmentManagementAPI, mastersAPI } from "@/contexts/organization_master";
 import { userManagementAPI } from "@/contexts/identity_access";
 import { toast } from "sonner";
 

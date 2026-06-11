@@ -44,7 +44,7 @@ jest.mock("@/contexts/employee_master/api/employeeProfileApi", () => ({
   },
 }));
 
-jest.mock("@/contexts/masters/api/mastersApi", () => ({
+jest.mock("@/contexts/organization_master/api/mastersApi", () => ({
   __esModule: true,
   mastersAPI: {
     getEmploymentTypes: (...args) => mockGetEmploymentTypes(...args),

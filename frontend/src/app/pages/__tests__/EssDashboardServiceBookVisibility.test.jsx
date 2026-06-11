@@ -65,7 +65,7 @@ jest.mock('@/contexts/ess/api/essApi', () => ({
   },
 }));
 
-jest.mock('@/contexts/leave/api/leaveApi', () => ({
+jest.mock('@/contexts/leave_attendance/api/leaveApi', () => ({
   __esModule: true,
   leaveAPI: {
     listMy: (...args) => mockListMyLeaves(...args),

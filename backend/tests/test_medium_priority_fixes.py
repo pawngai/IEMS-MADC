@@ -11,9 +11,9 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 from contexts.change_requests.application.service import ChangeRequestApplicationService
 from contexts.change_requests.infrastructure import gateway as change_request_gateway
 from contexts.change_requests.infrastructure.gateway import ChangeRequestMongoGateway
-from contexts.leave.application.service import LeaveApplicationService
-from contexts.leave.infrastructure import gateway as leave_gateway
-from contexts.leave.infrastructure.gateway import LeaveMongoGateway
+from contexts.leave_attendance.application.service import LeaveApplicationService
+from contexts.leave_attendance.infrastructure import gateway as leave_gateway
+from contexts.leave_attendance.infrastructure.gateway import LeaveMongoGateway
 
 
 class _FakeProfileCursor:

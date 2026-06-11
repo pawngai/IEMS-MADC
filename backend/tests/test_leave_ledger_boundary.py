@@ -8,10 +8,10 @@ BACKEND_ROOT = Path(__file__).resolve().parents[1]
 
 def test_leave_gateway_uses_leave_ledger_collection() -> None:
     source = (
-        BACKEND_ROOT / "contexts" / "leave" / "infrastructure" / "gateway.py"
+        BACKEND_ROOT / "contexts" / "leave_attendance" / "infrastructure" / "gateway.py"
     ).read_text(encoding="utf-8")
     repo_source = (
-        BACKEND_ROOT / "contexts" / "leave" / "repository" / "leave_repository.py"
+        BACKEND_ROOT / "contexts" / "leave_attendance" / "repository" / "leave_repository.py"
     ).read_text(encoding="utf-8")
 
     assert "LEAVE_LEDGER_COLLECTION = \"leave_ledger_entries\"" in source
@@ -20,7 +20,7 @@ def test_leave_gateway_uses_leave_ledger_collection() -> None:
 
 def test_leave_gateway_is_ledger_only_after_cutover() -> None:
     source = (
-        BACKEND_ROOT / "contexts" / "leave" / "repository" / "leave_repository.py"
+        BACKEND_ROOT / "contexts" / "leave_attendance" / "repository" / "leave_repository.py"
     ).read_text(encoding="utf-8")
 
     assert "service_book_part_vi" not in source
@@ -30,7 +30,7 @@ def test_leave_gateway_is_ledger_only_after_cutover() -> None:
 
 def test_leave_gateway_no_legacy_fallback_flag_remains() -> None:
     source = (
-        BACKEND_ROOT / "contexts" / "leave" / "repository" / "leave_repository.py"
+        BACKEND_ROOT / "contexts" / "leave_attendance" / "repository" / "leave_repository.py"
     ).read_text(encoding="utf-8")
 
     assert "allow_legacy_snapshot_fallback" not in source

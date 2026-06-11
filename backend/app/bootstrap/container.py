@@ -6,8 +6,8 @@ from collections.abc import Callable
 from app_platform.event_bus.bus import EventBus
 from app_platform.outbox.dispatcher import OutboxDispatcher
 from app_platform.outbox.repo import OutboxRepository
-from contexts.leave.application.evaluate_leave_request import evaluate_leave_request
-from contexts.leave.domain.leave_request_policy import LeaveFacts
+from contexts.leave_attendance.application.evaluate_leave_request import evaluate_leave_request
+from contexts.leave_attendance.domain.leave_request_policy import LeaveFacts
 
 
 @dataclass(slots=True)

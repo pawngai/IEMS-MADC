@@ -7,9 +7,9 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.pay.application.service import PayApplicationService
-from contexts.pay.contracts.dto import AllowanceChangeCreateDTO, PayRevisionCreateDTO
-from contexts.pay.domain.model import build_pay_snapshot
+from contexts.pay_benefits.application.service import PayApplicationService
+from contexts.pay_benefits.contracts.dto import AllowanceChangeCreateDTO, PayRevisionCreateDTO
+from contexts.pay_benefits.domain.model import build_pay_snapshot
 
 
 class _FakeOutboxRepo:

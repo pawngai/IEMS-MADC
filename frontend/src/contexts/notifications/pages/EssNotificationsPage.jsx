@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
 import { ESS } from "@/shared/lib/routes";
 import { essAPI } from "@/contexts/ess";
-import { leaveAPI } from "@/contexts/leave";
+import { leaveAPI } from "@/contexts/leave_attendance";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";

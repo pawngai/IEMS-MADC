@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.leave.services.leave_service import (
+from contexts.leave_attendance.services.leave_service import (
     applyLeaveRequest,
     approveLeave,
     updateLeaveBalance,
 )
-from contexts.pay.services.pay_service import applyPayChange, computePayRecord
-from contexts.pay.contracts.dto import AllowanceChangeCreateDTO, PayRevisionCreateDTO
+from contexts.pay_benefits.services.pay_service import applyPayChange, computePayRecord
+from contexts.pay_benefits.contracts.dto import AllowanceChangeCreateDTO, PayRevisionCreateDTO
 from contexts.documents.application.commands import validate_document_metadata
 
 

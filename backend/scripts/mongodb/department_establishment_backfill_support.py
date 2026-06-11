@@ -6,7 +6,7 @@ import uuid
 
 from fastapi import HTTPException
 
-from backend.contexts.department.domain.sanctioned_strength import (
+from backend.contexts.organization_master.domain.sanctioned_strength import (
     normalize_sanctioned_strength_rows,
 )
 

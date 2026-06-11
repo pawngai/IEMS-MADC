@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { AlertCircle, BookOpen, X } from "lucide-react";
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
-import { mastersAPI } from "@/contexts/masters";
+import { mastersAPI } from "@/contexts/organization_master";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { CardSkeleton, TableSkeleton } from "@/shared/ui/skeletons";

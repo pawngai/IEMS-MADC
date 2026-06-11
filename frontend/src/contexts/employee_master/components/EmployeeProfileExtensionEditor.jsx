@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/shared/ui/button";
 import { documentsAPI } from "@/contexts/documents";
-import { mastersAPI } from "@/contexts/masters";
+import { mastersAPI } from "@/contexts/organization_master";
 import { employeeProfileApi } from "@/contexts/employee_master/api/employeeProfileApi";
 import { buildPayLevelOptions } from "@/contexts/employee_master/model/profileEditorOptions";
 import { TYPE_SPECIFIC_FIELDS } from "@/contexts/employee_master/model/profileEditorConstants";

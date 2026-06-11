@@ -7,7 +7,7 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.department.repository import department_portal_repo
+from contexts.organization_master.repository import department_portal_repo
 
 
 class _NoDirectDepartmentCollectionAccess:

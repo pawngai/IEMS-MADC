@@ -59,10 +59,10 @@ Backend target structure:
 
 - `backend/contexts/employee_identity/{domain,application,contracts,services,repository,api,schemas}`
 - `backend/contexts/employee_profile/{domain,services,repository,api,schemas,read_model}`
-- `backend/contexts/department/{domain,services,repository,api}`
+- `backend/contexts/organization_master/{domain,services,repository,api}`
 - `backend/contexts/service_book/{domain,application,repository,api,schemas,mappers,read_side,records,opening,parts,projection,queries,verification,corrections,pdf}`
-- `backend/contexts/leave/{domain,services,repository,api,schemas}`
-- `backend/contexts/pay/{domain,services,repository,api}`
+- `backend/contexts/leave_attendance/{domain,services,repository,api,schemas}`
+- `backend/contexts/pay_benefits/{domain,services,repository,api}`
 - `backend/contexts/documents/{domain,application,infrastructure,services,repository,api}`
 - `backend/contexts/audit/{domain,services,repository,api}`
 - `backend/contexts/seniority/{domain,application,api}`
@@ -136,7 +136,7 @@ Business-domain facts and rules are owned by the context they describe:
 
 | Policy | Owning context | Module |
 |--------|----------------|--------|
-| Leave-request approval (CCS leave rules, maternity/paternity/CCL eligibility, balance/spell checks) | `leave` | `contexts.leave.domain.leave_request_policy`, `contexts.leave.application.evaluate_leave_request` |
+| Leave-request approval (CCS leave rules, maternity/paternity/CCL eligibility, balance/spell checks) | `leave` | `contexts.leave_attendance.domain.leave_request_policy`, `contexts.leave_attendance.application.evaluate_leave_request` |
 | Change-request gating | `change_requests` | `contexts.change_requests.domain.change_request_policy`, `contexts.change_requests.application.evaluate_change_request` |
 
 Enforcement: `test_policy_engine_is_platform_primitive_only`,

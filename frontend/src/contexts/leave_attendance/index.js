@@ -1,7 +1,6 @@
-// TODO(context-migration): Move implementation from contexts/leave into
-// contexts/leave_attendance once all legacy imports are migrated.
-export * from "@/contexts/leave";
-export {
-  fetchMyLeaves,
-  fetchPendingLeaveActions,
-} from "@/contexts/leave/model/leaveHomeGateway";
+import { lazy } from "react";
+
+export const LeaveDashboardPage = lazy(() => import("./pages/LeaveDashboardPage"));
+export const EssLeavePage = lazy(() => import("./pages/EssLeavePage"));
+export { leaveAPI } from "./api/leaveApi";
+export { fetchMyLeaves, fetchPendingLeaveActions } from "./model/leaveHomeGateway";

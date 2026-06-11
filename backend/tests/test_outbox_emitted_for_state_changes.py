@@ -7,7 +7,7 @@ from pathlib import Path
 BACKEND_ROOT = Path(__file__).resolve().parents[1]
 TARGET_FILES = [
     BACKEND_ROOT / "contexts" / "change_requests" / "application" / "service.py",
-    BACKEND_ROOT / "contexts" / "leave" / "application" / "service.py",
+    BACKEND_ROOT / "contexts" / "leave_attendance" / "application" / "service.py",
     BACKEND_ROOT / "contexts" / "service_book" / "records" / "application" / "service.py",
 ]
 

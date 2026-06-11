@@ -43,9 +43,9 @@ P1 employee_master → P2 identity_access → P3 portals → P4 renames
 P7 boundary tests → P8 large-file splits → P9 migration report.
 
 ## Open questions for stakeholder (R-16)
-- `frontend/src/contexts/masters` ownership → organization_master?
+- `frontend/src/contexts/organization_master` ownership → organization_master?
 - `frontend/src/contexts/access_control` → identity_access?
 - `frontend/src/contexts/applications` (GlobalPortalDashboard) → portals/admin?
-- `backend/contexts/reporting` vs `analytics`: spec says merge both into
+- `backend/contexts/reporting_analytics` vs `analytics`: spec says merge both into
   reporting_analytics, but backend has only `reporting` (no `analytics` backend
   context). Confirm analytics is frontend-only.

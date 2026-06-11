@@ -65,10 +65,10 @@ describe("Employee editor route config", () => {
     const callerFiles = [
       "src/contexts/employee_master/pages/EmployeeDirectoryPage.jsx",
       "src/contexts/employee_master/pages/EmployeeFilePage.jsx",
-      "src/contexts/department/pages/DepartmentEmployeeFilePage.jsx",
+      "src/contexts/organization_master/pages/DepartmentEmployeeFilePage.jsx",
       "src/contexts/employee_master/pages/EmployeeProfilePage.jsx",
-      "src/contexts/department/pages/DeptDirectoryPage.jsx",
-      "src/contexts/department/pages/DeptDashboardPage.jsx",
+      "src/contexts/organization_master/pages/DeptDirectoryPage.jsx",
+      "src/contexts/organization_master/pages/DeptDashboardPage.jsx",
       "src/contexts/workflow/containers/WorkflowQueueScreen.jsx",
     ];
 
@@ -82,14 +82,14 @@ describe("Employee editor route config", () => {
   test("department employee file page uses department gateway instead of employee profile api", () => {
     const frontendRoot = path.join(__dirname, "..", "..", "..", "..");
     const source = fs.readFileSync(
-      path.join(frontendRoot, "src/contexts/department/pages/DepartmentEmployeeFilePage.jsx"),
+      path.join(frontendRoot, "src/contexts/organization_master/pages/DepartmentEmployeeFilePage.jsx"),
       "utf8"
     );
 
-    expect(source).toContain('from "@/contexts/department/model/departmentProfileGateway"');
+    expect(source).toContain('from "@/contexts/organization_master/model/departmentProfileGateway"');
     expect(source).not.toContain('from "@/contexts/employee_master/api/employeeProfileApi"');
     expect(source).not.toContain("employeeProfileApi.");
-    expect(source).toContain('from "@/contexts/department/components/DepartmentEmployeeProfileSummary"');
+    expect(source).toContain('from "@/contexts/organization_master/components/DepartmentEmployeeProfileSummary"');
     expect(source).not.toContain('from "@/contexts/employee_master/components/EmployeeProfileSummary"');
     expect(source).toContain('buildIdentityEditPath("department", employeeId)');
     expect(source).toContain('buildProfileEditPath("department", employeeId)');

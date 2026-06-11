@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { employeeProfileApi } from "@/contexts/employee_master";
 import { formatDirectoryEnumLabel } from "@/contexts/employee_master";
-import { mastersAPI } from "@/contexts/masters";
+import { mastersAPI } from "@/contexts/organization_master";
 import { toast } from "sonner";
 
 const PAGE_SIZE = 20;

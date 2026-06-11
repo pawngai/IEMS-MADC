@@ -8,12 +8,12 @@ from fastapi import HTTPException
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.leave.application.evaluate_leave_request import (
+from contexts.leave_attendance.application.evaluate_leave_request import (
     evaluate_leave_request,
 )
-from contexts.leave.domain.leave_request_policy import LeaveFacts
-from contexts.leave.application.service import LeaveApplicationService
-from contexts.leave.contracts.dto import LeaveApplicationCreateDTO
+from contexts.leave_attendance.domain.leave_request_policy import LeaveFacts
+from contexts.leave_attendance.application.service import LeaveApplicationService
+from contexts.leave_attendance.contracts.dto import LeaveApplicationCreateDTO
 
 
 class _FakeLeaveGateway:

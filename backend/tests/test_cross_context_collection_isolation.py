@@ -40,9 +40,9 @@ COLLECTION_OWNER: dict[str, str] = {
     "designations": "employee_master",
     "counters": "employee_master",
     # leave
-    "leave_applications": "leave",
-    "leave_types": "leave",
-    "leave_ledger_entries": "leave",
+    "leave_applications": "leave_attendance",
+    "leave_types": "leave_attendance",
+    "leave_ledger_entries": "leave_attendance",
     # notifications
     "notifications": "notifications",
     # audit
@@ -59,10 +59,10 @@ COLLECTION_OWNER: dict[str, str] = {
     # system_admin / department
     "departments": "system_admin",
     "department_change_logs": "system_admin",
-    "department_establishments": "department",
-    "department_establishment_logs": "department",
+    "department_establishments": "organization_master",
+    "department_establishment_logs": "organization_master",
     # pay
-    "pay_ledger_entries": "pay",
+    "pay_ledger_entries": "pay_benefits",
     # service_book records, with legacy collections retained during migration.
     "service_events": "service_book",
     "service_event_streams": "service_book",
@@ -86,7 +86,7 @@ COLLECTION_OWNER: dict[str, str] = {
     "service_book_part_viii": "service_book",
     "service_book_entries": "service_book",
     "service_book_part_projections": "service_book",
-    "service_book_part_revisions": "leave",
+    "service_book_part_revisions": "leave_attendance",
 }
 
 # Contexts that are thin compatibility shims or sub-contexts of a parent.
@@ -116,7 +116,7 @@ ALLOWED_CROSS_COLLECTION_ACCESS: dict[str, set[str]] = {
         "service_book_part_ii_a",
     },
     # Reporting is a read-only analytics projection consumer.
-    "contexts/reporting/queries/analytics_queries.py": {
+    "contexts/reporting_analytics/queries/analytics_queries.py": {
         "service_book_records",
         "service_event_records",
     },

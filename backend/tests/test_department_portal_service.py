@@ -4,7 +4,7 @@ import pytest
 from fastapi import HTTPException
 from types import SimpleNamespace
 
-from contexts.department.services import department_portal_service
+from contexts.organization_master.services import department_portal_service
 from contexts.identity_access.rbac.domain.models import Permission
 
 

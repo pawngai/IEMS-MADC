@@ -1,5 +1,12 @@
-"""Pay Benefits port contracts."""
+from __future__ import annotations
 
-# TODO(context-migration): Move implementation from contexts.pay into
-# contexts.pay_benefits once all legacy imports are migrated.
-from contexts.pay.contracts.ports import *  # noqa: F401,F403
+from typing import Protocol
+
+from contexts.pay_benefits.contracts.dto import AllowanceChangeCreateDTO, PayRevisionCreateDTO
+
+
+class PayGateway(Protocol):
+    async def revise_pay(self, payload: PayRevisionCreateDTO, *, current_user: dict, session=None) -> dict: ...
+    async def change_allowance(self, payload: AllowanceChangeCreateDTO, *, current_user: dict, session=None) -> dict: ...
+    async def list_ledger_entries(self, employee_id: str, *, current_user: dict) -> list[dict]: ...
+    async def get_pay_snapshot(self, employee_id: str, *, current_user: dict) -> dict: ...

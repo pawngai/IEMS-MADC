@@ -4,7 +4,7 @@ import { ArrowLeft, Save, UserRoundPlus } from "lucide-react";
 import Layout from "@/app/layout/Layout";
 import { employeeIdentityApi } from "@/contexts/employee_master/api/employeeIdentityApi";
 import { employeeProfileApi } from "@/contexts/employee_master";
-import { mastersAPI } from "@/contexts/masters";
+import { mastersAPI } from "@/contexts/organization_master";
 import {
   buildEmployeeDirectoryPath,
   buildEmployeeFilePath,

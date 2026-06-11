@@ -232,12 +232,12 @@ def test_workflow_backward_compat_aliases_stay_deleted() -> None:
 
 def test_pay_repository_lives_in_infrastructure() -> None:
     """Pay repository must live in infrastructure/, not repository/."""
-    canonical = CONTEXTS_ROOT / "pay" / "infrastructure" / "pay_repository.py"
+    canonical = CONTEXTS_ROOT / "pay_benefits" / "infrastructure" / "pay_repository.py"
     assert canonical.exists(), (
         f"{canonical.relative_to(BACKEND_ROOT)} must exist — "
         "pay repository belongs in infrastructure/"
     )
-    old_location = CONTEXTS_ROOT / "pay" / "repository" / "pay_repository.py"
+    old_location = CONTEXTS_ROOT / "pay_benefits" / "repository" / "pay_repository.py"
     assert not old_location.exists(), (
         f"{old_location.relative_to(BACKEND_ROOT)} must not exist — "
         "canonical location is infrastructure/pay_repository.py"
@@ -246,7 +246,7 @@ def test_pay_repository_lives_in_infrastructure() -> None:
 
 def test_pay_domain_has_no_http_dependency() -> None:
     """Pay domain must not depend on fastapi/HTTP concerns."""
-    domain_dir = CONTEXTS_ROOT / "pay" / "domain"
+    domain_dir = CONTEXTS_ROOT / "pay_benefits" / "domain"
     violations: list[str] = []
     for py_file in domain_dir.rglob("*.py"):
         if py_file.name.startswith("__"):
@@ -264,7 +264,7 @@ def test_no_external_context_writes_to_pay_ledger() -> None:
     """Only pay context may write to pay_ledger_entries."""
     violations: list[str] = []
     for ctx_dir in CONTEXTS_ROOT.iterdir():
-        if not ctx_dir.is_dir() or ctx_dir.name in ("pay", "__pycache__"):
+        if not ctx_dir.is_dir() or ctx_dir.name in ("pay_benefits", "__pycache__"):
             continue
         for py_file in ctx_dir.rglob("*.py"):
             source = py_file.read_text(encoding="utf-8", errors="replace")
@@ -288,7 +288,7 @@ _WRITE_OPS = re.compile(
 
 def test_reporting_never_writes_to_any_collection() -> None:
     """Reporting is a pure read-only projection context — no write operations."""
-    reporting_root = CONTEXTS_ROOT / "reporting"
+    reporting_root = CONTEXTS_ROOT / "reporting_analytics"
     violations: list[str] = []
     for py_file in reporting_root.rglob("*.py"):
         if "__pycache__" in py_file.parts:
@@ -303,7 +303,7 @@ def test_reporting_never_writes_to_any_collection() -> None:
 
 def test_reporting_has_no_domain_models() -> None:
     """Reporting should not define its own Pydantic models (no shadow truth)."""
-    reporting_root = CONTEXTS_ROOT / "reporting"
+    reporting_root = CONTEXTS_ROOT / "reporting_analytics"
     violations: list[str] = []
     for py_file in reporting_root.rglob("*.py"):
         if "__pycache__" in py_file.parts:
@@ -319,7 +319,7 @@ def test_reporting_has_no_domain_models() -> None:
 
 def test_reporting_dead_scaffolding_stays_deleted() -> None:
     """Empty dashboards/ and projections/ packages were removed."""
-    reporting_root = CONTEXTS_ROOT / "reporting"
+    reporting_root = CONTEXTS_ROOT / "reporting_analytics"
     for name in ("dashboards", "projections"):
         assert not (reporting_root / name).exists(), (
             f"reporting/{name}/ was dead scaffolding and should stay deleted"
@@ -380,7 +380,7 @@ def test_documents_application_uses_leave_contract_for_leave_entities() -> None:
     violations = [snippet for snippet in forbidden_snippets if snippet in source]
     assert not violations, (
         "Documents application must validate Leave entities through "
-        "contexts.leave.contracts.leave_directory, not direct collection access: "
+        "contexts.leave_attendance.contracts.leave_directory, not direct collection access: "
         f"{violations}"
     )
 
@@ -394,7 +394,7 @@ _OWNERSHIP_ASSERTION_REPOS = {
     "contexts/change_requests/infrastructure/gateway.py": {"change_requests"},
     "contexts/notifications/infrastructure/repo.py": {"notifications"},
     "contexts/documents/repository/metadata_repository.py": {"document_metadata"},
-    "contexts/leave/repository/leave_repository.py": {"leave_applications", "leave_ledger_entries"},
+    "contexts/leave_attendance/repository/leave_repository.py": {"leave_applications", "leave_ledger_entries"},
 }
 
 

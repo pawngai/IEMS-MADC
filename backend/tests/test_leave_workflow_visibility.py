@@ -8,9 +8,9 @@ from fastapi import HTTPException
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.leave.application.service import LeaveApplicationService
-from contexts.leave.infrastructure import gateway as leave_gateway
-from contexts.leave.infrastructure.gateway import LeaveMongoGateway
+from contexts.leave_attendance.application.service import LeaveApplicationService
+from contexts.leave_attendance.infrastructure import gateway as leave_gateway
+from contexts.leave_attendance.infrastructure.gateway import LeaveMongoGateway
 
 
 class _FakeCursor:

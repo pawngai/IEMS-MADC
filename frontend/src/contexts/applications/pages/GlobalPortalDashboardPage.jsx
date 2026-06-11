@@ -13,7 +13,7 @@ import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { listProfilesByStatus } from "@/contexts/applications/model/globalPortalGateway";
-import { leaveAPI } from "@/contexts/leave";
+import { leaveAPI } from "@/contexts/leave_attendance";
 import { Permissions } from "@/platform/permissions";
 import {
   Card,

@@ -77,7 +77,7 @@ def test_service_book_repositories_do_not_import_leave_contracts() -> None:
         for root in checked_roots
         for path in _python_files(root)
         for module in _imports(path)
-        if module == "contexts.leave.contracts" or module.startswith("contexts.leave.contracts.")
+        if module == "contexts.leave_attendance.contracts" or module.startswith("contexts.leave_attendance.contracts.")
     ]
     assert not violations, "Leave integration belongs in ServiceBook read-side projectors:\n" + "\n".join(violations)
 

@@ -62,15 +62,15 @@ def test_key_repositories_call_ownership_assertion() -> None:
         BACKEND_ROOT / "contexts" / "service_book" / "records" / "repository" / "service_record_repository.py",
         BACKEND_ROOT / "contexts" / "employee_master" / "identity" / "repository" / "identity_repository.py",
         BACKEND_ROOT / "contexts" / "employee_master" / "profile" / "read_model" / "infrastructure" / "repository.py",
-        BACKEND_ROOT / "contexts" / "department" / "repository" / "department_portal_repo.py",
-        BACKEND_ROOT / "contexts" / "pay" / "infrastructure" / "pay_repository.py",
-        BACKEND_ROOT / "contexts" / "leave" / "infrastructure" / "gateway.py",
+        BACKEND_ROOT / "contexts" / "organization_master" / "repository" / "department_portal_repo.py",
+        BACKEND_ROOT / "contexts" / "pay_benefits" / "infrastructure" / "pay_repository.py",
+        BACKEND_ROOT / "contexts" / "leave_attendance" / "infrastructure" / "gateway.py",
         # Phase 9 additions
         BACKEND_ROOT / "contexts" / "workflow" / "infrastructure" / "repository.py",
         BACKEND_ROOT / "contexts" / "change_requests" / "infrastructure" / "gateway.py",
         BACKEND_ROOT / "contexts" / "notifications" / "infrastructure" / "repo.py",
         BACKEND_ROOT / "contexts" / "documents" / "repository" / "metadata_repository.py",
-        BACKEND_ROOT / "contexts" / "leave" / "repository" / "leave_repository.py",
+        BACKEND_ROOT / "contexts" / "leave_attendance" / "repository" / "leave_repository.py",
     ]
 
     violations: list[str] = []

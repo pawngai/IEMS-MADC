@@ -1,5 +1,9 @@
-"""Pay Benefits calculation contracts."""
+"""Public Pay operations contract."""
 
-# TODO(context-migration): Move implementation from contexts.pay into
-# contexts.pay_benefits once all legacy imports are migrated.
-from contexts.pay.contracts.pay_operations import *  # noqa: F401,F403
+from contexts.pay_benefits.services.pay_service import applyPayChange, computePayRecord
+
+__all__ = [
+    "applyPayChange",
+    "computePayRecord",
+]
+

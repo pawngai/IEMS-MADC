@@ -60,11 +60,11 @@ ALLOWED_GENERIC_PROFILE_PERMISSION_USAGE = {
     "contexts/employee_master/profile/application/update_profile_extension.py": {
         "Permission.PROFILE_UPDATE_ALL",
     },
-    "contexts/department/services/sanctioned_strength_service.py": {
+    "contexts/organization_master/services/sanctioned_strength_service.py": {
         "Permission.PROFILE_UPDATE_ALL",
     },
     # Reporting/analytics reads across all employees — read-only aggregation.
-    "contexts/reporting/api/router.py": {
+    "contexts/reporting_analytics/api/router.py": {
         "Permission.PROFILE_READ_ALL",
     },
 }
@@ -108,7 +108,7 @@ def _imports_from_ast(file_path: Path) -> list[str]:
 def test_refactor_facades_stay_thin() -> None:
     facades = {
         "backend/app_platform/reference_data/infrastructure/employee_form_schema.py": 80,
-        "backend/contexts/department/services/department_portal_service.py": 240,
+        "backend/contexts/organization_master/services/department_portal_service.py": 240,
     }
     violations = []
     for rel_path, max_lines in facades.items():
@@ -178,7 +178,7 @@ def test_workflow_rejects_service_history_truth_payloads() -> None:
 def test_pay_context_emits_events_via_outbox() -> None:
     """Pay application service must emit PayRevised/AllowanceChanged events via outbox."""
     pay_service_path = (
-        CONTEXTS_ROOT / "pay" / "application" / "service.py"
+        CONTEXTS_ROOT / "pay_benefits" / "application" / "service.py"
     )
     source = pay_service_path.read_text(encoding="utf-8")
     assert "EventName.PAY_REVISED" in source, (
@@ -427,8 +427,8 @@ def test_employee_profile_schema_value_object_reexport_shim_remains_deleted() ->
 def test_final_compatibility_packages_stay_deleted() -> None:
     removed_paths = [
         CONTEXTS_ROOT / "documents" / "services",
-        CONTEXTS_ROOT / "leave" / "schemas",
-        CONTEXTS_ROOT / "pay" / "repository",
+        CONTEXTS_ROOT / "leave_attendance" / "schemas",
+        CONTEXTS_ROOT / "pay_benefits" / "repository",
         CONTEXTS_ROOT / "service_book" / "read_side" / "api",
         CONTEXTS_ROOT / "service_book" / "records" / "application" / "commands.py",
     ]
@@ -554,7 +554,7 @@ def test_policy_engine_is_platform_primitive_only() -> None:
     assert not violations, (
         "app_platform/policy_engine/ must contain only Decision. Move "
         "business-domain policies into their owning context (e.g. "
-        "contexts/leave/domain/leave_request_policy.py):\n"
+        "contexts/leave_attendance/domain/leave_request_policy.py):\n"
         + "\n".join(sorted(violations))
     )
 
@@ -563,14 +563,14 @@ def test_leave_request_policy_lives_in_leave_context() -> None:
     """The CCS leave-rule set (LeaveFacts + LEAVE_RULES) must live in the
     leave bounded context."""
     policy_module = (
-        CONTEXTS_ROOT / "leave" / "domain" / "leave_request_policy.py"
+        CONTEXTS_ROOT / "leave_attendance" / "domain" / "leave_request_policy.py"
     )
     source = policy_module.read_text(encoding="utf-8-sig")
     assert "class LeaveFacts" in source, (
-        "LeaveFacts must be defined in contexts/leave/domain/leave_request_policy.py"
+        "LeaveFacts must be defined in contexts/leave_attendance/domain/leave_request_policy.py"
     )
     assert "LEAVE_RULES" in source, (
-        "LEAVE_RULES must be defined in contexts/leave/domain/leave_request_policy.py"
+        "LEAVE_RULES must be defined in contexts/leave_attendance/domain/leave_request_policy.py"
     )
 
 

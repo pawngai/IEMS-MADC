@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import EssLeavePage from '@/contexts/leave/pages/EssLeavePage';
+import EssLeavePage from '@/contexts/leave_attendance/pages/EssLeavePage';
 
 jest.mock('@/app/layout/Layout', () => ({
   __esModule: true,
@@ -47,7 +47,7 @@ const mockApply = jest.fn();
 const mockCancel = jest.fn();
 const mockLegacyGetBalances = jest.fn();
 
-jest.mock('@/contexts/leave/api/leaveApi', () => ({
+jest.mock('@/contexts/leave_attendance/api/leaveApi', () => ({
   __esModule: true,
   leaveAPI: {
     listMy: (...args) => mockListMy(...args),

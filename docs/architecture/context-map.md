@@ -65,11 +65,11 @@ Current route entrypoint status:
 
 | Route area | Old implementation module | Canonical registration module | API path changed | Compatibility alias |
 | --- | --- | --- | --- | --- |
-| Leave | `contexts.leave.api.router` | `contexts.leave_attendance.api.router` | No, still `/leave` | Canonical router imports legacy implementation temporarily. |
-| Pay | `contexts.pay.api.router` | `contexts.pay_benefits.api.router` | No, still `/pay` | Canonical router imports legacy implementation temporarily. |
-| Reporting | `contexts.reporting.api.router` | `contexts.reporting_analytics.api.router` | No, still `/reporting` | Canonical router imports legacy implementation temporarily. |
-| Department portal | `contexts.department.api.router` | `contexts.organization_master.api.router` | No, still `/department` | Canonical router imports legacy implementation temporarily. |
-| Department establishment admin | `contexts.department.api.admin_establishment_router` | `contexts.organization_master.api.admin_establishment_router` | No, existing prefix retained | Canonical router imports legacy implementation temporarily. |
+| Leave | `contexts.leave_attendance.api.router` | `contexts.leave_attendance.api.router` | No, still `/leave` | Canonical router imports legacy implementation temporarily. |
+| Pay | `contexts.pay_benefits.api.router` | `contexts.pay_benefits.api.router` | No, still `/pay` | Canonical router imports legacy implementation temporarily. |
+| Reporting | `contexts.reporting_analytics.api.router` | `contexts.reporting_analytics.api.router` | No, still `/reporting` | Canonical router imports legacy implementation temporarily. |
+| Department portal | `contexts.organization_master.api.router` | `contexts.organization_master.api.router` | No, still `/department` | Canonical router imports legacy implementation temporarily. |
+| Department establishment admin | `contexts.organization_master.api.admin_establishment_router` | `contexts.organization_master.api.admin_establishment_router` | No, existing prefix retained | Canonical router imports legacy implementation temporarily. |
 
 ## Large Frontend Files
 
@@ -77,8 +77,8 @@ Completed first-pass splits:
 
 - `frontend/src/contexts/change_requests/containers/EssChangeRequestsScreen.jsx`
 - `frontend/src/contexts/service_book/records/components/RecordServiceBookRecordDialog.jsx`
-- `frontend/src/contexts/analytics/components/AnalyticsDashboardSections.jsx`
-- `frontend/src/contexts/leave/pages/LeaveDashboardPage.jsx`
+- `frontend/src/contexts/reporting_analytics/components/AnalyticsDashboardSections.jsx`
+- `frontend/src/contexts/leave_attendance/pages/LeaveDashboardPage.jsx`
 - `frontend/src/contexts/employee_master/pages/EmployeeDirectoryPage.jsx`
 - `frontend/src/contexts/employee_master/components/EmployeeProfileExtensionEditor.jsx`
 - `frontend/src/contexts/seniority/components/SeniorityListsTab.jsx`
@@ -86,7 +86,7 @@ Completed first-pass splits:
 
 Current high-priority production files over 500 lines:
 
-- `frontend/src/contexts/leave/pages/EssLeavePage.jsx`
+- `frontend/src/contexts/leave_attendance/pages/EssLeavePage.jsx`
 - `frontend/src/portals/ess/pages/EssDashboardPage.jsx`
 - `frontend/src/contexts/service_book/records/model/recordServiceBookRecordDialogModel.js`
 - `frontend/src/index.css`
@@ -94,10 +94,10 @@ Current high-priority production files over 500 lines:
 - `frontend/src/contexts/workflow/containers/WorkflowQueueScreen.jsx`
 - `frontend/src/contexts/workflow/components/WorkflowDetailPanel.jsx`
 - `frontend/src/contexts/employee_master/hooks/useEmployeeDirectory.js`
-- `frontend/src/contexts/department/pages/DeptSanctionedStrengthPage.jsx`
+- `frontend/src/contexts/organization_master/pages/DeptSanctionedStrengthPage.jsx`
 - `frontend/src/app/layout/Layout.jsx`
 - `frontend/src/contexts/applications/pages/GlobalPortalDashboardPage.jsx`
-- `frontend/src/contexts/analytics/pages/AnalyticsDashboardPage.jsx`
+- `frontend/src/contexts/reporting_analytics/pages/AnalyticsDashboardPage.jsx`
 - `frontend/src/portals/ess/pages/EssDocumentsPage.jsx`
 
 Split these in dedicated behavior-preserving patches. Do not combine large UI

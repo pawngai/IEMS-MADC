@@ -1,4 +1,4 @@
-"""Pay Benefits API entrypoints."""
+"""Pay API layer."""
 
 from contexts.pay_benefits.api.router import pay_router
 

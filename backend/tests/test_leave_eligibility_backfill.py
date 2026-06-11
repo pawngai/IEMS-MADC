@@ -5,7 +5,7 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.leave.domain.eligibility_backfill import build_leave_eligibility_backfill_update
+from contexts.leave_attendance.domain.eligibility_backfill import build_leave_eligibility_backfill_update
 
 
 def test_legacy_leave_eligibility_backfill_marks_simple_leave_as_review_free() -> None:

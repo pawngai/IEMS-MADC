@@ -24,17 +24,13 @@ REQUIRED_CONTEXTS = {
 ALLOWED_TRANSITION_CONTEXTS: set[str] = {
     "audit",
     "change_requests",
-    "department",
     "documents",
     "employee_identity",
     "employee_profile",
     "ess",
     "identity",
-    "leave",
     "notifications",
-    "pay",
     "rbac",
-    "reporting",
     "seniority",
     "system_admin",
 }
@@ -81,27 +77,8 @@ REQUIRED_SHARED_KERNEL_SUBPACKAGES = {
 
 ALLOWED_TRANSITION_SHARED_KERNEL_SUBPACKAGES: set[str] = set()
 
-TRANSITION_WRAPPER_FILES = {
-    "backend/contexts/leave_attendance/api/router.py",
-    "backend/contexts/leave_attendance/contracts/dto.py",
-    "backend/contexts/leave_attendance/contracts/leave_commands.py",
-    "backend/contexts/leave_attendance/contracts/leave_directory.py",
-    "backend/contexts/leave_attendance/contracts/ports.py",
-    "backend/contexts/pay_benefits/api/router.py",
-    "backend/contexts/pay_benefits/contracts/dto.py",
-    "backend/contexts/pay_benefits/contracts/pay_operations.py",
-    "backend/contexts/pay_benefits/contracts/ports.py",
-    "backend/contexts/reporting_analytics/api/router.py",
-    "backend/contexts/reporting_analytics/contracts/analytics_queries.py",
-    "backend/contexts/organization_master/api/admin_establishment_router.py",
-    "backend/contexts/organization_master/api/router.py",
-    "backend/contexts/organization_master/contracts/department_directory.py",
-    "backend/contexts/organization_master/contracts/establishment.py",
-    "frontend/src/contexts/leave_attendance/index.js",
-    "frontend/src/contexts/pay_benefits/index.js",
-    "frontend/src/contexts/reporting_analytics/index.js",
-    "frontend/src/contexts/organization_master/index.js",
-}
+# All transition wrappers have been absorbed into their canonical contexts.
+TRANSITION_WRAPPER_FILES: set[str] = set()
 
 ARCH_ENFORCEMENT_MODE = os.getenv("ARCH_ENFORCEMENT_MODE", "staged").strip().lower()
 
@@ -264,7 +241,7 @@ def test_split_backend_modules_stay_under_size_limit() -> None:
     split_modules = [
         BACKEND_ROOT / "contexts" / "system_admin" / "api" / "router.py",
         BACKEND_ROOT / "contexts" / "identity_access" / "identity" / "infrastructure" / "user_management_service.py",
-        BACKEND_ROOT / "contexts" / "leave" / "infrastructure" / "gateway.py",
+        BACKEND_ROOT / "contexts" / "leave_attendance" / "infrastructure" / "gateway.py",
         BACKEND_ROOT / "contexts" / "service_book" / "records" / "schemas" / "service_event_schemas.py",
     ]
     violations = []

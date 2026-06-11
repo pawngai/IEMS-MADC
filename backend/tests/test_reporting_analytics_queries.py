@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.reporting.queries.analytics_queries import AnalyticsQueryService
+from contexts.reporting_analytics.queries.analytics_queries import AnalyticsQueryService
 
 
 def _matches_query(row: dict, query: dict) -> bool:

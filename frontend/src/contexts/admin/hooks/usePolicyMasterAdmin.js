@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback, useRef } from "react";
 import { toast } from "sonner";
-import { versionedMastersAPI } from "@/contexts/masters";
+import { versionedMastersAPI } from "@/contexts/organization_master";
 import { getApiErrorMessage } from "@/shared/lib/utils";
 import {
   SYSTEM_MANAGED_MASTERS,

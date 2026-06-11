@@ -15,7 +15,7 @@ const mockUploadSignature = jest.fn();
 const mockToastSuccess = jest.fn();
 const mockToastError = jest.fn();
 
-jest.mock("@/contexts/masters/api/mastersApi", () => ({
+jest.mock("@/contexts/organization_master/api/mastersApi", () => ({
   __esModule: true,
   mastersAPI: {
     getEmploymentTypes: (...args) => mockGetEmploymentTypes(...args),

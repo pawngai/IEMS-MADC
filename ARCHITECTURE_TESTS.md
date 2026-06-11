@@ -43,7 +43,7 @@ File: `backend/tests/test_architecture_guardrails.py`
 - Restricts `app_platform/policy_engine/` to `__init__.py` + `decision.py` only — no business-domain facts or rules.
 
 12. `test_leave_request_policy_lives_in_leave_context`
-- Requires `LeaveFacts` and `LEAVE_RULES` to live in `contexts.leave.domain.leave_request_policy`.
+- Requires `LeaveFacts` and `LEAVE_RULES` to live in `contexts.leave_attendance.domain.leave_request_policy`.
 
 13. `test_change_request_policy_lives_in_change_requests_context`
 - Requires `ChangeRequestFacts` to live in `contexts.change_requests.domain.change_request_policy`.

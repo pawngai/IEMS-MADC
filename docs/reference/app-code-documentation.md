@@ -67,7 +67,7 @@ Notes:
 
 - Change request routers are included explicitly from `contexts/change_requests/api/router.py`.
 - Some contexts (audit, notifications, documents, rbac) are not auto-registered via registration modules but contribute through subscriber wiring or direct router includes.
-- `/department/*` routes are owned by `contexts/department`, including the Department-owned sanctioned-strength editor and write API.
+- `/department/*` routes are owned by `contexts/organization_master`, including the Department-owned sanctioned-strength editor and write API.
 - `/departments/manage/*` governance routes remain under `contexts/system_admin/department`, and no longer edit sanctioned strength.
 
 ### 2.2.1 Authentication, permissions, and module access
@@ -135,8 +135,8 @@ Typical context layering:
 
 Department-specific note:
 
-- `backend/contexts/department/domain/sanctioned_strength.py` owns sanctioned-strength normalization and validation.
-- `backend/contexts/department/repository/department_portal_repo.py` persists Department establishment rows in `department_establishments` and logs mutations in `department_establishment_logs`.
+- `backend/contexts/organization_master/domain/sanctioned_strength.py` owns sanctioned-strength normalization and validation.
+- `backend/contexts/organization_master/repository/department_portal_repo.py` persists Department establishment rows in `department_establishments` and logs mutations in `department_establishment_logs`.
 - Legacy `departments.metadata.sanctioned_strength` data is migrated by `backend/scripts/mongodb/backfill_department_establishments.py` and retired by `backend/scripts/mongodb/cleanup_department_establishment_metadata.py`.
 
 ### 2.4 Eventing and outbox
@@ -203,7 +203,7 @@ Routes are lazy-loaded by context page modules and guarded via `ProtectedRoute` 
 
 Department portal note:
 
-- `frontend/src/app/router/departmentRoutes.jsx` resolves only department-owned page entrypoints under `frontend/src/contexts/department/pages`.
+- `frontend/src/app/router/departmentRoutes.jsx` resolves only department-owned page entrypoints under `frontend/src/contexts/organization_master/pages`.
 - Department page/model wrappers isolate portal routing from direct employee-profile API and presentation imports.
 
 Employee Directory note:

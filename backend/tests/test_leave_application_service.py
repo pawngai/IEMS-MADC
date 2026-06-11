@@ -7,8 +7,8 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.leave.application.service import LeaveApplicationService
-from contexts.leave.contracts.dto import LeaveApplicationCreateDTO
+from contexts.leave_attendance.application.service import LeaveApplicationService
+from contexts.leave_attendance.contracts.dto import LeaveApplicationCreateDTO
 
 
 class _FakeGateway:

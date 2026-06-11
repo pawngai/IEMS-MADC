@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import EssDashboard from '@/contexts/ess/pages/EssDashboardPage';
+import EssDashboard from '@/portals/ess/pages/EssDashboardPage';
 
 jest.mock('@/app/layout/Layout', () => ({
   __esModule: true,

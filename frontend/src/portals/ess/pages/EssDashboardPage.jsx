@@ -5,15 +5,15 @@ import Layout from "@/app/layout/Layout";
 import { ESS } from "@/shared/lib/routes";
 import { useAuth } from "@/contexts/identity";
 import { usePermissions } from "@/contexts/identity_access";
-import { essAPI } from "@/contexts/ess/api/essApi";
+import { essAPI } from "@/contexts/ess";
 import { leaveAPI } from "@/contexts/leave";
 import {
   assertEssPortalSession,
   assertEssSelfScope,
   canAccessEssDocuments,
   canShowEssServiceBook,
-} from "@/contexts/ess/services/essDomainService";
-import { getMyProfileAuditTrail, normalizeEssProfile } from "@/contexts/ess/model/essProfileGateway";
+} from "@/contexts/ess";
+import { getMyProfileAuditTrail, normalizeEssProfile } from "@/contexts/ess";
 import { Permissions } from "@/platform/permissions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Layout from "@/app/layout/Layout";
-import { essAPI } from "@/contexts/ess/api/essApi";
+import { essAPI } from "@/contexts/ess";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";

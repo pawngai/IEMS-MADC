@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from pydantic import ValidationError
 
-from contexts.employee_profile.contracts.schemas import (
+from contexts.employee_master.profile.contracts.schemas import (
     EmployeeCompositeProfileView,
     ContactDetails,
     IdentityDocuments,
@@ -22,8 +22,8 @@ from contexts.employee_profile.contracts.schemas import (
     IMMUTABLE_AFTER_VERIFICATION,
     PROFILE_EXTENSION_EDITABLE_FIELDS,
 )
-from contexts.employee_identity.schemas.field_policies import DATA_ENTRY_EDITABLE_FIELDS
-from contexts.employee_identity.schemas.commands import (
+from contexts.employee_master.identity.schemas.field_policies import DATA_ENTRY_EDITABLE_FIELDS
+from contexts.employee_master.identity.schemas.commands import (
     EmployeeIdentityCreate,
     EmployeeIdentityUpdate,
 )

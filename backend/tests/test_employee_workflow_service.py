@@ -9,13 +9,13 @@ from fastapi import HTTPException
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 from app_platform.event_bus.types import EventName
-from contexts.employee_profile.application.access_scope import enforce_profile_write_scope_or_raise
-from contexts.employee_profile.application.services.workflow_engine import EmployeeWorkflowApplicationService
-from contexts.employee_profile.contracts.dto import (
+from contexts.employee_master.profile.application.access_scope import enforce_profile_write_scope_or_raise
+from contexts.employee_master.profile.application.services.workflow_engine import EmployeeWorkflowApplicationService
+from contexts.employee_master.profile.contracts.dto import (
     EmployeeWorkflowAuditDTO,
     EmployeeWorkflowEventDTO,
 )
-from contexts.employee_profile.infrastructure.gateway import EmployeeWorkflowEventOutboxGateway
+from contexts.employee_master.profile.infrastructure.gateway import EmployeeWorkflowEventOutboxGateway
 
 
 class _FakeOutboxRepo:

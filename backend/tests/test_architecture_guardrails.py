@@ -22,8 +22,8 @@ CROSS_CONTEXT_REPO_IMPORT = re.compile(
 )
 
 AUTH_BYPASS_ALLOWED_FILES = {
-    "contexts/rbac/application/access_control.py",
-    "contexts/rbac/application/authorization_service.py",
+    "contexts/identity_access/rbac/application/access_control.py",
+    "contexts/identity_access/rbac/application/authorization_service.py",
     # Audit logs capture caller authority label; this is metadata, not authorization logic.
     "contexts/audit/api/router.py",
 }
@@ -49,15 +49,15 @@ ALLOWED_GENERIC_PROFILE_PERMISSION_USAGE = {
         "Permission.PROFILE_READ_ALL",
         "Permission.PROFILE_UPDATE_ALL",
     },
-    "contexts/employee_profile/application/audit_delete.py": {
+    "contexts/employee_master/profile/application/audit_delete.py": {
         "Permission.PROFILE_READ_OWN",
         "Permission.PROFILE_READ_ALL",
     },
-    "contexts/employee_profile/application/read_profiles.py": {
+    "contexts/employee_master/profile/application/read_profiles.py": {
         "Permission.PROFILE_READ_OWN",
         "Permission.PROFILE_READ_ALL",
     },
-    "contexts/employee_profile/application/update_profile_extension.py": {
+    "contexts/employee_master/profile/application/update_profile_extension.py": {
         "Permission.PROFILE_UPDATE_ALL",
     },
     "contexts/department/services/sanctioned_strength_service.py": {
@@ -286,7 +286,8 @@ def test_generic_profile_permissions_are_confined_to_profile_owned_flows() -> No
 def test_employee_profile_runtime_reads_do_not_fallback_to_legacy_employee_profiles() -> None:
     profile_interface = (
         CONTEXTS_ROOT
-        / "employee_profile"
+        / "employee_master"
+        / "profile"
         / "application"
         / "profile_interface.py"
     )
@@ -315,8 +316,8 @@ def test_workflow_context_does_not_reintroduce_employee_profile_specific_applica
 
 def test_employee_profile_runtime_code_does_not_call_split_legacy_employee_record() -> None:
     runtime_files = [
-        CONTEXTS_ROOT / "employee_profile" / "application" / "profile_interface.py",
-        CONTEXTS_ROOT / "employee_profile" / "infrastructure" / "gateway.py",
+        CONTEXTS_ROOT / "employee_master" / "profile" / "application" / "profile_interface.py",
+        CONTEXTS_ROOT / "employee_master" / "profile" / "infrastructure" / "gateway.py",
     ]
 
     violations: list[str] = []
@@ -334,7 +335,8 @@ def test_employee_profile_runtime_code_does_not_call_split_legacy_employee_recor
 def test_employee_profile_domain_does_not_define_split_legacy_employee_record() -> None:
     identity_layers = (
         CONTEXTS_ROOT
-        / "employee_profile"
+        / "employee_master"
+        / "profile"
         / "domain"
         / "identity_layers.py"
     )
@@ -348,7 +350,8 @@ def test_employee_profile_domain_does_not_define_split_legacy_employee_record() 
 def test_employee_identity_domain_does_not_define_split_legacy_employee_record() -> None:
     identity_layers = (
         CONTEXTS_ROOT
-        / "employee_identity"
+        / "employee_master"
+        / "identity"
         / "domain"
         / "identity_layers.py"
     )
@@ -362,7 +365,8 @@ def test_employee_identity_domain_does_not_define_split_legacy_employee_record()
 def test_employee_profile_domain_services_compat_shim_remains_deleted() -> None:
     compat_shim = (
         CONTEXTS_ROOT
-        / "employee_profile"
+        / "employee_master"
+        / "profile"
         / "services"
         / "domain_services.py"
     )
@@ -375,7 +379,8 @@ def test_employee_profile_domain_services_compat_shim_remains_deleted() -> None:
 def test_employee_identity_domain_services_compat_shim_remains_deleted() -> None:
     compat_shim = (
         CONTEXTS_ROOT
-        / "employee_identity"
+        / "employee_master"
+        / "identity"
         / "services"
         / "domain_services.py"
     )
@@ -386,7 +391,7 @@ def test_employee_identity_domain_services_compat_shim_remains_deleted() -> None
 
 
 def test_employee_profile_commands_do_not_reintroduce_ess_update_alias() -> None:
-    commands_module = CONTEXTS_ROOT / "employee_profile" / "schemas" / "commands.py"
+    commands_module = CONTEXTS_ROOT / "employee_master" / "profile" / "schemas" / "commands.py"
     source = commands_module.read_text(encoding="utf-8-sig")
 
     assert "class EmployeeProfileESSUpdate" not in source, (
@@ -395,7 +400,7 @@ def test_employee_profile_commands_do_not_reintroduce_ess_update_alias() -> None
 
 
 def test_employee_profile_model_does_not_reintroduce_profile_alias() -> None:
-    profile_model = CONTEXTS_ROOT / "employee_profile" / "schemas" / "profile_model.py"
+    profile_model = CONTEXTS_ROOT / "employee_master" / "profile" / "schemas" / "profile_model.py"
     source = profile_model.read_text(encoding="utf-8-sig")
 
     assert "class EmployeeProfile(" not in source, (
@@ -404,7 +409,7 @@ def test_employee_profile_model_does_not_reintroduce_profile_alias() -> None:
 
 
 def test_employee_profile_schema_enum_reexport_shim_remains_deleted() -> None:
-    compat_shim = CONTEXTS_ROOT / "employee_profile" / "schemas" / "enums.py"
+    compat_shim = CONTEXTS_ROOT / "employee_master" / "profile" / "schemas" / "enums.py"
 
     assert not compat_shim.exists(), (
         "employee_profile schemas/enums.py was a compatibility re-export and must remain deleted"
@@ -412,7 +417,7 @@ def test_employee_profile_schema_enum_reexport_shim_remains_deleted() -> None:
 
 
 def test_employee_profile_schema_value_object_reexport_shim_remains_deleted() -> None:
-    compat_shim = CONTEXTS_ROOT / "employee_profile" / "schemas" / "value_objects.py"
+    compat_shim = CONTEXTS_ROOT / "employee_master" / "profile" / "schemas" / "value_objects.py"
 
     assert not compat_shim.exists(), (
         "employee_profile schemas/value_objects.py was a compatibility re-export and must remain deleted"
@@ -492,13 +497,13 @@ def test_app_platform_events_does_not_define_business_event_schemas() -> None:
 
 def test_employee_event_schemas_live_in_employee_identity_context() -> None:
     """Canonical employee event schemas must be defined in
-    ``contexts.employee_identity.contracts.events`` (Published Language)."""
+    ``contexts.employee_master.identity.contracts.events`` (Published Language)."""
     events_module = (
-        CONTEXTS_ROOT / "employee_identity" / "contracts" / "events.py"
+        CONTEXTS_ROOT / "employee_master" / "identity" / "contracts" / "events.py"
     )
     assert events_module.exists(), (
         "Employee event contracts module must exist at "
-        "contexts/employee_identity/contracts/events.py"
+        "contexts/employee_master/identity/contracts/events.py"
     )
 
     tree = ast.parse(events_module.read_text(encoding="utf-8-sig"))
@@ -520,14 +525,14 @@ def test_employee_event_schemas_live_in_employee_identity_context() -> None:
 def test_app_platform_employee_events_module_stays_deleted() -> None:
     """The legacy module ``app_platform.contracts.events.employee_events`` was
     a business-event surface in a platform location. It has been moved to
-    ``contexts.employee_identity.contracts.events`` and must not be recreated."""
+    ``contexts.employee_master.identity.contracts.events`` and must not be recreated."""
     legacy = (
         BACKEND_ROOT / "app_platform" / "contracts" / "events" / "employee_events.py"
     )
     assert not legacy.exists(), (
         "Legacy module app_platform/contracts/events/employee_events.py must "
         "stay deleted. Define employee event schemas in "
-        "contexts/employee_identity/contracts/events.py instead."
+        "contexts/employee_master/identity/contracts/events.py instead."
     )
 
 
@@ -592,17 +597,18 @@ def test_employee_profile_profile_normalization_mirror_stays_deleted() -> None:
     contract surface."""
     mirror = (
         CONTEXTS_ROOT
-        / "employee_profile"
+        / "employee_master"
+        / "profile"
         / "domain"
         / "profile_normalization.py"
     )
     assert not mirror.exists(), (
         "employee_profile/domain/profile_normalization.py must stay deleted. "
-        "Use contexts.employee_identity.contracts.employee_domain instead."
+        "Use contexts.employee_master.identity.contracts.employee_domain instead."
     )
 
     legacy_contract = (
-        CONTEXTS_ROOT / "employee_profile" / "contracts" / "employee_domain.py"
+        CONTEXTS_ROOT / "employee_master" / "profile" / "contracts" / "employee_domain.py"
     )
     assert not legacy_contract.exists(), (
         "employee_profile/contracts/employee_domain.py was a re-export shim "

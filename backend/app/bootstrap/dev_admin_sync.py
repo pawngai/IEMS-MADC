@@ -5,11 +5,11 @@ import os
 import uuid
 from datetime import datetime, timezone
 
-from contexts.identity.contracts.password import (
+from contexts.identity_access.identity.contracts.password import (
     hash_password,
     verify_password,
 )
-from contexts.rbac.domain.models import Authority
+from contexts.identity_access.rbac.domain.models import Authority
 
 logger = logging.getLogger(__name__)
 

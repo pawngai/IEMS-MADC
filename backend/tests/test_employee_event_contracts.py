@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.employee_identity.contracts.events import (
+from contexts.employee_master.identity.contracts.events import (
     EmployeeCreatedEvent,
     EmployeeStatusChangedEvent,
     EmployeeUpdatedEvent,

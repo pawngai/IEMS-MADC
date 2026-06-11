@@ -3,9 +3,9 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from backend.contexts.employee_identity.contracts.identity_directory import resolve_identity_ref
+    from backend.contexts.employee_master.identity.contracts.identity_directory import resolve_identity_ref
 except ModuleNotFoundError:
-    from contexts.employee_identity.contracts.identity_directory import resolve_identity_ref
+    from contexts.employee_master.identity.contracts.identity_directory import resolve_identity_ref
 
 
 MIGRATION_MARKER = "document-subject-employee-backfill-v1"

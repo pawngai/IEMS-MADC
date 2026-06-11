@@ -24,16 +24,16 @@ os.environ.setdefault("DB_NAME", "iems_test_db")
 
 from httpx import ASGITransport, AsyncClient
 from app.main import app  # the FastAPI application
-from contexts.employee_identity.application import dependencies as employee_identity_deps
-import contexts.employee_identity.api.read_router as employee_identity_read_module
-import contexts.employee_identity.api.write_router as employee_identity_write_module
-from contexts.employee_profile.application import dependencies as employee_deps
-import contexts.employee_profile.api.write_router as employee_write_module
+from contexts.employee_master.identity.application import dependencies as employee_identity_deps
+import contexts.employee_master.identity.api.read_router as employee_identity_read_module
+import contexts.employee_master.identity.api.write_router as employee_identity_write_module
+from contexts.employee_master.profile.application import dependencies as employee_deps
+import contexts.employee_master.profile.api.write_router as employee_write_module
 from app_platform import auth as shared_auth_module
 from app_platform.config.settings import settings
 from app_platform.db.runtime import get_db, get_db_optional
-from contexts.identity.infrastructure import service as identity_service
-from contexts.rbac.domain.models import TokenResponse, UserResponse
+from contexts.identity_access.identity.infrastructure import service as identity_service
+from contexts.identity_access.rbac.domain.models import TokenResponse, UserResponse
 
 # ---------------------------------------------------------------------------
 # Fixtures

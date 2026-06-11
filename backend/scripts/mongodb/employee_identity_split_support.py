@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from contexts.employee_profile.domain.identity_layers import (
+from contexts.employee_master.profile.domain.identity_layers import (
     compose_employee_record_view,
     split_employee_payload,
     utc_now_iso,

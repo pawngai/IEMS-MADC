@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.employee_profile.infrastructure.gateway import (
+from contexts.employee_master.profile.infrastructure.gateway import (
     EmployeeProfileReadMongoGateway,
     EmployeeProfileRepositoryMongoGateway,
 )

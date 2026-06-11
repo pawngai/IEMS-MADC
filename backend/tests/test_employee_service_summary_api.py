@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.rbac.domain.models import Authority
+from contexts.identity_access.rbac.domain.models import Authority
 from contexts.service_book.records.api import router as service_events_router
 
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 
-from contexts.employee_profile.read_model.infrastructure.repository import (
+from contexts.employee_master.profile.read_model.infrastructure.repository import (
     EmployeeProfileReadModelRepository,
 )
 

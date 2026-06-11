@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.employee_identity.schemas.field_policies import DATA_ENTRY_EDITABLE_FIELDS
+from contexts.employee_master.identity.schemas.field_policies import DATA_ENTRY_EDITABLE_FIELDS
 
 
 def test_data_entry_editable_fields_exclude_aadhaar_number() -> None:

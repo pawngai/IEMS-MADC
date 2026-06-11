@@ -202,6 +202,20 @@ class Settings:
     document_preview_backend: str = field(
         default_factory=lambda: (os.getenv("DOCUMENT_PREVIEW_BACKEND", "noop") or "noop").strip().lower()
     )
+    # Employee Master collection cutover (Phase 1b, expand/contract).
+    # dual_write: projection writer mirrors the composed employee record into the
+    # canonical `employee_master` collection. read: composed reads come from
+    # `employee_master` first (with fallback to the legacy read model / live
+    # compose). Both default ON; old collections are retained for rollback.
+    employee_master_dual_write: bool = field(
+        default_factory=lambda: _env_bool("EMPLOYEE_MASTER_DUAL_WRITE", True)
+    )
+    # Default OFF: reads stay on the proven read-model path until employee_master
+    # has been fully backfilled and parity-verified, then flip EMPLOYEE_MASTER_READ
+    # on (avoids partial-read under-counting during the expand phase).
+    employee_master_read: bool = field(
+        default_factory=lambda: _env_bool("EMPLOYEE_MASTER_READ", False)
+    )
     rate_limit_storage_uri: str = field(
         default_factory=lambda: os.getenv("RATE_LIMIT_STORAGE_URI", "").strip()
     )

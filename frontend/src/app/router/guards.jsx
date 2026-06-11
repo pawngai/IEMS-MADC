@@ -1,5 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { PageLoader } from "@/app/router/routeLoading";
 import ForceChangePasswordDialog from "@/contexts/identity/ui/ForceChangePasswordDialog";
@@ -28,7 +29,8 @@ export const ProtectedRoute = ({
 	requiredAuthorities = [],
 	requireAllAuthorities = false,
 }) => {
-	const { user, loading, canAny, canAccessModule, isAny } = useAuth();
+	const { user, loading } = useAuth();
+	const { canAny, canAccessModule, isAny } = usePermissions();
 
 	if (loading) return <PageLoader />;
 

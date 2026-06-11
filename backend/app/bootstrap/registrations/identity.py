@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from contexts.identity.api.router import users_router
+from contexts.identity_access.identity.api.router import users_router
 from fastapi import APIRouter
 
 

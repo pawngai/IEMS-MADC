@@ -240,7 +240,7 @@ def test_split_backend_modules_stay_under_size_limit() -> None:
     max_lines = 800
     split_modules = [
         BACKEND_ROOT / "contexts" / "system_admin" / "api" / "router.py",
-        BACKEND_ROOT / "contexts" / "identity" / "infrastructure" / "user_management_service.py",
+        BACKEND_ROOT / "contexts" / "identity_access" / "identity" / "infrastructure" / "user_management_service.py",
         BACKEND_ROOT / "contexts" / "leave" / "infrastructure" / "gateway.py",
         BACKEND_ROOT / "contexts" / "service_book" / "records" / "schemas" / "service_event_schemas.py",
     ]

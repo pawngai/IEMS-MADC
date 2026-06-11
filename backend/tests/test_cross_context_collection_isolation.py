@@ -22,22 +22,23 @@ CONTEXTS_ROOT = BACKEND_ROOT / "contexts"
 # Maps collection name → owning context directory name.
 COLLECTION_OWNER: dict[str, str] = {
     # identity
-    "users": "identity",
-    "refresh_tokens": "identity",
-    "user_activity_logs": "identity",
-    "role_change_audit": "identity",
-    "system_config": "identity",
-    # employee identity/profile
-    "employee_profiles": "employee_profile",
-    "employee_identities": "employee_identity",
-    "employee_profile_extensions": "employee_profile",
-    "employee_profile_read_models": "employee_profile",
-    "employee_profiles_deleted": "employee_profile",
-    "profile_audit_logs_v2": "employee_profile",
-    "immutability_audit_logs": "employee_profile",
-    "domain_violation_logs": "employee_profile",
-    "designations": "employee_identity",
-    "counters": "employee_identity",
+    "users": "identity_access",
+    "refresh_tokens": "identity_access",
+    "user_activity_logs": "identity_access",
+    "role_change_audit": "identity_access",
+    "system_config": "identity_access",
+    # employee identity/profile (merged into employee_master)
+    "employee_master": "employee_master",
+    "employee_profiles": "employee_master",
+    "employee_identities": "employee_master",
+    "employee_profile_extensions": "employee_master",
+    "employee_profile_read_models": "employee_master",
+    "employee_profiles_deleted": "employee_master",
+    "profile_audit_logs_v2": "employee_master",
+    "immutability_audit_logs": "employee_master",
+    "domain_violation_logs": "employee_master",
+    "designations": "employee_master",
+    "counters": "employee_master",
     # leave
     "leave_applications": "leave",
     "leave_types": "leave",
@@ -91,23 +92,21 @@ COLLECTION_OWNER: dict[str, str] = {
 # Contexts that are thin compatibility shims or sub-contexts of a parent.
 # These are allowed to access the parent context's collections.
 CONTEXT_ALIASES: dict[str, str] = {
-    "read_model": "employee_profile",
+    "read_model": "employee_master",
 }
 
 # ── Transitional allowlist ────────────────────────────────────────────
 # File (relative to backend/) → set of foreign collections allowed.
 # Each entry must have a tracking comment. Shrink this list over time.
 ALLOWED_CROSS_COLLECTION_ACCESS: dict[str, set[str]] = {
-    "contexts/employee_profile/application/profile_interface.py": {"employee_identities"},
-    "contexts/employee_profile/contracts/profile_directory.py": {"employee_identities"},
-    "contexts/employee_profile/infrastructure/gateway.py": {
-        "designations",
-        "employee_identities",
+    # employee_master now owns the identity + profile collections, so the former
+    # cross-context reads between identity and profile are same-context. The only
+    # remaining foreign read is the profile gateway joining `users` (owned by
+    # identity) for login-account status. COMPAT: removable when that join moves
+    # behind the identity_access contract.
+    "contexts/employee_master/profile/infrastructure/gateway.py": {
         "users",
     },
-    "contexts/employee_profile/read_model/infrastructure/repository.py": {"employee_identities"},
-    # rebuild_projection_from_identity reads canonical identity data
-    "contexts/employee_profile/read_model/application/service.py": {"employee_identities"},
     # Seniority uses cross-context reads for three-collection join at generation
     # time and for reference-data dropdowns.  All reads go through the application
     # service; the router itself no longer touches foreign collections.

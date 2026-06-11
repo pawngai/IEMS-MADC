@@ -17,7 +17,7 @@ from contexts.documents.infrastructure import query as _query_mod
 from contexts.documents.application import commands as _commands_mod
 from contexts.documents.domain import validation
 from contexts.documents.infrastructure.storage import StorageBucket
-from contexts.rbac.policies.operational import require_document_delete_permission
+from contexts.identity_access.rbac.policies.operational import require_document_delete_permission
 from app_platform.event_bus.types import EventName
 
 

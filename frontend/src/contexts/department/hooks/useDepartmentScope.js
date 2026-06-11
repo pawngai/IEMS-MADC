@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import {
   DEPARTMENT_SCOPED_AUTHORITIES,
   hasAnyAuthority,
@@ -31,7 +32,8 @@ export const normalizeDepartmentRows = (rows) =>
  * to localStorage.
  */
 export function useDepartmentScope() {
-  const { user, can, canAccessModule } = useAuth();
+  const { user } = useAuth();
+  const { can, canAccessModule } = usePermissions();
 
   const canUseDepartmentPortal =
     hasAnyAuthority(user, DEPARTMENT_SCOPED_AUTHORITIES) &&

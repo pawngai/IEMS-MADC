@@ -3,7 +3,7 @@
 This module wires bounded-context-owned event schemas into the platform event
 registry. Schemas themselves are defined by their owning contexts:
 
-- Employee identity events: ``contexts.employee_identity.contracts.events``
+- Employee identity events: ``contexts.employee_master.contracts.events``
 - Service-event payloads:    ``contexts.service_book.records.contracts.events``
 - Document events:           ``contexts.documents.contracts.events``
 
@@ -27,7 +27,7 @@ from contexts.documents.contracts.events import (
     DocumentScanCompletedPayload,
     DocumentUploadedPayload,
 )
-from contexts.employee_identity.contracts.events import (
+from contexts.employee_master.contracts.events import (
     EmployeeCreatedEvent,
     EmployeeIdentityCreatedEvent,
     EmployeePromotedEvent,

@@ -2,7 +2,7 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import EssDocumentsPage from "@/contexts/ess/pages/EssDocumentsPage";
+import EssDocumentsPage from "@/portals/ess/pages/EssDocumentsPage";
 
 jest.mock("@/app/layout/Layout", () => ({
   __esModule: true,

@@ -8,7 +8,7 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.employee_profile.application.read_profiles import list_profiles_response
+from contexts.employee_master.profile.application.read_profiles import list_profiles_response
 
 
 class _FakeWorkflowService:

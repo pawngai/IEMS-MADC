@@ -5,7 +5,7 @@ from httpx import ASGITransport, AsyncClient
 
 from app.main import app
 from app_platform import auth as shared_auth_module
-from contexts.identity.api import users_router as users_router_module
+from contexts.identity_access.identity.api import users_router as users_router_module
 
 
 @pytest.fixture

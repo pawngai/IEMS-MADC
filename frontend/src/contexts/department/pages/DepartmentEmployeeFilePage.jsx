@@ -4,6 +4,7 @@ import Layout from "@/app/layout/Layout";
 import { DEPT } from "@/shared/lib/routes";
 import DepartmentEmployeeProfileSummary from "@/contexts/department/components/DepartmentEmployeeProfileSummary";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import { useDepartmentScope } from "@/contexts/department/hooks/useDepartmentScope";
 import {
   getDepartmentEmployeeFile,
@@ -47,7 +48,7 @@ const DepartmentEmployeeFilePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { employeeId } = useParams();
-  const { can, canAny, canAccessModule } = useAuth();
+  const { can, canAny, canAccessModule } = usePermissions();
   const {
     loading,
     setLoading,

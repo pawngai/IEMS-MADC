@@ -3,13 +3,12 @@ import { Navigate, Route } from "react-router-dom";
 import { Permissions } from "@/platform/permissions";
 import { useAuth } from "@/contexts/identity";
 import { ESS_DOCUMENTS_REQUIRED_PERMISSIONS, hasEssEmployeeIdentity } from "@/contexts/ess/services/essDomainService";
+import { EssDashboardPage as EssDashboard, EssDocumentsPage } from "@/portals/ess";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { ProtectedRoute } from "@/app/router/guards";
 import { PageLoader } from "@/app/router/routeLoading";
 
-const EssDashboard = lazy(() => import("@/contexts/ess/pages/EssDashboardPage"));
 const EssProfilePage = lazy(() => import("@/contexts/employee_profile/pages/EmployeeProfilePage"));
-const EssDocumentsPage = lazy(() => import("@/contexts/ess/pages/EssDocumentsPage"));
 const EssServiceBookPage = lazy(() => import("@/contexts/service_book/pages/EssServiceBookPage"));
 const EssLeavePage = lazy(() => import("@/contexts/leave/pages/EssLeavePage"));
 const EssNotificationsPage = lazy(() => import("@/contexts/notifications/pages/EssNotificationsPage"));

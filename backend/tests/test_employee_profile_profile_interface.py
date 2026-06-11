@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from fastapi import HTTPException
 
-from contexts.employee_profile.application.profile_interface import (
+from contexts.employee_master.profile.application.profile_interface import (
     get_employee_profile_view,
     require_employee_profile,
 )

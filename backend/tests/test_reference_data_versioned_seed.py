@@ -13,7 +13,7 @@ from app_platform.reference_data.infrastructure.versioned_seed import (
 from app_platform.reference_data.infrastructure.schemas import DEFAULT_EMPLOYMENT_TYPES
 from app_platform.reference_data.infrastructure import service as reference_data_service
 from app_platform.reference_data.contracts.employment_type_master import RETAINED_EMPLOYMENT_TYPE_CODES
-from contexts.rbac.domain.models import Authority, WorkflowStage
+from contexts.identity_access.rbac.domain.models import Authority, WorkflowStage
 
 
 class _FakeCollection:

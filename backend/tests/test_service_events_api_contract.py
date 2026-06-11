@@ -6,7 +6,7 @@ from httpx import ASGITransport, AsyncClient
 from app.main import app
 from contexts.service_book.records.api import router as service_events_router_module
 from contexts.service_book.records.api.dependencies import get_service_events_service
-from contexts.rbac.domain.models import Permission
+from contexts.identity_access.rbac.domain.models import Permission
 from app_platform import auth as shared_auth_module
 from app_platform.db.runtime import get_db
 from shared_kernel.base import DomainError

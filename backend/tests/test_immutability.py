@@ -9,7 +9,7 @@ import os
 # Add backend to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from contexts.employee_profile.contracts.immutability import (
+from contexts.employee_master.profile.contracts.immutability import (
     ImmutabilityValidator,
     ImmutabilityValidationResult,
     validate_immutability,

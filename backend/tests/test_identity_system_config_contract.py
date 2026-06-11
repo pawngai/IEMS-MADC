@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from contexts.identity.contracts import system_config
+from contexts.identity_access.identity.contracts import system_config
 
 
 class _FakeSystemConfigCollection:

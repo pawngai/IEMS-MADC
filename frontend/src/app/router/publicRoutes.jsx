@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/app/router/guards";
 import { useAuth } from "@/contexts/identity";
+import { usePermissions } from "@/contexts/identity_access";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { getDefaultLandingPath } from "@/app/router/defaultLanding";
 import LoginPage from "@/contexts/identity/ui/LoginPage";
@@ -11,8 +12,9 @@ const NotFoundPage = lazy(() => import("@/app/pages/system-admin/NotFoundPage"))
 
 /** Resolve a role-aware landing page for the signed-in user. */
 const DefaultLanding = () => {
-	const auth = useAuth();
-	const landingPath = getDefaultLandingPath(auth);
+	const { user } = useAuth();
+	const permissions = usePermissions();
+	const landingPath = getDefaultLandingPath({ user, ...permissions });
 
 	if (!landingPath) {
 		return (

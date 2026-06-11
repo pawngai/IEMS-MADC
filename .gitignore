@@ -119,3 +119,8 @@ frontend/build/
 
 # Mobile development
 android-sdk/
+
+# refactor migration artifacts (contain dev data)
+docs/refactor/employee_master_migration_report.json
+.tmp_ui_check/
+scripts/ui_arch_check.py

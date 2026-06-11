@@ -9,7 +9,7 @@
 # 5. Locked records are immutable
 
 import pytest
-from contexts.rbac.domain.policy_engine import (
+from contexts.identity_access.rbac.domain.policy_engine import (
     PolicyEngine,
     PolicyResult,
     UserContext,

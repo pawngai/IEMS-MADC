@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 
 from motor.motor_asyncio import AsyncIOMotorClient
 
-from contexts.employee_identity.domain.employee_code import format_employee_code
+from contexts.employee_master.identity.domain.employee_code import format_employee_code
 
 
 async def main() -> None:

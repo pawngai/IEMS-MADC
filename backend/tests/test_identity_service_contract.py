@@ -10,12 +10,12 @@ from types import SimpleNamespace
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from contexts.identity.domain.module_access_policy import module_access_fallback
-from contexts.identity.infrastructure import auth_session_service
-from contexts.identity.infrastructure import activity_service
-from contexts.identity.infrastructure import service
-from contexts.identity.infrastructure import user_management_service
-from contexts.identity.contracts.schemas import UserCreate
+from contexts.identity_access.identity.domain.module_access_policy import module_access_fallback
+from contexts.identity_access.identity.infrastructure import auth_session_service
+from contexts.identity_access.identity.infrastructure import activity_service
+from contexts.identity_access.identity.infrastructure import service
+from contexts.identity_access.identity.infrastructure import user_management_service
+from contexts.identity_access.identity.contracts.schemas import UserCreate
 
 
 @pytest.mark.asyncio

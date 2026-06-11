@@ -73,14 +73,32 @@ Current route entrypoint status:
 
 ## Large Frontend Files
 
-The current first-pass scan found these high-priority files over 500 lines:
+Completed first-pass splits:
 
 - `frontend/src/contexts/change_requests/containers/EssChangeRequestsScreen.jsx`
 - `frontend/src/contexts/service_book/records/components/RecordServiceBookRecordDialog.jsx`
 - `frontend/src/contexts/analytics/components/AnalyticsDashboardSections.jsx`
+- `frontend/src/contexts/leave/pages/LeaveDashboardPage.jsx`
 - `frontend/src/contexts/employee_master/pages/EmployeeDirectoryPage.jsx`
 - `frontend/src/contexts/employee_master/components/EmployeeProfileExtensionEditor.jsx`
 - `frontend/src/contexts/seniority/components/SeniorityListsTab.jsx`
+- `frontend/src/contexts/employee_master/components/EmployeeProfileSummary.jsx`
+
+Current high-priority production files over 500 lines:
+
+- `frontend/src/contexts/leave/pages/EssLeavePage.jsx`
+- `frontend/src/portals/ess/pages/EssDashboardPage.jsx`
+- `frontend/src/contexts/service_book/records/model/recordServiceBookRecordDialogModel.js`
+- `frontend/src/index.css`
+- `frontend/src/contexts/employee_master/components/EmployeeProfileExtensionEditor.support.jsx`
+- `frontend/src/contexts/workflow/containers/WorkflowQueueScreen.jsx`
+- `frontend/src/contexts/workflow/components/WorkflowDetailPanel.jsx`
+- `frontend/src/contexts/employee_master/hooks/useEmployeeDirectory.js`
+- `frontend/src/contexts/department/pages/DeptSanctionedStrengthPage.jsx`
+- `frontend/src/app/layout/Layout.jsx`
+- `frontend/src/contexts/applications/pages/GlobalPortalDashboardPage.jsx`
+- `frontend/src/contexts/analytics/pages/AnalyticsDashboardPage.jsx`
+- `frontend/src/portals/ess/pages/EssDocumentsPage.jsx`
 
 Split these in dedicated behavior-preserving patches. Do not combine large UI
 extractions with context import migration.

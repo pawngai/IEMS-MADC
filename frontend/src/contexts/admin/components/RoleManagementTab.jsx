@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { Input } from "@/shared/ui/input";
 import { toast } from "sonner";
-import { userManagementAPI } from "@/contexts/identity";
+import { userManagementAPI } from "@/contexts/identity_access";
 import { normalizeAuthorityCode, dedupeAuthorityCodes } from "@/contexts/admin/hooks/authorityNormalization";
 
 const EXCLUDED_ROLES = new Set(["DEPT_DATA_ENTRY", "HOD", "EMPLOYEE"]);

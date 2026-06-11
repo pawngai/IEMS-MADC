@@ -12,11 +12,11 @@ const ServiceBookRecordsPage = lazy(() => import("@/contexts/service_book/record
 const ServiceBookRecordsLandingPage = lazy(() => import("@/contexts/service_book/records/pages/ServiceBookRecordsLandingPage"));
 const DocumentManagementPage = lazy(() => import("@/contexts/documents/pages/DocumentManagementPage"));
 const WorkQueue = lazy(() => import("@/contexts/workflow/pages/WorkflowQueuePage"));
-const EmployeeDirectoryPage = lazy(() => import("@/contexts/employee_identity/pages/EmployeeDirectoryPage"));
-const EmployeeFile = lazy(() => import("@/contexts/employee_profile/pages/EmployeeFilePage"));
-const EmployeeIdentityEditorPage = lazy(() => import("@/contexts/employee_identity/pages/EmployeeIdentityEditorPage"));
-const RegularisationRecordPage = lazy(() => import("@/contexts/employee_identity/pages/RegularisationRecordPage"));
-const EmployeeProfileEditorPage = lazy(() => import("@/contexts/employee_profile/pages/EmployeeProfileEditorPage"));
+const EmployeeDirectoryPage = lazy(() => import("@/contexts/employee_master/pages/EmployeeDirectoryPage"));
+const EmployeeFile = lazy(() => import("@/contexts/employee_master/pages/EmployeeFilePage"));
+const EmployeeIdentityEditorPage = lazy(() => import("@/contexts/employee_master/pages/EmployeeIdentityEditorPage"));
+const RegularisationRecordPage = lazy(() => import("@/contexts/employee_master/pages/RegularisationRecordPage"));
+const EmployeeProfileEditorPage = lazy(() => import("@/contexts/employee_master/pages/EmployeeProfileEditorPage"));
 
 /** Redirect that preserves matched route params via react-router's generatePath. */
 const ParamRedirect = ({ to }) => {

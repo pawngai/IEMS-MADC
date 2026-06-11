@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import {
   DEPARTMENT_SCOPED_AUTHORITIES,
   hasAnyAuthority,
   hasAuthority,
 } from "@/contexts/access_control";
-import { authAPI } from "@/contexts/identity";
+import { authAPI } from "@/contexts/identity_access";
 import { mastersAPI } from "@/contexts/masters";
 import { Permissions } from "@/platform/permissions";
 import { setTokens } from "@/platform/api/httpClient";

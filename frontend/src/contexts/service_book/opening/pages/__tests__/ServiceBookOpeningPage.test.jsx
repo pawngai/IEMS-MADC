@@ -29,10 +29,13 @@ vi.mock("@/app/layout/Layout", () => ({
   default: ({ children }) => <div data-testid="layout">{children}</div>,
 }));
 
-vi.mock("@/contexts/identity", () => ({
+vi.mock("@/contexts/identity_access", () => ({
   __esModule: true,
   useAuth: () => ({
     user: { employee_id: "EMP-1", name: "Opening Clerk" },
+    can: (...args) => mockCan(...args),
+  }),
+  usePermissions: () => ({
     can: (...args) => mockCan(...args),
   }),
 }));

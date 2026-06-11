@@ -20,7 +20,7 @@ jest.mock('@/platform/api/httpClient', () => ({
   clearTokens: jest.fn(),
 }));
 
-jest.mock('@/contexts/identity/api/authApi', () => ({
+jest.mock('@/contexts/identity_access/api/authApi', () => ({
   __esModule: true,
   authAPI: { getMe: jest.fn().mockRejectedValue(new Error('no token')), getModuleAccess: jest.fn(), login: jest.fn() },
 }));
@@ -45,7 +45,7 @@ jest.mock('@/platform/permissions', () => ({
 }));
 
 // Mock auth context
-jest.mock('@/contexts/identity', () => ({
+jest.mock('@/contexts/identity_access', () => ({
   __esModule: true,
   AuthProvider: ({ children }) => <div>{children}</div>,
   useAuth: () => ({

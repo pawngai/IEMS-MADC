@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { Permissions } from "@/platform/permissions";
 import { serviceBookRecordsAPI } from "@/contexts/service_book/records/api/serviceBookRecordsApi";

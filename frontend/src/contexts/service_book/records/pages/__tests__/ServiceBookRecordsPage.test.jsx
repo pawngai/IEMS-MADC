@@ -28,7 +28,7 @@ vi.mock("@/app/layout/Layout", () => ({
   default: ({ children }) => <div data-testid="layout">{children}</div>,
 }));
 
-vi.mock("@/contexts/identity/model/authContext", () => ({
+vi.mock("@/contexts/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => ({
     user: { name: "Global Data Entry" },

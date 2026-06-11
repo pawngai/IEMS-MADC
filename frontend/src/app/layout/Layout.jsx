@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { isRegularEssEmployee } from "@/contexts/ess/services/essEligibility";
 import { canAccessEssDocuments } from "@/contexts/ess/services/essDomainService";
@@ -40,7 +40,7 @@ import {
   FileText,
   Lock,
 } from "lucide-react";
-import ChangePasswordDialog from "@/contexts/identity/model/changePasswordDialogAdapter";
+import ChangePasswordDialog from "@/contexts/identity_access/model/changePasswordDialogAdapter";
 
 export const buildSwitchTargets = ({
   isSystemAdmin,

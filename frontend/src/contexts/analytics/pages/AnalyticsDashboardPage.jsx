@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Layout from "@/app/layout/Layout";
 import { analyticsAPI } from "@/contexts/analytics/api/analyticsApi";
 import { mastersAPI } from "@/contexts/masters";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { Permissions } from "@/platform/permissions";
 import { Button } from "@/shared/ui/button";

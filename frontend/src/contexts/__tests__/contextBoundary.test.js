@@ -21,10 +21,10 @@ const SPLIT_FRONTEND_SHELL_MAX_LINES = 1200;
 const SPLIT_FRONTEND_SHELLS = [
   "contexts/analytics/pages/AnalyticsDashboardPage.jsx",
   "contexts/service_book/records/components/RecordServiceBookRecordDialog.jsx",
-  "contexts/employee_profile/components/EmployeeProfileExtensionEditor.jsx",
-  "contexts/employee_identity/pages/EmployeeDirectoryPage.jsx",
+  "contexts/employee_master/components/EmployeeProfileExtensionEditor.jsx",
+  "contexts/employee_master/pages/EmployeeDirectoryPage.jsx",
 ];
-const FORM_SCHEMA_CONTEXTS = ["employee_identity", "employee_profile", "service_book/records", "service_book/opening"];
+const FORM_SCHEMA_CONTEXTS = ["employee_master", "service_book/records", "service_book/opening"];
 
 function walkJsFiles(root) {
   if (!fs.existsSync(root)) return [];

@@ -9,7 +9,7 @@ const mockGetDepartments = vi.fn();
 const mockGetMe = vi.fn();
 const mockSetTokens = vi.fn();
 
-vi.mock("@/contexts/identity/model/authContext", () => ({
+vi.mock("@/contexts/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
@@ -21,7 +21,7 @@ vi.mock("@/contexts/masters/api/mastersApi", () => ({
   },
 }));
 
-vi.mock("@/contexts/identity/api/authApi", () => ({
+vi.mock("@/contexts/identity_access/api/authApi", () => ({
   __esModule: true,
   authAPI: {
     getMe: (...args) => mockGetMe(...args),

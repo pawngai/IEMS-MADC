@@ -1,5 +1,5 @@
 import { BrowserRouter } from "react-router-dom";
-import { AuthProvider } from "@/contexts/identity";
+import { AuthProvider } from "@/contexts/identity_access";
 import ErrorBoundary from "@/app/layout/ErrorBoundary";
 import { Toaster } from "@/shared/ui/sonner";
 import { PasswordGate } from "@/app/router/guards";

@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
 import { OPS } from "@/shared/lib/routes";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";
-import { useAuth } from "@/contexts/identity";
+import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { listProfilesByStatus } from "@/contexts/applications/model/globalPortalGateway";
 import { leaveAPI } from "@/contexts/leave";

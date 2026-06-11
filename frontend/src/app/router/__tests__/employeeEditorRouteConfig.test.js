@@ -63,10 +63,10 @@ describe("Employee editor route config", () => {
   test("active employee/profile/department pages no longer import the combined wizard", () => {
     const frontendRoot = path.join(__dirname, "..", "..", "..", "..");
     const callerFiles = [
-      "src/contexts/employee_identity/pages/EmployeeDirectoryPage.jsx",
-      "src/contexts/employee_profile/pages/EmployeeFilePage.jsx",
+      "src/contexts/employee_master/pages/EmployeeDirectoryPage.jsx",
+      "src/contexts/employee_master/pages/EmployeeFilePage.jsx",
       "src/contexts/department/pages/DepartmentEmployeeFilePage.jsx",
-      "src/contexts/employee_profile/pages/EmployeeProfilePage.jsx",
+      "src/contexts/employee_master/pages/EmployeeProfilePage.jsx",
       "src/contexts/department/pages/DeptDirectoryPage.jsx",
       "src/contexts/department/pages/DeptDashboardPage.jsx",
       "src/contexts/workflow/containers/WorkflowQueueScreen.jsx",
@@ -87,10 +87,10 @@ describe("Employee editor route config", () => {
     );
 
     expect(source).toContain('from "@/contexts/department/model/departmentProfileGateway"');
-    expect(source).not.toContain('from "@/contexts/employee_profile/api/employeeProfileApi"');
+    expect(source).not.toContain('from "@/contexts/employee_master/api/employeeProfileApi"');
     expect(source).not.toContain("employeeProfileApi.");
     expect(source).toContain('from "@/contexts/department/components/DepartmentEmployeeProfileSummary"');
-    expect(source).not.toContain('from "@/contexts/employee_profile/components/EmployeeProfileSummary"');
+    expect(source).not.toContain('from "@/contexts/employee_master/components/EmployeeProfileSummary"');
     expect(source).toContain('buildIdentityEditPath("department", employeeId)');
     expect(source).toContain('buildProfileEditPath("department", employeeId)');
     expect(source).toContain('<DepartmentEmployeeProfileSummary profile={profile} compact />');
@@ -99,7 +99,7 @@ describe("Employee editor route config", () => {
 
   test("legacy combined wizard source tree has been removed", () => {
     const frontendRoot = path.join(__dirname, "..", "..", "..", "..");
-    const wizardRoot = path.join(frontendRoot, "src", "contexts", "employee_profile", "wizard");
+    const wizardRoot = path.join(frontendRoot, "src", "contexts", "employee_master", "wizard");
     const legacyPage = path.join(wizardRoot, "page", "EmployeeWizardPage.jsx");
 
     expect(fs.existsSync(legacyPage)).toBe(false);

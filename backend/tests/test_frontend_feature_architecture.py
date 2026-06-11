@@ -66,8 +66,6 @@ DEPRECATED_CONTEXT_BASELINES = {
     "change_requests": 16,
     "department": 18,
     "documents": 5,
-    "employee_identity": 8,
-    "employee_profile": 16,
     "ess": 8,
     "leave": 11,
     "masters": 2,

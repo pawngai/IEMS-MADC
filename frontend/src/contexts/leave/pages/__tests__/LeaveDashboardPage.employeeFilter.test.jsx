@@ -55,7 +55,7 @@ jest.mock("@/contexts/leave/api/leaveApi", () => ({
   },
 }));
 
-jest.mock("@/contexts/employee_identity/api/employeeIdentityApi", () => ({
+jest.mock("@/contexts/employee_master/api/employeeIdentityApi", () => ({
   __esModule: true,
   employeeIdentityApi: {
     list: (...args) => mockEmployeeIdentityList(...args),

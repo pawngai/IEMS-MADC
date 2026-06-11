@@ -30,7 +30,7 @@ export const ProtectedRoute = ({
 	requireAllAuthorities = false,
 }) => {
 	const { user, loading } = useAuth();
-	const { canAny, canAccessModule, isAny } = usePermissions();
+	const { canAny, canAll, canAccessModule, isAny } = usePermissions();
 
 	if (loading) return <PageLoader />;
 
@@ -40,7 +40,7 @@ export const ProtectedRoute = ({
 
 	if (requiredPermissions.length > 0) {
 		const hasAccess = requireAllPermissions
-			? requiredPermissions.every((permission) => canAny([permission]))
+			? canAll(requiredPermissions)
 			: canAny(requiredPermissions);
 		if (!hasAccess) {
 			return (

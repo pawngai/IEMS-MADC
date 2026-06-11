@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { authAPI } from '@/contexts/identity_access/api/authApi';
 import { getToken, getUser, setTokens, clearTokens } from "@/platform/api/httpClient";
 
@@ -53,13 +53,13 @@ export const AuthProvider = ({ children }) => {
 		try { return _store.getItem('iems_active_role') || null; } catch { return null; }
 	});
 
-	const setActiveRole = (role) => {
+	const setActiveRole = useCallback((role) => {
 		setActiveRoleState(role);
 		try {
 			if (role) _store.setItem('iems_active_role', role);
 			else _store.removeItem('iems_active_role');
 		} catch { }
-	};
+	}, []);
 
 	useEffect(() => {
 		const bootstrapAuth = async () => {
@@ -121,11 +121,10 @@ export const AuthProvider = ({ children }) => {
 			setUser(null);
 			setActiveRole(null);
 			setModuleAccess(DEFAULT_MODULE_ACCESS);
-			setLoading(false);
 		};
 
 		bootstrapAuth().finally(() => setLoading(false));
-	}, []);
+	}, [setActiveRole]);
 
 	useEffect(() => {
 		const loadModuleAccess = async () => {
@@ -144,7 +143,7 @@ export const AuthProvider = ({ children }) => {
 		}
 	}, [user]);
 
-	const login = async (email, password) => {
+	const login = useCallback(async (email, password) => {
 		const payload = {
 			email: String(email || '').trim(),
 			password: String(password || ''),
@@ -157,9 +156,9 @@ export const AuthProvider = ({ children }) => {
 		setUser(userData);
 
 		return userData;
-	};
+	}, [setActiveRole]);
 
-	const logout = async () => {
+	const logout = useCallback(async () => {
 		try {
 			await authAPI.logout();
 		} catch { }
@@ -167,31 +166,37 @@ export const AuthProvider = ({ children }) => {
 		setActiveRole(null);
 		setUser(null);
 		setModuleAccess(DEFAULT_MODULE_ACCESS);
-	};
+	}, [setActiveRole]);
 
-	const clearMustChangePassword = () => {
-		if (user) {
-			const updated = { ...user, must_change_password: false };
+	const clearMustChangePassword = useCallback(() => {
+		setUser((currentUser) => {
+			if (!currentUser) return currentUser;
+			const updated = { ...currentUser, must_change_password: false };
 			setTokens({ user: updated });
-			setUser(updated);
-		}
-	};
+			return updated;
+		});
+	}, []);
 
 	// AuthContext holds only auth state. Permission/authority/module selectors
 	// live in @/contexts/identity_access (usePermissions); portal-access rules in
 	// portalAccessRules. clearMustChangePassword is retained as an essential
 	// auth-state transition that requires provider internals.
+	// The value (and each function above) is memoized so consumers that put
+	// auth fields in useEffect/useCallback deps don't refire on unrelated
+	// provider re-renders (same hazard class as the work-queue loader loop).
+	const value = useMemo(() => ({
+		user,
+		loading,
+		login,
+		logout,
+		activeRole,
+		setActiveRole,
+		moduleAccess,
+		clearMustChangePassword,
+	}), [user, loading, login, logout, activeRole, setActiveRole, moduleAccess, clearMustChangePassword]);
+
 	return (
-		<AuthContext.Provider value={{
-			user,
-			loading,
-			login,
-			logout,
-			activeRole,
-			setActiveRole,
-			moduleAccess,
-			clearMustChangePassword,
-		}}>
+		<AuthContext.Provider value={value}>
 			{children}
 		</AuthContext.Provider>
 	);

@@ -15,12 +15,12 @@ import { createPermissionSelectors } from "@/platform/permissions";
 /**
  * Hook returning permission selectors derived from current auth state.
  * Selector surface: can, canAny, canAll, isAny, canAccessModule,
- * canAccessEssPortal, canAccessAdminPortal, getPrimaryAuthority,
- * getAuthorityDisplayName, Permissions, ...
+ * canAccessEssPortal, getPrimaryAuthority, getAuthorityDisplayName,
+ * Permissions, ...
  */
 const SELECTOR_KEYS = [
   "can", "canAny", "canAll", "isAny", "canAccessModule", "canAccessEssPortal",
-  "canAccessAdminPortal", "getPrimaryAuthority", "getAuthorityDisplayName",
+  "getPrimaryAuthority", "getAuthorityDisplayName",
 ];
 
 export function usePermissions() {

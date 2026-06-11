@@ -144,6 +144,7 @@ export const canPerformAction = (
 export const createPermissionSelectors = ({ user, moduleAccess, activeRole }) => {
   const can = (permission) => canPerformAction(user, { requiredPermissions: [permission] });
   const canAny = (permissions = []) => permissions.some((permission) => can(permission));
+  const canAll = (permissions = []) => permissions.every((permission) => can(permission));
   const canAccessModule = (moduleId) => {
     if (!moduleId) return true;
     if (moduleAccess?.mode === "allow_all") return true;
@@ -162,6 +163,7 @@ export const createPermissionSelectors = ({ user, moduleAccess, activeRole }) =>
   return {
     can,
     canAny,
+    canAll,
     is: (authority) => hasAuthority(user, authority),
     isAny: (authorities) => hasAnyAuthority(user, authorities),
     canVerify: () => can(Permissions.SERVICE_BOOK_ENTRY_VERIFY),

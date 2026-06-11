@@ -15,9 +15,10 @@ jest.mock("@/contexts/identity_access", () => ({
 
 // AuthContext now holds only auth state; permission selectors come from
 // usePermissions. Split a combined fixture across the two mocks.
-function setAuth({ user, loading = false, canAny, isAny, canAccessModule }) {
+function setAuth({ user, loading = false, canAny, canAll, isAny, canAccessModule }) {
   mockUseAuth.mockReturnValue({ user, loading });
-  mockUsePermissions.mockReturnValue({ canAny, isAny, canAccessModule });
+  const resolvedCanAll = canAll || ((permissions) => permissions.every((p) => canAny([p])));
+  mockUsePermissions.mockReturnValue({ canAny, canAll: resolvedCanAll, isAny, canAccessModule });
 }
 
 jest.mock("@/app/pages/system-admin/AccessDeniedPage", () => ({

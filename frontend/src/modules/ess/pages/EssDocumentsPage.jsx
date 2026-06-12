@@ -11,7 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { CardSkeleton, PageHeaderSkeleton, TableSkeleton } from "@/shared/ui/skeletons";
 import { getApiErrorMessage } from "@/shared/lib/utils";
 import {
@@ -401,85 +401,103 @@ const EssDocumentsPage = () => {
                       </p>
                     </div>
                   ) : (
-                    <div className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>File</TableHead>
-                            <TableHead className="hidden md:table-cell">Context</TableHead>
-                            <TableHead className="hidden sm:table-cell">Added</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead className="text-right">Action</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {documents.map((document) => (
-                            <TableRow key={document.document_id || document.filename}>
-                              <TableCell className="max-w-[260px]">
-                                <div className="font-medium truncate">{document.original_name || document.filename}</div>
-                                {document.original_name && document.original_name !== document.filename ? (
-                                  <div className="text-xs text-slate-500 truncate">{document.filename}</div>
+                    <DataTable
+                      rows={documents}
+                      rowKey={(document) => document.document_id || document.filename}
+                      columns={[
+                        {
+                          key: "file",
+                          header: "File",
+                          className: "max-w-[260px]",
+                          headClassName: "",
+                          render: (document) => (
+                            <>
+                              <div className="font-medium truncate">{document.original_name || document.filename}</div>
+                              {document.original_name && document.original_name !== document.filename ? (
+                                <div className="text-xs text-slate-500 truncate">{document.filename}</div>
+                              ) : null}
+                              <div className="mt-1 flex flex-wrap gap-1">
+                                {document.document_type ? (
+                                  <Badge variant="outline" className="text-[10px]">
+                                    {formatDocumentTypeLabel(document.document_type)}
+                                  </Badge>
                                 ) : null}
-                                <div className="mt-1 flex flex-wrap gap-1">
-                                  {document.document_type ? (
-                                    <Badge variant="outline" className="text-[10px]">
-                                      {formatDocumentTypeLabel(document.document_type)}
-                                    </Badge>
-                                  ) : null}
-                                  {document.category ? (
-                                    <Badge variant="secondary" className="text-[10px]">
-                                      {formatDocumentTypeLabel(document.category)}
-                                    </Badge>
-                                  ) : null}
-                                </div>
-                              </TableCell>
-                              <TableCell className="hidden md:table-cell">
-                                <div className="text-sm text-slate-700">
-                                  {document.source_context ? formatSourceContextLabel(document.source_context) : "General upload"}
-                                </div>
-                                {document.entity_type || document.entity_id ? (
-                                  <div className="text-xs text-slate-500">
-                                    {[document.entity_type, document.entity_id].filter(Boolean).join(" • ")}
-                                  </div>
+                                {document.category ? (
+                                  <Badge variant="secondary" className="text-[10px]">
+                                    {formatDocumentTypeLabel(document.category)}
+                                  </Badge>
                                 ) : null}
-                              </TableCell>
-                              <TableCell className="hidden sm:table-cell">
-                                <div className="text-sm text-slate-700">{formatDate(document.uploaded_at)}</div>
-                                <div className="text-xs text-slate-500">{formatSize(document.file_size)}</div>
-                              </TableCell>
-                              <TableCell>
-                                <Badge variant={document.is_locked ? "secondary" : "outline"}>
-                                  {buildStatusLabel(document)}
-                                </Badge>
-                              </TableCell>
-                              <TableCell className="text-right">
-                                <div className="flex items-center justify-end gap-2">
-                                  {canPreviewDocument(document) ? (
-                                    <Button
-                                      type="button"
-                                      size="sm"
-                                      variant="ghost"
-                                      onClick={() => handlePreviewDocument(document)}
-                                    >
-                                      Preview
-                                    </Button>
-                                  ) : null}
-                                  <Button
-                                    type="button"
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => handleDownloadDocument(document)}
-                                  >
-                                      <Download className="w-4 h-4 mr-2" />
-                                      Download
-                                  </Button>
+                              </div>
+                            </>
+                          ),
+                        },
+                        {
+                          key: "context",
+                          header: "Context",
+                          className: "hidden md:table-cell",
+                          render: (document) => (
+                            <>
+                              <div className="text-sm text-slate-700">
+                                {document.source_context ? formatSourceContextLabel(document.source_context) : "General upload"}
+                              </div>
+                              {document.entity_type || document.entity_id ? (
+                                <div className="text-xs text-slate-500">
+                                  {[document.entity_type, document.entity_id].filter(Boolean).join(" • ")}
                                 </div>
-                              </TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
+                              ) : null}
+                            </>
+                          ),
+                        },
+                        {
+                          key: "added",
+                          header: "Added",
+                          className: "hidden sm:table-cell",
+                          render: (document) => (
+                            <>
+                              <div className="text-sm text-slate-700">{formatDate(document.uploaded_at)}</div>
+                              <div className="text-xs text-slate-500">{formatSize(document.file_size)}</div>
+                            </>
+                          ),
+                        },
+                        {
+                          key: "status",
+                          header: "Status",
+                          render: (document) => (
+                            <Badge variant={document.is_locked ? "secondary" : "outline"}>
+                              {buildStatusLabel(document)}
+                            </Badge>
+                          ),
+                        },
+                        {
+                          key: "action",
+                          header: "Action",
+                          className: "text-right",
+                          render: (document) => (
+                            <div className="flex items-center justify-end gap-2">
+                              {canPreviewDocument(document) ? (
+                                <Button
+                                  type="button"
+                                  size="sm"
+                                  variant="ghost"
+                                  onClick={() => handlePreviewDocument(document)}
+                                >
+                                  Preview
+                                </Button>
+                              ) : null}
+                              <Button
+                                type="button"
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleDownloadDocument(document)}
+                              >
+                                <Download className="w-4 h-4 mr-2" />
+                                Download
+                              </Button>
+                            </div>
+                          ),
+                        },
+                      ]}
+                    />
                   )}
                 </div>
 

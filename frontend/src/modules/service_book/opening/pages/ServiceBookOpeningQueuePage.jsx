@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { BookOpen, RefreshCw, Users } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { serviceBookOpeningApi } from "@/modules/service_book/opening/api/serviceBookOpeningApi";
 import OpeningStatusBadge from "@/modules/service_book/opening/components/OpeningStatusBadge";
 import { getOpeningCta } from "@/modules/service_book/opening/services/openingDomainService";
@@ -66,40 +66,44 @@ const ServiceBookOpeningQueuePage = () => {
             </div>
           </CardHeader>
           <CardContent>
-            {rows.length === 0 ? (
-              <div className="py-10 text-center text-sm text-slate-500">
-                Select a regular employee from the directory to open or continue Service Book Opening.
-              </div>
-            ) : (
-              <div className="rounded-md border overflow-hidden">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Employee</TableHead>
-                      <TableHead>Code</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {rows.map((row) => {
-                      const status = row.status || row.workflow_status || OPENING_STATUS.NOT_STARTED;
-                      const cta = getOpeningCta(row);
-                      return (
-                        <TableRow key={row.employee_id || row.employee_code}>
-                          <TableCell>{row.full_name || row.employee_name || row.employee_id}</TableCell>
-                          <TableCell className="font-mono text-xs">{row.employee_code || row.employee_id}</TableCell>
-                          <TableCell><OpeningStatusBadge status={status} /></TableCell>
-                          <TableCell className="text-right">
-                            <Button size="sm" onClick={() => openRow(row)}>{cta.label}</Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
+            <DataTable
+              rows={rows}
+              rowKey={(row) => row.employee_id || row.employee_code}
+              emptyState={
+                <div className="py-10 text-center text-sm text-slate-500">
+                  Select a regular employee from the directory to open or continue Service Book Opening.
+                </div>
+              }
+              columns={[
+                {
+                  key: "employee",
+                  header: "Employee",
+                  render: (row) => row.full_name || row.employee_name || row.employee_id,
+                },
+                {
+                  key: "code",
+                  header: "Code",
+                  className: "font-mono text-xs",
+                  headClassName: "",
+                  render: (row) => row.employee_code || row.employee_id,
+                },
+                {
+                  key: "status",
+                  header: "Status",
+                  render: (row) => (
+                    <OpeningStatusBadge status={row.status || row.workflow_status || OPENING_STATUS.NOT_STARTED} />
+                  ),
+                },
+                {
+                  key: "action",
+                  header: "Action",
+                  className: "text-right",
+                  render: (row) => (
+                    <Button size="sm" onClick={() => openRow(row)}>{getOpeningCta(row).label}</Button>
+                  ),
+                },
+              ]}
+            />
           </CardContent>
         </Card>
       </div>

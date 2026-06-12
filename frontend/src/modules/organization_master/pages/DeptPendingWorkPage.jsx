@@ -7,7 +7,7 @@ import { cn } from "@/shared/lib/utils";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { toast } from "sonner";
 import { TableSkeleton, PageHeaderSkeleton } from "@/shared/ui/skeletons";
 import {
@@ -130,56 +130,69 @@ const DeptPendingWorkPage = () => {
         ) : (
           <Card className="shadow-sm">
             <CardContent className="p-0">
-              <div className="rounded-xl overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50/80">
-                      <TableHead className="w-[35%]">Employee</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="hidden md:table-cell">Action Needed</TableHead>
-                      <TableHead className="text-right">Go</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pendingWork.map((item) => {
-                      const initials = (item.full_name || "E").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
-                      return (
-                        <TableRow key={item.employee_id} className="hover:bg-amber-50/40 cursor-pointer" onClick={() => navigate(DEPT.EMPLOYEE(item.employee_id))}>
-                          <TableCell>
-                            <div className="flex items-center gap-3">
-                              <div className={cn("w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0", item.workflow_status === "REJECTED" ? "bg-red-100 text-red-700" : "bg-slate-100 text-slate-600")}>{initials}</div>
-                              <div className="min-w-0">
-                                <p className="font-medium text-slate-900 truncate">{item.full_name || "Employee"}</p>
-                                <p className="text-xs text-slate-500 font-mono truncate">{item.employee_code || item.employee_id}</p>
-                              </div>
+              <div className="rounded-xl">
+                <DataTable
+                  rows={pendingWork}
+                  rowKey={(item) => item.employee_id}
+                  rowClassName="hover:bg-amber-50/40"
+                  onRowClick={(item) => navigate(DEPT.EMPLOYEE(item.employee_id))}
+                  columns={[
+                    {
+                      key: "employee",
+                      header: "Employee",
+                      headClassName: "w-[35%]",
+                      render: (item) => {
+                        const initials = (item.full_name || "E").split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+                        return (
+                          <div className="flex items-center gap-3">
+                            <div className={cn("w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0", item.workflow_status === "REJECTED" ? "bg-red-100 text-red-700" : "bg-slate-100 text-slate-600")}>{initials}</div>
+                            <div className="min-w-0">
+                              <p className="font-medium text-slate-900 truncate">{item.full_name || "Employee"}</p>
+                              <p className="text-xs text-slate-500 font-mono truncate">{item.employee_code || item.employee_id}</p>
                             </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={cn("text-xs", STATUS_STYLES[item.workflow_status] || "bg-slate-100 text-slate-700")}>{item.workflow_status}</Badge>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <p className="text-sm text-slate-600">{item.action_needed}</p>
-                            {item.rejection_reason && (
-                              <p className="text-xs text-red-500 mt-0.5 flex items-center gap-1"><XCircle className="w-3 h-3 flex-shrink-0" />{item.rejection_reason}</p>
-                            )}
-                          </TableCell>
-                          <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                            <div className="flex items-center justify-end gap-1">
-                              {isDataEntry && ["DRAFT", "REJECTED"].includes(item.workflow_status) && (
-                                <Button variant="default" size="sm" className="gap-1" onClick={() => navigate(DEPT.EMPLOYEE(item.employee_id))}>
-                                  <Edit3 className="w-3 h-3" />Edit
-                                </Button>
-                              )}
-                              <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(DEPT.EMPLOYEE(item.employee_id))}>
-                                Open <ArrowUpRight className="w-3 h-3" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
+                          </div>
+                        );
+                      },
+                    },
+                    {
+                      key: "status",
+                      header: "Status",
+                      render: (item) => (
+                        <Badge className={cn("text-xs", STATUS_STYLES[item.workflow_status] || "bg-slate-100 text-slate-700")}>{item.workflow_status}</Badge>
+                      ),
+                    },
+                    {
+                      key: "action_needed",
+                      header: "Action Needed",
+                      className: "hidden md:table-cell",
+                      render: (item) => (
+                        <>
+                          <p className="text-sm text-slate-600">{item.action_needed}</p>
+                          {item.rejection_reason && (
+                            <p className="text-xs text-red-500 mt-0.5 flex items-center gap-1"><XCircle className="w-3 h-3 flex-shrink-0" />{item.rejection_reason}</p>
+                          )}
+                        </>
+                      ),
+                    },
+                    {
+                      key: "go",
+                      header: "Go",
+                      className: "text-right",
+                      render: (item) => (
+                        <div className="flex items-center justify-end gap-1" onClick={(e) => e.stopPropagation()}>
+                          {isDataEntry && ["DRAFT", "REJECTED"].includes(item.workflow_status) && (
+                            <Button variant="default" size="sm" className="gap-1" onClick={() => navigate(DEPT.EMPLOYEE(item.employee_id))}>
+                              <Edit3 className="w-3 h-3" />Edit
+                            </Button>
+                          )}
+                          <Button variant="outline" size="sm" className="gap-1" onClick={() => navigate(DEPT.EMPLOYEE(item.employee_id))}>
+                            Open <ArrowUpRight className="w-3 h-3" />
+                          </Button>
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
               </div>
             </CardContent>
           </Card>

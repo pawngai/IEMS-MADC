@@ -6,7 +6,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { PageHeaderSkeleton, TableSkeleton } from "@/shared/ui/skeletons";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { toast } from "sonner";
 import { AlertTriangle, CheckCircle2, Lock, RefreshCw } from "lucide-react";
 
@@ -124,44 +124,58 @@ const DeptLeavePage = () => {
         ) : (
           <Card className="shadow-sm">
             <CardContent className="p-0">
-              <div className="rounded-xl overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="bg-slate-50/80">
-                      <TableHead className="w-[30%]">Employee</TableHead>
-                      <TableHead>Leave Type</TableHead>
-                      <TableHead className="hidden sm:table-cell">Period</TableHead>
-                      <TableHead className="text-center">Days</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {pendingLeaves.map((leave) => (
-                      <TableRow key={leave.id} className="hover:bg-orange-50/30">
-                        <TableCell>
-                          <div className="min-w-0">
-                            <p className="font-medium text-slate-900 truncate">{leave.employee_name || leave.employee_id}</p>
-                            <p className="text-xs text-slate-500 font-mono truncate">{leave.employee_id}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className="text-xs font-normal">{leave.leave_type_code}</Badge>
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell text-sm text-slate-600">
+              <div className="rounded-xl">
+                <DataTable
+                  rows={pendingLeaves}
+                  rowKey={(leave) => leave.id}
+                  rowClassName="hover:bg-orange-50/30"
+                  columns={[
+                    {
+                      key: "employee",
+                      header: "Employee",
+                      headClassName: "w-[30%]",
+                      render: (leave) => (
+                        <div className="min-w-0">
+                          <p className="font-medium text-slate-900 truncate">{leave.employee_name || leave.employee_id}</p>
+                          <p className="text-xs text-slate-500 font-mono truncate">{leave.employee_id}</p>
+                        </div>
+                      ),
+                    },
+                    {
+                      key: "leave_type",
+                      header: "Leave Type",
+                      render: (leave) => (
+                        <Badge variant="outline" className="text-xs font-normal">{leave.leave_type_code}</Badge>
+                      ),
+                    },
+                    {
+                      key: "period",
+                      header: "Period",
+                      className: "hidden sm:table-cell text-sm text-slate-600",
+                      headClassName: "hidden sm:table-cell",
+                      render: (leave) => (
+                        <>
                           <span>{formatDate(leave.from_date)}</span>
                           <span className="text-slate-400 mx-1">&ndash;</span>
                           <span>{formatDate(leave.to_date)}</span>
-                        </TableCell>
-                        <TableCell className="text-center">
-                          <span className="font-semibold text-slate-900">{leave.days_applied}</span>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={cn("text-xs", LEAVE_STATUS_STYLES[leave.status] || "bg-slate-100 text-slate-700")}>{leave.status}</Badge>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                        </>
+                      ),
+                    },
+                    {
+                      key: "days",
+                      header: "Days",
+                      className: "text-center",
+                      render: (leave) => <span className="font-semibold text-slate-900">{leave.days_applied}</span>,
+                    },
+                    {
+                      key: "status",
+                      header: "Status",
+                      render: (leave) => (
+                        <Badge className={cn("text-xs", LEAVE_STATUS_STYLES[leave.status] || "bg-slate-100 text-slate-700")}>{leave.status}</Badge>
+                      ),
+                    },
+                  ]}
+                />
               </div>
             </CardContent>
           </Card>

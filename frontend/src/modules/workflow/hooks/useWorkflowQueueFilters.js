@@ -1,14 +1,26 @@
-import { useDeferredValue, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useMemo } from "react";
+import { useUrlTableState } from "@/shared/lib/useUrlTableState";
 import {
   selectFilteredQueueItems,
   selectKanbanColumns,
 } from "@/modules/workflow/model/workflowQueueSelectors";
 
+// Queue filters live in the URL so a filtered queue view can be bookmarked,
+// shared, and survives refresh (same pattern as the employee directory).
+const QUEUE_FILTERS = {
+  query: { param: "q", defaultValue: "" },
+  type: { param: "type", defaultValue: "ALL" },
+  sla: { param: "sla", defaultValue: "ALL" },
+};
+
 export function useWorkflowQueueFilters({ items }) {
-  const [query, setQuery] = useState("");
-  const [typeFilter, setTypeFilter] = useState("ALL");
-  const [slaFilter, setSlaFilter] = useState("ALL");
+  const { values, setValue } = useUrlTableState({ filters: QUEUE_FILTERS });
+  const { query, type: typeFilter, sla: slaFilter } = values;
   const deferredQuery = useDeferredValue(query);
+
+  const setQuery = useCallback((value) => setValue("query", value), [setValue]);
+  const setTypeFilter = useCallback((value) => setValue("type", value), [setValue]);
+  const setSlaFilter = useCallback((value) => setValue("sla", value), [setValue]);
 
   const filteredItems = useMemo(
     () =>

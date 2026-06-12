@@ -17,7 +17,7 @@ module.exports = [
             {
               group: ["@/features/*", "@/features/**"],
               message:
-                "Import via context-owned entrypoints (`@/contexts/*`) instead of direct feature paths.",
+                "Import via context-owned entrypoints (`@/modules/*`) instead of direct feature paths.",
             },
           ],
         },
@@ -32,26 +32,9 @@ module.exports = [
         {
           patterns: [
             {
-              group: ["@/contexts/*", "@/contexts/**"],
+              group: ["@/modules/*", "@/modules/**"],
               message:
                 "Platform must not import bounded contexts. Keep platform services domain-neutral.",
-            },
-          ],
-        },
-      ],
-    },
-  },
-  {
-    files: ["src/portals/**/*.{js,jsx}"],
-    rules: {
-      "no-restricted-imports": [
-        "error",
-        {
-          patterns: [
-            {
-              group: ["@/contexts/*/*", "@/contexts/*/**"],
-              message:
-                "Portals may compose contexts only through public context index contracts.",
             },
           ],
         },
@@ -66,7 +49,7 @@ module.exports = [
         {
           patterns: [
             {
-              group: ["@/contexts/*/api/*", "@/contexts/*/api/**"],
+              group: ["@/modules/*/api/*", "@/modules/*/api/**"],
               message:
                 "App layer must not import context APIs directly. Use context model/ui adapters.",
             },
@@ -83,7 +66,7 @@ module.exports = [
         {
           patterns: [
             {
-              group: ["@/contexts/*/api/*", "@/contexts/*/api/**"],
+              group: ["@/modules/*/api/*", "@/modules/*/api/**"],
               message:
                 "Hooks layer must not import context APIs directly. Use context model adapters.",
             },
@@ -93,7 +76,7 @@ module.exports = [
     },
   },
   {
-    files: ["src/contexts/**/__tests__/*.{js,jsx}"],
+    files: ["src/modules/**/__tests__/*.{js,jsx}"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -110,7 +93,7 @@ module.exports = [
     },
   },
   {
-    files: ["src/contexts/**/*.{js,jsx}"],
+    files: ["src/modules/**/*.{js,jsx}"],
     rules: {
       "no-restricted-imports": [
         "error",
@@ -134,12 +117,12 @@ module.exports = [
         {
           patterns: [
             {
-              group: ["@/contexts/*/api/*", "@/contexts/*/api/**"],
+              group: ["@/modules/*/api/*", "@/modules/*/api/**"],
               message:
                 "Shared layer must not import context APIs directly. Use context model/ui adapters.",
             },
             {
-              group: ["@/contexts/*/ui/*", "@/contexts/*/ui/**"],
+              group: ["@/modules/*/ui/*", "@/modules/*/ui/**"],
               message:
                 "Shared layer must not import context UI directly. Keep shared components context-agnostic.",
             },
@@ -166,7 +149,7 @@ module.exports = [
         {
           patterns: [
             {
-              group: ["@/contexts/*", "@/contexts/**"],
+              group: ["@/modules/*", "@/modules/**"],
               message:
                 "shared/ui must stay dumb. Do not import context modules directly.",
             },

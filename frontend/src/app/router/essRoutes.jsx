@@ -1,18 +1,18 @@
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { Permissions } from "@/platform/permissions";
-import { useAuth } from "@/contexts/identity_access";
-import { ESS_DOCUMENTS_REQUIRED_PERMISSIONS, hasEssEmployeeIdentity } from "@/contexts/ess/services/essDomainService";
-import { EssDashboardPage as EssDashboard, EssDocumentsPage } from "@/portals/ess";
+import { useAuth } from "@/modules/identity_access";
+import { ESS_DOCUMENTS_REQUIRED_PERMISSIONS, hasEssEmployeeIdentity } from "@/modules/ess/services/essDomainService";
+import { EssDashboardPage as EssDashboard, EssDocumentsPage } from "@/modules/ess";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { ProtectedRoute } from "@/app/router/guards";
 import { PageLoader } from "@/app/router/routeLoading";
-import { EssLeavePage } from "@/contexts/leave_attendance";
+import { EssLeavePage } from "@/modules/leave_attendance";
 
-const EssProfilePage = lazy(() => import("@/contexts/employee_master/pages/EmployeeProfilePage"));
-const EssServiceBookPage = lazy(() => import("@/contexts/service_book/pages/EssServiceBookPage"));
-const EssNotificationsPage = lazy(() => import("@/contexts/notifications/pages/EssNotificationsPage"));
-const EssChangeRequestsPage = lazy(() => import("@/contexts/change_requests/pages/EssChangeRequestsPage"));
+const EssProfilePage = lazy(() => import("@/modules/employee_master/pages/EmployeeProfilePage"));
+const EssServiceBookPage = lazy(() => import("@/modules/service_book/pages/EssServiceBookPage"));
+const EssNotificationsPage = lazy(() => import("@/modules/notifications/pages/EssNotificationsPage"));
+const EssChangeRequestsPage = lazy(() => import("@/modules/change_requests/pages/EssChangeRequestsPage"));
 
 const EssProtectedRoute = ({ requiredPermissions, children }) => {
   const { user, loading } = useAuth();

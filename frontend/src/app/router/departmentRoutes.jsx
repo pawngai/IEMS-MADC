@@ -14,7 +14,7 @@ import {
   DeptLeavePage,
   DeptPendingWorkPage,
   DeptSanctionedStrengthPage,
-} from "@/contexts/organization_master";
+} from "@/modules/organization_master";
 
 const IDENTITY_EDITOR_PERMISSIONS = [
   Permissions.IDENTITY_READ_ALL,

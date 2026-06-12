@@ -1,14 +1,14 @@
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/app/router/guards";
-import { useAuth } from "@/contexts/identity_access";
-import { usePermissions } from "@/contexts/identity_access";
+import { useAuth } from "@/modules/identity_access";
+import { usePermissions } from "@/modules/identity_access";
 import { Permissions } from "@/platform/permissions";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
-import { getDefaultLandingPath } from "@/contexts/identity_access";
-import LoginPage from "@/contexts/identity_access/ui/LoginPage";
+import { getDefaultLandingPath } from "@/modules/identity_access";
+import LoginPage from "@/modules/identity_access/ui/LoginPage";
 
-const GlobalPortalDashboard = lazy(() => import("@/contexts/applications/pages/GlobalPortalDashboardPage"));
+const GlobalPortalDashboard = lazy(() => import("@/modules/applications/pages/GlobalPortalDashboardPage"));
 const NotFoundPage = lazy(() => import("@/app/pages/system-admin/NotFoundPage"));
 
 /**

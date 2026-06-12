@@ -4,10 +4,10 @@ import process from "node:process";
 
 const FRONTEND_ROOT = process.cwd();
 const SRC_ROOT = path.join(FRONTEND_ROOT, "src");
-const CONTEXTS_ROOT = path.join(SRC_ROOT, "contexts");
+const MODULES_ROOT = path.join(SRC_ROOT, "modules");
 const OUT_PATH = path.join(
   SRC_ROOT,
-  "contexts",
+  "modules",
   "__tests__",
   "fixtures",
   "context-boundary-allowlist.json"
@@ -34,24 +34,24 @@ function walkJsFiles(root) {
   return files;
 }
 
-function collectCrossContextViolations() {
-  const files = walkJsFiles(CONTEXTS_ROOT).filter(
+function collectCrossModuleViolations() {
+  const files = walkJsFiles(MODULES_ROOT).filter(
     (filePath) => !filePath.includes(`${path.sep}__tests__${path.sep}`)
   );
   const violations = [];
 
   for (const filePath of files) {
     const source = fs.readFileSync(filePath, "utf8");
-    const relative = path.relative(CONTEXTS_ROOT, filePath).replace(/\\/g, "/");
-    const currentContext = relative.split("/")[0];
-    const imports = source.match(/from\s+["']@\/contexts\/[^"']+["']/g) || [];
+    const relative = path.relative(MODULES_ROOT, filePath).replace(/\\/g, "/");
+    const currentModule = relative.split("/")[0];
+    const imports = source.match(/from\s+["']@\/modules\/[^"']+["']/g) || [];
 
     for (const imp of imports) {
-      const match = imp.match(/@\/contexts\/([^/]+)/);
+      const match = imp.match(/@\/modules\/([^/]+)/);
       if (!match) continue;
-      const targetContext = match[1];
-      if (targetContext !== currentContext) {
-        violations.push(`${relative} -> ${targetContext}`);
+      const targetModule = match[1];
+      if (targetModule !== currentModule) {
+        violations.push(`${relative} -> ${targetModule}`);
       }
     }
   }
@@ -59,7 +59,7 @@ function collectCrossContextViolations() {
   return [...new Set(violations)].sort();
 }
 
-const violations = collectCrossContextViolations();
+const violations = collectCrossModuleViolations();
 fs.mkdirSync(path.dirname(OUT_PATH), { recursive: true });
 fs.writeFileSync(OUT_PATH, `${JSON.stringify(violations, null, 2)}\n`, "utf8");
 process.stdout.write(`Updated ${OUT_PATH} with ${violations.length} entries.\n`);

@@ -2,13 +2,13 @@ import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import EssServiceBookPage from "@/contexts/service_book/pages/EssServiceBookPage";
+import EssServiceBookPage from "@/modules/service_book/pages/EssServiceBookPage";
 
 const mockServiceBookReadScreen = jest.fn(() => (
   <div data-testid="service-book-read-screen">ServiceBookReadScreen</div>
 ));
 
-jest.mock("@/contexts/service_book/containers/ServiceBookReadScreen", () => ({
+jest.mock("@/modules/service_book/containers/ServiceBookReadScreen", () => ({
   __esModule: true,
   default: (props) => mockServiceBookReadScreen(props),
 }));

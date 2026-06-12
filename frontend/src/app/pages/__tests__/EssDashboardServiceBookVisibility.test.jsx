@@ -10,7 +10,7 @@ const render = (ui) =>
   );
 import '@testing-library/jest-dom';
 
-import EssDashboard from '@/portals/ess/pages/EssDashboardPage';
+import EssDashboard from '@/modules/ess/pages/EssDashboardPage';
 
 jest.mock('@/app/layout/Layout', () => ({
   __esModule: true,
@@ -41,7 +41,7 @@ jest.mock('react-router-dom', () => ({
 
 const mockUseAuth = jest.fn();
 
-jest.mock('@/contexts/identity_access/model/authContext', () => ({
+jest.mock('@/modules/identity_access/model/authContext', () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
@@ -53,7 +53,7 @@ const mockGetMyServiceBook = jest.fn();
 const mockListMyLeaves = jest.fn();
 const mockGetMyProfileAuditTrail = jest.fn();
 
-jest.mock('@/contexts/ess/api/essApi', () => ({
+jest.mock('@/modules/ess/api/essApi', () => ({
   __esModule: true,
   essAPI: {
     getDashboard: (...args) => mockGetDashboard(...args),
@@ -63,14 +63,14 @@ jest.mock('@/contexts/ess/api/essApi', () => ({
   },
 }));
 
-jest.mock('@/contexts/leave_attendance/api/leaveApi', () => ({
+jest.mock('@/modules/leave_attendance/api/leaveApi', () => ({
   __esModule: true,
   leaveAPI: {
     listMy: (...args) => mockListMyLeaves(...args),
   },
 }));
 
-jest.mock('@/contexts/ess/model/essProfileGateway', () => ({
+jest.mock('@/modules/ess/model/essProfileGateway', () => ({
   __esModule: true,
   getMyProfileAuditTrail: (...args) => mockGetMyProfileAuditTrail(...args),
   normalizeEssProfile: (profile) => profile,

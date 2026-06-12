@@ -1,11 +1,11 @@
 import { Navigate, Route } from "react-router-dom";
 import { Permissions } from "@/platform/permissions";
 import { ProtectedRoute } from "@/app/router/guards";
-import { LeaveDashboardPage as LeaveDashboard } from "@/contexts/leave_attendance";
-import { AnalyticsDashboardPage as AnalyticsDashboard } from "@/contexts/reporting_analytics";
-import { SystemAdminConsolePage as SystemAdminConsole } from "@/contexts/admin";
-import { SeniorityPage } from "@/contexts/seniority";
-import { AuditorDashboardPage as AuditorDashboard } from "@/contexts/audit";
+import { LeaveDashboardPage as LeaveDashboard } from "@/modules/leave_attendance";
+import { AnalyticsDashboardPage as AnalyticsDashboard } from "@/modules/reporting_analytics";
+import { SystemAdminConsolePage as SystemAdminConsole } from "@/modules/admin";
+import { SeniorityPage } from "@/modules/seniority";
+import { AuditorDashboardPage as AuditorDashboard } from "@/modules/audit";
 
 export const AdminRoutes = () => (
   <>

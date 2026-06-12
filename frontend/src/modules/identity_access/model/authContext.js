@@ -1,0 +1,213 @@
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { authAPI } from '@/modules/identity_access/api/authApi';
+import { getToken, getUser, setTokens, clearTokens } from "@/platform/api/httpClient";
+
+const AuthContext = createContext(null);
+const DEFAULT_MODULE_ACCESS = { mode: "deny_by_default", allowed_modules: [] };
+const PUBLIC_AUTH_PATHS = new Set(["/login"]);
+
+const _store = typeof sessionStorage !== 'undefined' ? sessionStorage : localStorage;
+const AUTH_SESSION_NOTICE_KEY = 'iems_auth_notice';
+let bootstrapRefreshPromise = null;
+
+function normalizeAuthorityList(user) {
+	return Array.from(new Set(Array.isArray(user?.authorities) ? user.authorities.filter(Boolean) : [])).sort();
+}
+
+export function hasAuthorityDrift(savedUser, freshUser) {
+	const savedAuthorities = normalizeAuthorityList(savedUser);
+	const freshAuthorities = normalizeAuthorityList(freshUser);
+	if (savedAuthorities.length !== freshAuthorities.length) return true;
+	return savedAuthorities.some((authority, index) => authority !== freshAuthorities[index]);
+}
+
+function persistAuthNotice(message) {
+	try {
+		_store.setItem(AUTH_SESSION_NOTICE_KEY, message);
+	} catch { }
+}
+
+function getCurrentPathname() {
+	if (typeof window === 'undefined') return '/';
+	return window.location.pathname || '/';
+}
+
+function shouldAttemptBootstrapRefresh(pathname = getCurrentPathname()) {
+	return !PUBLIC_AUTH_PATHS.has(pathname);
+}
+
+async function requestBootstrapRefresh() {
+	if (!bootstrapRefreshPromise) {
+		bootstrapRefreshPromise = authAPI.refresh().finally(() => {
+			bootstrapRefreshPromise = null;
+		});
+	}
+	return bootstrapRefreshPromise;
+}
+
+export const AuthProvider = ({ children }) => {
+	const [user, setUser] = useState(null);
+	const [loading, setLoading] = useState(true);
+	const [moduleAccess, setModuleAccess] = useState(DEFAULT_MODULE_ACCESS);
+	const [activeRole, setActiveRoleState] = useState(() => {
+		try { return _store.getItem('iems_active_role') || null; } catch { return null; }
+	});
+
+	const setActiveRole = useCallback((role) => {
+		setActiveRoleState(role);
+		try {
+			if (role) _store.setItem('iems_active_role', role);
+			else _store.removeItem('iems_active_role');
+		} catch { }
+	}, []);
+
+	useEffect(() => {
+		const bootstrapAuth = async () => {
+			let token = getToken();
+			let savedUser = getUser();
+
+			if (!token && shouldAttemptBootstrapRefresh()) {
+				try {
+					const refreshResponse = await requestBootstrapRefresh();
+					const { access_token, refresh_token, user: refreshedUser } = refreshResponse.data || {};
+					if (access_token) {
+						setTokens({ access_token, refresh_token, user: refreshedUser });
+						token = access_token;
+						savedUser = refreshedUser || savedUser;
+					}
+				} catch {
+					clearTokens();
+					setUser(null);
+					setActiveRole(null);
+					setModuleAccess(DEFAULT_MODULE_ACCESS);
+					return;
+				}
+			}
+
+			if (!token || !savedUser) {
+				clearTokens();
+				setUser(null);
+				setActiveRole(null);
+				setModuleAccess(DEFAULT_MODULE_ACCESS);
+				return;
+			}
+
+			try {
+				const res = await authAPI.getMe();
+				if (res.data) {
+					const freshUser = res.data;
+					if (hasAuthorityDrift(savedUser, freshUser)) {
+						clearTokens();
+						persistAuthNotice('Your access changed. Sign in again to continue.');
+						setUser(null);
+						setActiveRole(null);
+						setModuleAccess(DEFAULT_MODULE_ACCESS);
+						return;
+					}
+					setTokens({ user: freshUser });
+					const freshAuthorities = Array.isArray(freshUser?.authorities) ? freshUser.authorities : [];
+					const savedRole = _store.getItem('iems_active_role');
+					if (savedRole && !freshAuthorities.includes(savedRole)) {
+						setActiveRole(null);
+					}
+					setUser(freshUser);
+					return;
+				}
+			} catch {
+				// fall through to clear stale auth state
+			}
+
+			clearTokens();
+			setUser(null);
+			setActiveRole(null);
+			setModuleAccess(DEFAULT_MODULE_ACCESS);
+		};
+
+		bootstrapAuth().finally(() => setLoading(false));
+	}, [setActiveRole]);
+
+	useEffect(() => {
+		const loadModuleAccess = async () => {
+			try {
+				const res = await authAPI.getModuleAccess();
+				setModuleAccess(res.data || DEFAULT_MODULE_ACCESS);
+			} catch {
+				setModuleAccess(DEFAULT_MODULE_ACCESS);
+			}
+		};
+
+		if (user) {
+			loadModuleAccess();
+		} else {
+			setModuleAccess(DEFAULT_MODULE_ACCESS);
+		}
+	}, [user]);
+
+	const login = useCallback(async (email, password) => {
+		const payload = {
+			email: String(email || '').trim(),
+			password: String(password || ''),
+		};
+		const response = await authAPI.login(payload);
+		const { access_token, refresh_token, user: userData } = response.data;
+
+		setTokens({ access_token, refresh_token, user: userData });
+		setActiveRole(null);
+		setUser(userData);
+
+		return userData;
+	}, [setActiveRole]);
+
+	const logout = useCallback(async () => {
+		try {
+			await authAPI.logout();
+		} catch { }
+		clearTokens();
+		setActiveRole(null);
+		setUser(null);
+		setModuleAccess(DEFAULT_MODULE_ACCESS);
+	}, [setActiveRole]);
+
+	const clearMustChangePassword = useCallback(() => {
+		setUser((currentUser) => {
+			if (!currentUser) return currentUser;
+			const updated = { ...currentUser, must_change_password: false };
+			setTokens({ user: updated });
+			return updated;
+		});
+	}, []);
+
+	// AuthContext holds only auth state. Permission/authority/module selectors
+	// live in @/modules/identity_access (usePermissions); portal-access rules in
+	// portalAccessRules. clearMustChangePassword is retained as an essential
+	// auth-state transition that requires provider internals.
+	// The value (and each function above) is memoized so consumers that put
+	// auth fields in useEffect/useCallback deps don't refire on unrelated
+	// provider re-renders (same hazard class as the work-queue loader loop).
+	const value = useMemo(() => ({
+		user,
+		loading,
+		login,
+		logout,
+		activeRole,
+		setActiveRole,
+		moduleAccess,
+		clearMustChangePassword,
+	}), [user, loading, login, logout, activeRole, setActiveRole, moduleAccess, clearMustChangePassword]);
+
+	return (
+		<AuthContext.Provider value={value}>
+			{children}
+		</AuthContext.Provider>
+	);
+};
+
+export const useAuth = () => {
+	const context = useContext(AuthContext);
+	if (!context) {
+		throw new Error('useAuth must be used within an AuthProvider');
+	}
+	return context;
+};
+
+export default AuthContext;

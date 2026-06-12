@@ -1,4 +1,4 @@
-import { mapServerAction } from '@/contexts/notifications/pages/EssNotificationsPage';
+import { mapServerAction } from '@/modules/notifications/pages/EssNotificationsPage';
 
 describe('EssNotificationsPage server action mapping', () => {
   test('maps backend action_url for leave route to current frontend route', () => {

@@ -2,7 +2,7 @@ import React from "react";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 
-import EssDocumentsPage from "@/portals/ess/pages/EssDocumentsPage";
+import EssDocumentsPage from "@/modules/ess/pages/EssDocumentsPage";
 
 jest.mock("@/app/layout/Layout", () => ({
   __esModule: true,
@@ -20,7 +20,7 @@ const mockPreviewMyDocument = jest.fn();
 const mockDownloadMyDocument = jest.fn();
 let anchorClickSpy;
 
-jest.mock("@/contexts/ess/api/essApi", () => ({
+jest.mock("@/modules/ess/api/essApi", () => ({
   __esModule: true,
   essAPI: {
     getMyDocuments: (...args) => mockGetMyDocuments(...args),

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { AuthProvider } from "@/contexts/identity_access";
+import { AuthProvider } from "@/modules/identity_access";
 import { createQueryClient } from "@/platform/query/queryClient";
 import ErrorBoundary from "@/app/layout/ErrorBoundary";
 import { Toaster } from "@/shared/ui/sonner";

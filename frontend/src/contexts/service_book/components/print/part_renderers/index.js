@@ -1,9 +1,0 @@
-export { default as PrintPartI } from "@/contexts/service_book/components/print/part_renderers/PrintPartI";
-export { default as PrintPartIIA } from "@/contexts/service_book/components/print/part_renderers/PrintPartIIA";
-export { default as PrintPartIIB } from "@/contexts/service_book/components/print/part_renderers/PrintPartIIB";
-export { default as PrintPartIII } from "@/contexts/service_book/components/print/part_renderers/PrintPartIII";
-export { default as PrintPartIV } from "@/contexts/service_book/components/print/part_renderers/PrintPartIV";
-export { default as PrintPartV } from "@/contexts/service_book/components/print/part_renderers/PrintPartV";
-export { default as PrintPartVI } from "@/contexts/service_book/components/print/part_renderers/PrintPartVI";
-export { default as PrintPartVII } from "@/contexts/service_book/components/print/part_renderers/PrintPartVII";
-export { default as PrintPartVIII } from "@/contexts/service_book/components/print/part_renderers/PrintPartVIII";

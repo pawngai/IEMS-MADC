@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
-import EssLeavePage from '@/contexts/leave_attendance/pages/EssLeavePage';
+import EssLeavePage from '@/modules/leave_attendance/pages/EssLeavePage';
 
 jest.mock('@/app/layout/Layout', () => ({
   __esModule: true,
@@ -18,7 +18,7 @@ jest.mock('sonner', () => ({
 
 const mockUseAuth = jest.fn();
 
-jest.mock('@/contexts/identity_access/model/authContext', () => ({
+jest.mock('@/modules/identity_access/model/authContext', () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));
@@ -26,7 +26,7 @@ jest.mock('@/contexts/identity_access/model/authContext', () => ({
 const mockGetMyProfile = jest.fn();
 const mockGetMyLeaveBalances = jest.fn();
 
-jest.mock('@/contexts/ess/api/essApi', () => ({
+jest.mock('@/modules/ess/api/essApi', () => ({
   __esModule: true,
   essAPI: {
     getMyProfile: (...args) => mockGetMyProfile(...args),
@@ -39,7 +39,7 @@ const mockApply = jest.fn();
 const mockCancel = jest.fn();
 const mockLegacyGetBalances = jest.fn();
 
-jest.mock('@/contexts/leave_attendance/api/leaveApi', () => ({
+jest.mock('@/modules/leave_attendance/api/leaveApi', () => ({
   __esModule: true,
   leaveAPI: {
     listMy: (...args) => mockListMy(...args),

@@ -1,9 +1,9 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "@/contexts/identity_access";
-import { usePermissions } from "@/contexts/identity_access";
+import { useAuth } from "@/modules/identity_access";
+import { usePermissions } from "@/modules/identity_access";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
 import { PageLoader } from "@/app/router/routeLoading";
-import ForceChangePasswordDialog from "@/contexts/identity_access/ui/ForceChangePasswordDialog";
+import ForceChangePasswordDialog from "@/modules/identity_access/ui/ForceChangePasswordDialog";
 
 export const PasswordGate = ({ children }) => {
 	const { user, logout, clearMustChangePassword } = useAuth();

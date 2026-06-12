@@ -1,6 +1,6 @@
 # Frontend Context Boundaries
 
-This frontend follows context-owned boundaries aligned with backend bounded contexts.
+This frontend follows module-owned boundaries (one `src/modules/<module>` per backend bounded context).
 
 ## Purpose
 
@@ -20,14 +20,14 @@ For these layers:
 
 Do **not** import `@/features/*` directly.
 
-Use context-owned entrypoints under `@/contexts/*`.
+Use context-owned entrypoints under `@/modules/*`.
 
 ### 2) Shared layer must stay context-agnostic
 
 For `src/shared/**`:
 
-- Do **not** import `@/contexts/*/api/*`
-- Do **not** import `@/contexts/*/ui/*`
+- Do **not** import `@/modules/*/api/*`
+- Do **not** import `@/modules/*/ui/*`
 
 If shared needs domain behavior, create a small adapter in a context `model` layer and call that adapter.
 
@@ -36,53 +36,49 @@ If shared needs domain behavior, create a small adapter in a context `model` lay
 ESLint enforces these rules in `eslint.config.js` via `no-restricted-imports`:
 
 - Block `@/features/*` in `src/{lib,hooks,shared}/**` (shared/hook layers must use context entrypoints).
-- Block `@/contexts/*/api/*` in `src/app/{providers,router,layouts}/**` (app must use context model/ui adapters).
-- Block `@/contexts/*/api/*` in `src/hooks/**` (hooks must use context model adapters).
-- Block `@/features/*` in `src/contexts/**/__tests__/*` (context tests must target context contracts).
-- Block `@/features/*` in `src/contexts/**` (context modules must not import feature modules).
-- Block `@/contexts/*/api/*` and `@/contexts/*/ui/*` in `src/shared/**` (shared layer stays context-agnostic).
-- Block `@/contexts/*` and `@/features/*` in `src/shared/ui/**` (shared UI stays dumb).
+- Block `@/modules/*/api/*` in `src/app/{providers,router,layouts}/**` (app must use context model/ui adapters).
+- Block `@/modules/*/api/*` in `src/hooks/**` (hooks must use context model adapters).
+- Block `@/features/*` in `src/modules/**/__tests__/*` (context tests must target context contracts).
+- Block `@/features/*` in `src/modules/**` (context modules must not import feature modules).
+- Block `@/modules/*/api/*` and `@/modules/*/ui/*` in `src/shared/**` (shared layer stays context-agnostic).
+- Block `@/modules/*` and `@/features/*` in `src/shared/ui/**` (shared UI stays dumb).
 
 ## Enforcement Matrix
 
 - `src/app/{providers,router,layouts}/**`
-	- ❌ `@/contexts/*/api/*`
+	- ❌ `@/modules/*/api/*`
 - `src/{lib,hooks,shared}/**`
 	- ❌ `@/features/*`
 - `src/hooks/**`
-	- ❌ `@/contexts/*/api/*`
+	- ❌ `@/modules/*/api/*`
 - `src/shared/**`
 	- ❌ `@/features/*`
-	- ❌ `@/contexts/*/api/*`
-	- ❌ `@/contexts/*/ui/*`
+	- ❌ `@/modules/*/api/*`
+	- ❌ `@/modules/*/ui/*`
 - `src/shared/ui/**`
-	- ❌ `@/contexts/*`
+	- ❌ `@/modules/*`
 	- ❌ `@/features/*`
-- `src/contexts/**/__tests__/*`
+- `src/modules/**/__tests__/*`
 	- ❌ `@/features/*`
-- `src/contexts/**`
+- `src/modules/**`
 	- ❌ `@/features/*`
 
 ## Recommended Structure
 
-- `src/contexts/<context>/api/*` for HTTP contracts.
-- `src/contexts/<context>/model/*` for adapters and domain-facing helpers.
-- `src/contexts/<context>/pages/*` and `src/contexts/<context>/components/*` for context-owned UI entrypoints.
-- `src/features/*` for implementation details behind context wrappers.
-- `src/portals/*` for portal-specific composition that imports contexts only through public context index contracts.
+- `src/modules/<context>/api/*` for HTTP contracts.
+- `src/modules/<context>/model/*` for adapters and domain-facing helpers.
+- `src/modules/<context>/pages/*` and `src/modules/<context>/components/*` for context-owned UI entrypoints.
 
 ## Target Top-Level Directories
 
 - `src/app`
-- `src/contexts`
-- `src/features`
+- `src/modules`
 - `src/platform`
-- `src/portals`
 - `src/shared`
 
 ## Practical Pattern
 
-- Good: `src/app/router/*` imports `@/contexts/*/pages/*`
+- Good: `src/app/router/*` imports `@/modules/*/pages/*`
 - Good: `src/shared/*` imports only shared utilities/components (or context model adapters if needed)
 - Avoid: direct `@/features/*` imports from app shell/shared layers
 

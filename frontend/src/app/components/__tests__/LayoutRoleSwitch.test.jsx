@@ -2,7 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import { buildSwitchTargets } from '@/app/layout/Layout';
-import { canEnterEssPortal } from '@/contexts/identity_access/model/portalAccessRules';
+import { canEnterEssPortal } from '@/modules/identity_access/model/portalAccessRules';
 
 describe('Layout dual-role portal switching', () => {
   test('requires employee authority and employee id for ESS portal eligibility', () => {

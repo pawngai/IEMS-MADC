@@ -7,7 +7,7 @@ import { resolveRouteLoadingVariant, RouteShellFallback } from "@/app/router/rou
 const mockUseAuth = jest.fn();
 const mockUseLocation = jest.fn();
 
-jest.mock("@/contexts/identity_access/model/authContext", () => ({
+jest.mock("@/modules/identity_access/model/authContext", () => ({
   __esModule: true,
   useAuth: () => mockUseAuth(),
 }));

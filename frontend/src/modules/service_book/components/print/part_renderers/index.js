@@ -1,0 +1,9 @@
+export { default as PrintPartI } from "@/modules/service_book/components/print/part_renderers/PrintPartI";
+export { default as PrintPartIIA } from "@/modules/service_book/components/print/part_renderers/PrintPartIIA";
+export { default as PrintPartIIB } from "@/modules/service_book/components/print/part_renderers/PrintPartIIB";
+export { default as PrintPartIII } from "@/modules/service_book/components/print/part_renderers/PrintPartIII";
+export { default as PrintPartIV } from "@/modules/service_book/components/print/part_renderers/PrintPartIV";
+export { default as PrintPartV } from "@/modules/service_book/components/print/part_renderers/PrintPartV";
+export { default as PrintPartVI } from "@/modules/service_book/components/print/part_renderers/PrintPartVI";
+export { default as PrintPartVII } from "@/modules/service_book/components/print/part_renderers/PrintPartVII";
+export { default as PrintPartVIII } from "@/modules/service_book/components/print/part_renderers/PrintPartVIII";

@@ -63,13 +63,13 @@ describe("Employee editor route config", () => {
   test("active employee/profile/department pages no longer import the combined wizard", () => {
     const frontendRoot = path.join(__dirname, "..", "..", "..", "..");
     const callerFiles = [
-      "src/contexts/employee_master/pages/EmployeeDirectoryPage.jsx",
-      "src/contexts/employee_master/pages/EmployeeFilePage.jsx",
-      "src/contexts/organization_master/pages/DepartmentEmployeeFilePage.jsx",
-      "src/contexts/employee_master/pages/EmployeeProfilePage.jsx",
-      "src/contexts/organization_master/pages/DeptDirectoryPage.jsx",
-      "src/contexts/organization_master/pages/DeptDashboardPage.jsx",
-      "src/contexts/workflow/containers/WorkflowQueueScreen.jsx",
+      "src/modules/employee_master/pages/EmployeeDirectoryPage.jsx",
+      "src/modules/employee_master/pages/EmployeeFilePage.jsx",
+      "src/modules/organization_master/pages/DepartmentEmployeeFilePage.jsx",
+      "src/modules/employee_master/pages/EmployeeProfilePage.jsx",
+      "src/modules/organization_master/pages/DeptDirectoryPage.jsx",
+      "src/modules/organization_master/pages/DeptDashboardPage.jsx",
+      "src/modules/workflow/containers/WorkflowQueueScreen.jsx",
     ];
 
     callerFiles.forEach((relativePath) => {
@@ -82,15 +82,15 @@ describe("Employee editor route config", () => {
   test("department employee file page uses department gateway instead of employee profile api", () => {
     const frontendRoot = path.join(__dirname, "..", "..", "..", "..");
     const source = fs.readFileSync(
-      path.join(frontendRoot, "src/contexts/organization_master/pages/DepartmentEmployeeFilePage.jsx"),
+      path.join(frontendRoot, "src/modules/organization_master/pages/DepartmentEmployeeFilePage.jsx"),
       "utf8"
     );
 
-    expect(source).toContain('from "@/contexts/organization_master/model/departmentProfileGateway"');
-    expect(source).not.toContain('from "@/contexts/employee_master/api/employeeProfileApi"');
+    expect(source).toContain('from "@/modules/organization_master/model/departmentProfileGateway"');
+    expect(source).not.toContain('from "@/modules/employee_master/api/employeeProfileApi"');
     expect(source).not.toContain("employeeProfileApi.");
-    expect(source).toContain('from "@/contexts/organization_master/components/DepartmentEmployeeProfileSummary"');
-    expect(source).not.toContain('from "@/contexts/employee_master/components/EmployeeProfileSummary"');
+    expect(source).toContain('from "@/modules/organization_master/components/DepartmentEmployeeProfileSummary"');
+    expect(source).not.toContain('from "@/modules/employee_master/components/EmployeeProfileSummary"');
     expect(source).toContain('buildIdentityEditPath("department", employeeId)');
     expect(source).toContain('buildProfileEditPath("department", employeeId)');
     expect(source).toContain('<DepartmentEmployeeProfileSummary profile={profile} compact />');

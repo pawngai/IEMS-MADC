@@ -14,7 +14,7 @@ This frontend runs on Vite and follows context-owned architecture boundaries.
 - `npm run preview`: Preview production build locally.
 - `npm run test`: Run tests via Vitest.
 - `npm run test:watch`: Run tests in watch mode.
-- `npm run test:context-boundary:update`: Regenerate `src/contexts/__tests__/fixtures/context-boundary-allowlist.json` from current imports.
+- `npm run test:context-boundary:update`: Regenerate `src/modules/__tests__/fixtures/context-boundary-allowlist.json` from current imports.
 - `npm run lint`: Run ESLint.
 
 ## Deep-Link Routing

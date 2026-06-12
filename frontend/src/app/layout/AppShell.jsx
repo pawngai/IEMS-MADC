@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Layout from "@/app/layout/Layout";
-import { useAuth } from "@/contexts/identity_access";
+import { useAuth } from "@/modules/identity_access";
 import { PageLoader, RouteShellSkeleton } from "@/app/router/routeLoading";
 
 /**

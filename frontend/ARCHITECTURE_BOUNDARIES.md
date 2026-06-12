@@ -98,3 +98,22 @@ npm run lint
 ```
 
 Boundary violations fail lint.
+
+## Backend Guard Mirrors (read this before any structural migration)
+
+The architecture is enforced in TWO test layers:
+
+1. Frontend: `src/modules/__tests__/contextBoundary.test.js` + eslint
+   `no-restricted-imports` patterns (run via `npm run lint` / `npm test`).
+2. Backend mirrors that read frontend paths directly with `Path / "..."`
+   constructions (NOT greppable as literal path strings):
+   - `backend/tests/test_frontend_feature_architecture.py`
+   - `backend/tests/test_target_architecture_enforcement.py`
+   - `backend/tests/test_architecture_guardrails.py` (reads
+     `modules/documents/services/documentDomainService.js`)
+
+Any rename/move of frontend top-level directories or module folders must
+sweep `backend/tests/` as well, and run `pytest tests/ -q` from `backend/`
+before pushing. The `contexts -> modules` rename initially missed these
+mirrors (fixed in 90815af); some old-path guards passed vacuously instead
+of failing, so a green run alone does not prove the guards still bite.

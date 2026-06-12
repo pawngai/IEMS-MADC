@@ -22,14 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { useAuth } from "@/modules/identity_access";
 import { hasAuthority } from "@/platform/permissions";
 import SeniorityListDetailView from "@/modules/seniority/components/SeniorityListDetailView";
@@ -237,70 +230,63 @@ const SeniorityListsTab = ({
                 Opening seniority list...
               </div>
             )}
-            <div className="rounded-md border overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead>Service</TableHead>
-                    <TableHead>Designation</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Employees</TableHead>
-                    <TableHead>Created</TableHead>
-                    <TableHead className="w-20">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {lists.map((item) => (
-                    <TableRow key={item.list_id}>
-                      <TableCell>
-                        <div className="space-y-1">
-                          <div className="font-medium">{formatGeneratedListTitle(item.title)}</div>
-                          <div className="text-xs text-muted-foreground">{formatVersionLabel(item.version)}</div>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <ListTypeBadge listType={item.list_type} />
-                      </TableCell>
-                      <TableCell>{formatServiceLabel(item.service)}</TableCell>
-                      <TableCell>{formatDesignation(item.designation_code)}</TableCell>
-                      <TableCell>
-                        <StatusBadge status={item.status} />
-                      </TableCell>
-                      <TableCell className="text-right">{item.total}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{formatPreciseDateTime(item.created_at) || "-"}</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          title={openingListId === item.list_id ? "Opening details" : "View details"}
-                          aria-label={openingListId === item.list_id ? "Opening details" : "View details"}
-                          disabled={detailLoading}
-                          onClick={() => handleOpenDetail(item.list_id)}
-                        >
-                          {openingListId === item.list_id ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                          ) : (
-                            <Eye className="w-4 h-4" />
-                          )}
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                  {lists.length === 0 && (
-                    <TableRow>
-                      <TableCell colSpan={8} className="text-center py-16">
-                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                          <ListOrdered className="w-10 h-10 opacity-30" />
-                          <p className="font-medium">No seniority lists found</p>
-                          <p className="text-xs">Generate a new list or adjust your filters above.</p>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
+            <div className="rounded-md border">
+              <DataTable
+                rows={lists}
+                rowKey={(item) => item.list_id}
+                emptyState={
+                  <div className="flex flex-col items-center gap-2 py-16 text-center text-muted-foreground">
+                    <ListOrdered className="w-10 h-10 opacity-30" />
+                    <p className="font-medium">No seniority lists found</p>
+                    <p className="text-xs">Generate a new list or adjust your filters above.</p>
+                  </div>
+                }
+                columns={[
+                  {
+                    key: "title",
+                    header: "Title",
+                    render: (item) => (
+                      <div className="space-y-1">
+                        <div className="font-medium">{formatGeneratedListTitle(item.title)}</div>
+                        <div className="text-xs text-muted-foreground">{formatVersionLabel(item.version)}</div>
+                      </div>
+                    ),
+                  },
+                  { key: "type", header: "Type", render: (item) => <ListTypeBadge listType={item.list_type} /> },
+                  { key: "service", header: "Service", render: (item) => formatServiceLabel(item.service) },
+                  { key: "designation", header: "Designation", render: (item) => formatDesignation(item.designation_code) },
+                  { key: "status", header: "Status", render: (item) => <StatusBadge status={item.status} /> },
+                  { key: "total", header: "Employees", className: "text-right" },
+                  {
+                    key: "created",
+                    header: "Created",
+                    className: "text-xs text-muted-foreground",
+                    headClassName: "",
+                    render: (item) => formatPreciseDateTime(item.created_at) || "-",
+                  },
+                  {
+                    key: "actions",
+                    header: "Actions",
+                    headClassName: "w-20",
+                    render: (item) => (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        title={openingListId === item.list_id ? "Opening details" : "View details"}
+                        aria-label={openingListId === item.list_id ? "Opening details" : "View details"}
+                        disabled={detailLoading}
+                        onClick={() => handleOpenDetail(item.list_id)}
+                      >
+                        {openingListId === item.list_id ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
+                      </Button>
+                    ),
+                  },
+                ]}
+              />
             </div>
           </CardContent>
         </Card>

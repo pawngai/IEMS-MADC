@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuth } from "@/modules/identity_access";
 import { usePermissions } from "@/modules/identity_access";
 import { essAPI } from "@/modules/ess";
@@ -14,7 +14,8 @@ import { CardSkeleton, PageHeaderSkeleton, StatGridSkeleton, TableSkeleton } fro
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Textarea } from "@/shared/ui/textarea";
 import { SearchableSelect } from "@/shared/ui/searchable-select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { TableCell, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { getApiErrorMessage, getLeaveTypeUnavailableMessage } from "@/shared/lib/utils";
 import { AlertTriangle, Calendar, ChevronDown, ChevronUp, RefreshCw, RotateCcw, XCircle } from "lucide-react";
 import { toast } from "sonner";
@@ -521,84 +522,92 @@ const EssLeavePage = () => {
               <CardDescription>{profile?.full_name || user?.name || "Employee"} leave history.</CardDescription>
             </CardHeader>
             <CardContent>
-              {myLeaves.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-10 text-center">
-                  <Calendar className="w-10 h-10 text-slate-300 mb-3" />
-                  <p className="text-sm font-medium text-slate-500">No leave applications yet</p>
-                  <p className="text-xs text-slate-400 mt-1">Your submitted leave requests will appear here.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-8"></TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Dates</TableHead>
-                      <TableHead className="hidden sm:table-cell">Days</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Action</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {myLeaves.map((leave) => {
-                      const isExpanded = expandedLeaveId === leave.id;
+              <DataTable
+                rows={myLeaves}
+                rowKey={(leave) => leave.id}
+                onRowClick={(leave) => setExpandedLeaveId(expandedLeaveId === leave.id ? null : leave.id)}
+                rowClassName="hover:bg-slate-50"
+                emptyState={
+                  <div className="flex flex-col items-center justify-center py-10 text-center">
+                    <Calendar className="w-10 h-10 text-slate-300 mb-3" />
+                    <p className="text-sm font-medium text-slate-500">No leave applications yet</p>
+                    <p className="text-xs text-slate-400 mt-1">Your submitted leave requests will appear here.</p>
+                  </div>
+                }
+                columns={[
+                  {
+                    key: "expand",
+                    header: "",
+                    className: "pr-0 w-8",
+                    headClassName: "w-8",
+                    render: (leave) =>
+                      expandedLeaveId === leave.id
+                        ? <ChevronUp className="w-4 h-4 text-slate-400" />
+                        : <ChevronDown className="w-4 h-4 text-slate-400" />,
+                  },
+                  { key: "leave_type_code", header: "Type", className: "font-medium" },
+                  {
+                    key: "dates",
+                    header: "Dates",
+                    className: "text-sm",
+                    headClassName: "",
+                    render: (leave) => <>{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</>,
+                  },
+                  { key: "days_applied", header: "Days", className: "hidden sm:table-cell" },
+                  {
+                    key: "status",
+                    header: "Status",
+                    render: (leave) => <LeaveStatusBadge status={leave.status} />,
+                  },
+                  {
+                    key: "action",
+                    header: "Action",
+                    className: "text-right",
+                    render: (leave) => {
                       const isCancellable = ["SUBMITTED", "RECOMMENDED"].includes(leave.status);
                       const isConfirming = confirmCancelId === leave.id;
+                      if (!isCancellable) return null;
                       return (
-                        <Fragment key={leave.id}>
-                          <TableRow
-                            className="cursor-pointer hover:bg-slate-50"
-                            onClick={() => setExpandedLeaveId(isExpanded ? null : leave.id)}
-                          >
-                            <TableCell className="pr-0 w-8">
-                              {isExpanded
-                                ? <ChevronUp className="w-4 h-4 text-slate-400" />
-                                : <ChevronDown className="w-4 h-4 text-slate-400" />}
-                            </TableCell>
-                            <TableCell className="font-medium">{leave.leave_type_code}</TableCell>
-                            <TableCell className="text-sm">
-                              {formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}
-                            </TableCell>
-                            <TableCell className="hidden sm:table-cell">{leave.days_applied}</TableCell>
-                            <TableCell><LeaveStatusBadge status={leave.status} /></TableCell>
-                            <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                              {isCancellable && !isConfirming && (
-                                <Button
-                                  variant="outline"
-                                  size="sm"
-                                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                  disabled={cancellingId === leave.id}
-                                  onClick={() => setConfirmCancelId(leave.id)}
-                                >
-                                  <XCircle className="w-4 h-4 mr-1" />
-                                  Cancel
-                                </Button>
-                              )}
-                              {isCancellable && isConfirming && (
-                                <div className="flex items-center gap-1 justify-end">
-                                  <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    disabled={cancellingId === leave.id}
-                                    onClick={() => handleCancelLeave(leave)}
-                                  >
-                                    {cancellingId === leave.id ? "Cancelling..." : "Confirm"}
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => setConfirmCancelId(null)}
-                                  >
-                                    No
-                                  </Button>
-                                </div>
-                              )}
-                            </TableCell>
-                          </TableRow>
-                          {isExpanded && (
-                            <TableRow className="bg-slate-50/60">
-                              <TableCell colSpan={6} className="py-3">
+                        <div onClick={(e) => e.stopPropagation()}>
+                          {!isConfirming ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              disabled={cancellingId === leave.id}
+                              onClick={() => setConfirmCancelId(leave.id)}
+                            >
+                              <XCircle className="w-4 h-4 mr-1" />
+                              Cancel
+                            </Button>
+                          ) : (
+                            <div className="flex items-center gap-1 justify-end">
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                disabled={cancellingId === leave.id}
+                                onClick={() => handleCancelLeave(leave)}
+                              >
+                                {cancellingId === leave.id ? "Cancelling..." : "Confirm"}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setConfirmCancelId(null)}
+                              >
+                                No
+                              </Button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    },
+                  },
+                ]}
+                renderExpandedRow={(leave) =>
+                  expandedLeaveId === leave.id ? (
+                    <TableRow className="bg-slate-50/60">
+                      <TableCell colSpan={6} className="py-3">
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2 text-sm pl-2">
                                   {leave.reason && (
                                     <div className="col-span-2 sm:col-span-4">
@@ -654,16 +663,11 @@ const EssLeavePage = () => {
                                     </div>
                                   )}
                                 </div>
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </Fragment>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-                </div>
-              )}
+                      </TableCell>
+                    </TableRow>
+                  ) : null
+                }
+              />
             </CardContent>
           </Card>
         )}

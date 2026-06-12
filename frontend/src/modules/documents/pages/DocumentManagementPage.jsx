@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -231,21 +231,25 @@ export default function DocumentManagementPage() {
                   )}
                 </div>
               ) : (
-                <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>File</TableHead>
-                      <TableHead className="hidden md:table-cell">Belongs to</TableHead>
-                      <TableHead className="hidden md:table-cell">Uploaded by</TableHead>
-                      <TableHead className="hidden sm:table-cell">Info</TableHead>
-                      <TableHead className="whitespace-nowrap text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {docs.visibleDocuments.map((doc) => (
-                      <TableRow key={doc.document_id || doc.filename}>
-                        <TableCell className="max-w-[220px]">
+                <DataTable
+                  rows={docs.visibleDocuments}
+                  rowKey={(doc) => doc.document_id || doc.filename}
+                  emptyState={
+                    <div className="flex flex-col items-center gap-2 p-8 text-center">
+                      <FileText className="h-8 w-8 text-muted-foreground/40" />
+                      <p className="text-sm font-medium text-muted-foreground">
+                        No documents match the current filters.
+                      </p>
+                    </div>
+                  }
+                  columns={[
+                    {
+                      key: "file",
+                      header: "File",
+                      className: "max-w-[220px]",
+                      headClassName: "",
+                      render: (doc) => (
+                        <>
                           <div className="truncate font-medium">{doc.original_name || doc.filename}</div>
                           {doc.original_name && doc.original_name !== doc.filename && (
                             <div className="truncate text-xs text-muted-foreground">{doc.filename}</div>
@@ -264,21 +268,39 @@ export default function DocumentManagementPage() {
                               ) : null}
                             </div>
                           )}
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          {doc.subject_employee_code ? (
-                            <span className="text-sm font-medium">{doc.subject_employee_code}</span>
-                          ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
-                          )}
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
+                        </>
+                      ),
+                    },
+                    {
+                      key: "belongs_to",
+                      header: "Belongs to",
+                      className: "hidden md:table-cell",
+                      render: (doc) =>
+                        doc.subject_employee_code ? (
+                          <span className="text-sm font-medium">{doc.subject_employee_code}</span>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">&mdash;</span>
+                        ),
+                    },
+                    {
+                      key: "uploaded_by",
+                      header: "Uploaded by",
+                      className: "hidden md:table-cell",
+                      render: (doc) => (
+                        <>
                           <div className="text-sm font-medium">{formatUploaderLabel(doc)}</div>
                           {doc.uploaded_employee_code && doc.uploaded_employee_id ? (
                             <div className="text-xs text-muted-foreground">{doc.uploaded_employee_id}</div>
                           ) : null}
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">
+                        </>
+                      ),
+                    },
+                    {
+                      key: "info",
+                      header: "Info",
+                      className: "hidden sm:table-cell",
+                      render: (doc) => (
+                        <>
                           <div className="text-sm">{docs.formatDate(doc.uploaded_at)}</div>
                           <div className="text-xs text-muted-foreground">{docs.formatSize(doc.file_size)}</div>
                           <div className="mt-1">
@@ -288,65 +310,71 @@ export default function DocumentManagementPage() {
                               <Badge variant="outline" className="text-[10px]">Draft</Badge>
                             )}
                           </div>
-                        </TableCell>
-                        <TableCell className="whitespace-nowrap text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => documentsAPI.openDocument(doc.filename)}
-                            >
-                              Open
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => documentsAPI.downloadDocument(doc.filename)}
-                            >
-                              Download
-                            </Button>
-                            <AlertDialog
-                              open={pendingDelete === doc.filename}
-                              onOpenChange={(open) => !open && setPendingDelete(null)}
-                            >
-                              <AlertDialogTrigger asChild>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="sm"
-                                  className="text-red-600 hover:text-red-700"
-                                  disabled={docs.deletingDocument === doc.filename || doc.is_locked}
-                                  onClick={() => setPendingDelete(doc.filename)}
+                        </>
+                      ),
+                    },
+                    {
+                      key: "actions",
+                      header: "Actions",
+                      className: "whitespace-nowrap text-right",
+                      render: (doc) => (
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => documentsAPI.openDocument(doc.filename)}
+                          >
+                            Open
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => documentsAPI.downloadDocument(doc.filename)}
+                          >
+                            Download
+                          </Button>
+                          <AlertDialog
+                            open={pendingDelete === doc.filename}
+                            onOpenChange={(open) => !open && setPendingDelete(null)}
+                          >
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                className="text-red-600 hover:text-red-700"
+                                disabled={docs.deletingDocument === doc.filename || doc.is_locked}
+                                onClick={() => setPendingDelete(doc.filename)}
+                              >
+                                {doc.is_locked ? "Locked" : "Delete"}
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete document?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  <strong>{doc.original_name || doc.filename}</strong> will be permanently removed. This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-red-600 hover:bg-red-700"
+                                  onClick={() => { docs.deleteDocument(doc.filename); setPendingDelete(null); }}
                                 >
-                                  {doc.is_locked ? "Locked" : "Delete"}
-                                </Button>
-                              </AlertDialogTrigger>
-                              <AlertDialogContent>
-                                <AlertDialogHeader>
-                                  <AlertDialogTitle>Delete document?</AlertDialogTitle>
-                                  <AlertDialogDescription>
-                                    <strong>{doc.original_name || doc.filename}</strong> will be permanently removed. This action cannot be undone.
-                                  </AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                  <AlertDialogAction
-                                    className="bg-red-600 hover:bg-red-700"
-                                    onClick={() => { docs.deleteDocument(doc.filename); setPendingDelete(null); }}
-                                  >
-                                    Delete
-                                  </AlertDialogAction>
-                                </AlertDialogFooter>
-                              </AlertDialogContent>
-                            </AlertDialog>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>                </div>              )}
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      ),
+                    },
+                  ]}
+                />
+              )}
             </div>
 
             {docs.documents.length > 0 ? (

@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { TableSkeleton } from "@/shared/ui/skeletons";
 import { cn } from "@/shared/lib/utils";
@@ -10,6 +11,8 @@ import { cn } from "@/shared/lib/utils";
  * columns: [{ key, header, className?, headClassName?, render?(row) }]
  * - className applies to body cells and (unless headClassName is given)
  *   to the header cell, so responsive `hidden sm:table-cell` stays in sync.
+ * renderExpandedRow(row): optional; return a full <TableRow> (or null) to
+ * render an expansion row directly after the data row.
  */
 export function DataTable({
   columns,
@@ -20,6 +23,7 @@ export function DataTable({
   emptyState = null,
   onRowClick,
   rowClassName,
+  renderExpandedRow,
   "data-testid": dataTestId,
 }) {
   if (loading) {
@@ -43,20 +47,22 @@ export function DataTable({
         </TableHeader>
         <TableBody>
           {rows.map((row) => (
-            <TableRow
-              key={rowKey(row)}
-              className={cn(
-                onRowClick && "cursor-pointer",
-                typeof rowClassName === "function" ? rowClassName(row) : rowClassName,
-              )}
-              onClick={onRowClick ? () => onRowClick(row) : undefined}
-            >
-              {columns.map((column) => (
-                <TableCell key={column.key} className={column.className}>
-                  {column.render ? column.render(row) : row[column.key]}
-                </TableCell>
-              ))}
-            </TableRow>
+            <Fragment key={rowKey(row)}>
+              <TableRow
+                className={cn(
+                  onRowClick && "cursor-pointer",
+                  typeof rowClassName === "function" ? rowClassName(row) : rowClassName,
+                )}
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+              >
+                {columns.map((column) => (
+                  <TableCell key={column.key} className={column.className}>
+                    {column.render ? column.render(row) : row[column.key]}
+                  </TableCell>
+                ))}
+              </TableRow>
+              {renderExpandedRow ? renderExpandedRow(row) : null}
+            </Fragment>
           ))}
         </TableBody>
       </Table>

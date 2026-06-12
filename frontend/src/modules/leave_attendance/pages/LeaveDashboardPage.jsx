@@ -2,7 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { CardSkeleton, PageHeaderSkeleton, StatGridSkeleton, TableSkeleton } from "@/shared/ui/skeletons";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { ArrowLeft, Calendar, CheckCircle2, Clock, Inbox, XCircle, RefreshCw } from "lucide-react";
 import { LeaveStatusBadge } from "@/modules/leave_attendance/components/LeaveStatusBadge";
 import LeaveActionDialog from "@/modules/leave_attendance/components/LeaveActionDialog";
@@ -26,6 +26,30 @@ const BALANCE_CARD_STYLES = {
   CL:  { bg: "bg-amber-50",   iconBg: "bg-amber-100",   iconColor: "text-amber-600",   accent: "border-l-amber-500" },
 };
 const DEFAULT_CARD_STYLE = { bg: "bg-slate-50", iconBg: "bg-slate-100", iconColor: "text-slate-600", accent: "border-l-slate-500" };
+
+const buildEmployeeColumn = (openEmployeeHistory) => ({
+  key: "employee",
+  header: "Employee",
+  render: (leave) => (
+    <button
+      type="button"
+      className="min-w-0 text-left hover:underline"
+      onClick={() => openEmployeeHistory(leave.employee_id)}
+    >
+      <p className="font-medium text-blue-700 truncate">{leave.employee_name || leave.employee_id}</p>
+      <p className="text-xs text-slate-500 font-mono truncate">{leave.employee_id}</p>
+    </button>
+  ),
+});
+
+const REASON_COLUMN = {
+  key: "reason",
+  header: "Reason",
+  className: "hidden md:table-cell",
+  render: (leave) => (
+    <span className="text-sm text-slate-600 truncate block max-w-[200px]" title={leave.reason}>{leave.reason}</span>
+  ),
+};
 const LeaveDashboard = () => {
   const {
     actionDialog,
@@ -200,46 +224,44 @@ const LeaveDashboard = () => {
               <CardDescription>Track your leave requests</CardDescription>
             </CardHeader>
             <CardContent>
-              {myLeaves.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Calendar className="w-8 h-8 text-slate-300 mb-2" />
-                  <p className="text-sm text-slate-500">No leave applications yet</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Dates</TableHead>
-                        <TableHead className="hidden sm:table-cell">Days</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {myLeaves.map((leave) => (
-                        <TableRow key={leave.id}>
-                          <TableCell>{leave.leave_type_code}</TableCell>
-                          <TableCell className="text-sm">
-                            <div>{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</div>
-                            <LeaveAttachmentLinks attachments={leave.attachments} />
-                          </TableCell>
-                          <TableCell className="hidden sm:table-cell">{leave.days_applied}</TableCell>
-                          <TableCell><LeaveStatusBadge status={leave.status} /></TableCell>
-                          <TableCell className="text-right">
-                            {canApply && ["SUBMITTED", "RECOMMENDED"].includes(leave.status) ? (
-                              <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openActionDialog("cancel", leave)}>
-                                <XCircle className="w-4 h-4 mr-1" /> Cancel
-                              </Button>
-                            ) : null}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+              <DataTable
+                rows={myLeaves}
+                rowKey={(leave) => leave.id}
+                emptyState={
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Calendar className="w-8 h-8 text-slate-300 mb-2" />
+                    <p className="text-sm text-slate-500">No leave applications yet</p>
+                  </div>
+                }
+                columns={[
+                  { key: "leave_type_code", header: "Type" },
+                  {
+                    key: "dates",
+                    header: "Dates",
+                    className: "text-sm",
+                    headClassName: "",
+                    render: (leave) => (
+                      <>
+                        <div>{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</div>
+                        <LeaveAttachmentLinks attachments={leave.attachments} />
+                      </>
+                    ),
+                  },
+                  { key: "days_applied", header: "Days", className: "hidden sm:table-cell" },
+                  { key: "status", header: "Status", render: (leave) => <LeaveStatusBadge status={leave.status} /> },
+                  {
+                    key: "action",
+                    header: "Action",
+                    className: "text-right",
+                    render: (leave) =>
+                      canApply && ["SUBMITTED", "RECOMMENDED"].includes(leave.status) ? (
+                        <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openActionDialog("cancel", leave)}>
+                          <XCircle className="w-4 h-4 mr-1" /> Cancel
+                        </Button>
+                      ) : null,
+                  },
+                ]}
+              />
             </CardContent>
           </Card>
         )}
@@ -252,66 +274,51 @@ const LeaveDashboard = () => {
               <CardDescription>Leaves awaiting recommendation</CardDescription>
             </CardHeader>
             <CardContent>
-              {pendingRecommend.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Inbox className="w-8 h-8 text-slate-300 mb-2" />
-                  <p className="text-sm text-slate-500">No pending recommendations</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Submitted leave requests will appear here.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Employee</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Dates</TableHead>
-                        <TableHead className="hidden sm:table-cell">Days</TableHead>
-                        <TableHead className="hidden md:table-cell">Reason</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {pendingRecommend.map((leave) => (
-                        <TableRow key={leave.id}>
-                          <TableCell>
-                            <button
-                              type="button"
-                              className="min-w-0 text-left hover:underline"
-                              onClick={() => openEmployeeHistory(leave.employee_id)}
-                            >
-                              <p className="font-medium text-blue-700 truncate">{leave.employee_name || leave.employee_id}</p>
-                              <p className="text-xs text-slate-500 font-mono truncate">{leave.employee_id}</p>
-                            </button>
-                          </TableCell>
-                          <TableCell>{leave.leave_type_code}</TableCell>
-                          <TableCell className="text-sm">{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</TableCell>
-                          <TableCell className="hidden sm:table-cell">{leave.days_applied}</TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <span className="text-sm text-slate-600 truncate block max-w-[200px]" title={leave.reason}>{leave.reason}</span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              {leave.leave_type_code === "CL" ? (
-                                <Button size="sm" className="gap-1" onClick={() => openActionDialog("sanction", leave)}>
-                                  <CheckCircle2 className="w-4 h-4" /> Approve
-                                </Button>
-                              ) : (
-                                <Button size="sm" className="gap-1" onClick={() => openActionDialog("recommend", leave)}>
-                                  <CheckCircle2 className="w-4 h-4" /> Recommend
-                                </Button>
-                              )}
-                              <Button variant="outline" size="sm" className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openActionDialog("reject", leave)}>
-                                <XCircle className="w-4 h-4" /> Reject
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+              <DataTable
+                rows={pendingRecommend}
+                rowKey={(leave) => leave.id}
+                emptyState={
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Inbox className="w-8 h-8 text-slate-300 mb-2" />
+                    <p className="text-sm text-slate-500">No pending recommendations</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Submitted leave requests will appear here.</p>
+                  </div>
+                }
+                columns={[
+                  buildEmployeeColumn(openEmployeeHistory),
+                  { key: "leave_type_code", header: "Type" },
+                  {
+                    key: "dates",
+                    header: "Dates",
+                    className: "text-sm",
+                    headClassName: "",
+                    render: (leave) => <>{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</>,
+                  },
+                  { key: "days_applied", header: "Days", className: "hidden sm:table-cell" },
+                  REASON_COLUMN,
+                  {
+                    key: "action",
+                    header: "Action",
+                    className: "text-right",
+                    render: (leave) => (
+                      <div className="flex justify-end gap-2">
+                        {leave.leave_type_code === "CL" ? (
+                          <Button size="sm" className="gap-1" onClick={() => openActionDialog("sanction", leave)}>
+                            <CheckCircle2 className="w-4 h-4" /> Approve
+                          </Button>
+                        ) : (
+                          <Button size="sm" className="gap-1" onClick={() => openActionDialog("recommend", leave)}>
+                            <CheckCircle2 className="w-4 h-4" /> Recommend
+                          </Button>
+                        )}
+                        <Button variant="outline" size="sm" className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openActionDialog("reject", leave)}>
+                          <XCircle className="w-4 h-4" /> Reject
+                        </Button>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
             </CardContent>
           </Card>
         )}
@@ -324,64 +331,51 @@ const LeaveDashboard = () => {
               <CardDescription>Leaves awaiting sanction</CardDescription>
             </CardHeader>
             <CardContent>
-              {pendingSanction.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <Clock className="w-8 h-8 text-slate-300 mb-2" />
-                  <p className="text-sm text-slate-500">No pending sanctions</p>
-                  <p className="text-xs text-slate-400 mt-0.5">Recommended leave requests will appear here.</p>
-                </div>
-              ) : (
-                <div className="overflow-x-auto -mx-4 sm:mx-0">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Employee</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Dates</TableHead>
-                        <TableHead className="hidden sm:table-cell">Days</TableHead>
-                        <TableHead className="hidden md:table-cell">Reason</TableHead>
-                        <TableHead className="hidden md:table-cell">Recommended By</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {pendingSanction.map((leave) => (
-                        <TableRow key={leave.id}>
-                          <TableCell>
-                            <button
-                              type="button"
-                              className="min-w-0 text-left hover:underline"
-                              onClick={() => openEmployeeHistory(leave.employee_id)}
-                            >
-                              <p className="font-medium text-blue-700 truncate">{leave.employee_name || leave.employee_id}</p>
-                              <p className="text-xs text-slate-500 font-mono truncate">{leave.employee_id}</p>
-                            </button>
-                          </TableCell>
-                          <TableCell>{leave.leave_type_code}</TableCell>
-                          <TableCell className="text-sm">{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</TableCell>
-                          <TableCell className="hidden sm:table-cell">{leave.days_applied}</TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <span className="text-sm text-slate-600 truncate block max-w-[200px]" title={leave.reason}>{leave.reason}</span>
-                          </TableCell>
-                          <TableCell className="hidden md:table-cell">
-                            <span className="text-sm text-slate-600">{leave.recommended_by_name || ""}</span>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex justify-end gap-2">
-                              <Button size="sm" className="gap-1" onClick={() => openActionDialog("sanction", leave)}>
-                                <CheckCircle2 className="w-4 h-4" /> Sanction
-                              </Button>
-                              <Button variant="outline" size="sm" className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openActionDialog("reject", leave)}>
-                                <XCircle className="w-4 h-4" /> Reject
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              )}
+              <DataTable
+                rows={pendingSanction}
+                rowKey={(leave) => leave.id}
+                emptyState={
+                  <div className="flex flex-col items-center justify-center py-8 text-center">
+                    <Clock className="w-8 h-8 text-slate-300 mb-2" />
+                    <p className="text-sm text-slate-500">No pending sanctions</p>
+                    <p className="text-xs text-slate-400 mt-0.5">Recommended leave requests will appear here.</p>
+                  </div>
+                }
+                columns={[
+                  buildEmployeeColumn(openEmployeeHistory),
+                  { key: "leave_type_code", header: "Type" },
+                  {
+                    key: "dates",
+                    header: "Dates",
+                    className: "text-sm",
+                    headClassName: "",
+                    render: (leave) => <>{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</>,
+                  },
+                  { key: "days_applied", header: "Days", className: "hidden sm:table-cell" },
+                  REASON_COLUMN,
+                  {
+                    key: "recommended_by",
+                    header: "Recommended By",
+                    className: "hidden md:table-cell",
+                    render: (leave) => <span className="text-sm text-slate-600">{leave.recommended_by_name || ""}</span>,
+                  },
+                  {
+                    key: "action",
+                    header: "Action",
+                    className: "text-right",
+                    render: (leave) => (
+                      <div className="flex justify-end gap-2">
+                        <Button size="sm" className="gap-1" onClick={() => openActionDialog("sanction", leave)}>
+                          <CheckCircle2 className="w-4 h-4" /> Sanction
+                        </Button>
+                        <Button variant="outline" size="sm" className="gap-1 text-red-600 hover:text-red-700 hover:bg-red-50" onClick={() => openActionDialog("reject", leave)}>
+                          <XCircle className="w-4 h-4" /> Reject
+                        </Button>
+                      </div>
+                    ),
+                  },
+                ]}
+              />
             </CardContent>
           </Card>
         )}

@@ -1,7 +1,16 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
+import { useUrlTableState } from "@/shared/lib/useUrlTableState";
+
+// Status filter is URL-synced (?status=) so a filtered view is bookmarkable
+// and survives refresh — same pattern as the directory and work queue.
+const CHANGE_REQUEST_FILTERS = {
+  status: { param: "status", defaultValue: "ALL" },
+};
 
 export function useChangeRequestFilters({ requests }) {
-  const [statusFilter, setStatusFilter] = useState("ALL");
+  const { values, setValue } = useUrlTableState({ filters: CHANGE_REQUEST_FILTERS });
+  const statusFilter = values.status;
+  const setStatusFilter = useCallback((value) => setValue("status", value), [setValue]);
 
   const filteredRequests = useMemo(() => {
     if (statusFilter === "ALL") return requests || [];

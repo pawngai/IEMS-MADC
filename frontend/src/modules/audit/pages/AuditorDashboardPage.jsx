@@ -1,68 +1,61 @@
-import { useState, useEffect, useCallback } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { auditAPI, dashboardAPI } from "@/modules/audit/api/auditApi";
+import { auditKeys } from "@/modules/audit/queries/keys";
+import { useUrlTableState } from "@/shared/lib/useUrlTableState";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
-import { Button } from "@/shared/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { ScrollArea } from "@/shared/ui/scroll-area";
 import { CardSkeleton, PageHeaderSkeleton, StatGridSkeleton, TableSkeleton } from "@/shared/ui/skeletons";
 import { toast } from "sonner";
 import {
   Eye,
-  Search,
   Users,
-  FileText,
-  Clock,
   Activity,
   BookOpen,
   AlertTriangle,
 } from "lucide-react";
 
+const AUDIT_FILTERS = {
+  resourceType: { param: "resource", defaultValue: "all" },
+  action: { param: "action", defaultValue: "all" },
+};
+
+const EMPTY_LOGS = [];
+const EMPTY_STATS = {};
+
 const AuditorDashboard = () => {
-  const [auditLogs, setAuditLogs] = useState([]);
-  const [stats, setStats] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState({
-    resourceType: "all",
-    action: "all",
+  // Filters are URL-synced (?resource=&action=) and apply immediately —
+  // filtered audit views are bookmarkable and survive refresh.
+  const { values: filters, setValue: setFilterValue } = useUrlTableState({
+    filters: AUDIT_FILTERS,
   });
 
-  const fetchData = useCallback(async () => {
-    try {
-      const [logsRes, statsRes] = await Promise.all([
-        auditAPI.getLogs({ limit: 100 }).catch(() => ({ data: [] })),
-        dashboardAPI.getStats().catch(() => ({ data: {} })),
-      ]);
-
-      setAuditLogs(logsRes.data || []);
-      setStats(statsRes.data || {});
-    } catch (error) {
-      console.error("Failed to fetch data:", error);
-      toast.error("Failed to load audit data");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const fetchFilteredLogs = async () => {
-    setLoading(true);
-    try {
+  const logsQuery = useQuery({
+    queryKey: auditKeys.logs(filters),
+    placeholderData: keepPreviousData,
+    queryFn: async () => {
       const params = { limit: 100 };
       if (filters.resourceType && filters.resourceType !== "all") params.resource_type = filters.resourceType;
       if (filters.action && filters.action !== "all") params.action = filters.action;
+      try {
+        const res = await auditAPI.getLogs(params);
+        return res.data || EMPTY_LOGS;
+      } catch {
+        toast.error("Failed to fetch logs");
+        return EMPTY_LOGS;
+      }
+    },
+  });
 
-      const res = await auditAPI.getLogs(params);
-      setAuditLogs(res.data || []);
-    } catch (error) {
-      toast.error("Failed to fetch logs");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const statsQuery = useQuery({
+    queryKey: auditKeys.stats(),
+    queryFn: () => dashboardAPI.getStats().then((res) => res.data || EMPTY_STATS).catch(() => EMPTY_STATS),
+  });
+
+  const auditLogs = logsQuery.data ?? EMPTY_LOGS;
+  const stats = statsQuery.data ?? EMPTY_STATS;
+  const loading = logsQuery.isPending || statsQuery.isPending;
 
   const getActionColor = (action) => {
     if (!action) return "bg-slate-100 text-slate-800";
@@ -178,7 +171,7 @@ const AuditorDashboard = () => {
                 <div className="flex flex-wrap gap-3 mb-6">
                   <Select
                     value={filters.resourceType}
-                    onValueChange={(v) => setFilters({ ...filters, resourceType: v })}
+                    onValueChange={(v) => setFilterValue("resourceType", v)}
                   >
                     <SelectTrigger className="w-36 sm:w-48">
                       <SelectValue placeholder="Resource Type" />
@@ -193,7 +186,7 @@ const AuditorDashboard = () => {
 
                   <Select
                     value={filters.action}
-                    onValueChange={(v) => setFilters({ ...filters, action: v })}
+                    onValueChange={(v) => setFilterValue("action", v)}
                   >
                     <SelectTrigger className="w-36 sm:w-48">
                       <SelectValue placeholder="Action Type" />
@@ -206,11 +199,6 @@ const AuditorDashboard = () => {
                       <SelectItem value="WORKFLOW">Workflow</SelectItem>
                     </SelectContent>
                   </Select>
-
-                  <Button onClick={fetchFilteredLogs} variant="outline" size="sm" className="gap-2">
-                    <Search className="w-4 h-4" />
-                    Filter
-                  </Button>
                 </div>
 
                 {/* Logs */}

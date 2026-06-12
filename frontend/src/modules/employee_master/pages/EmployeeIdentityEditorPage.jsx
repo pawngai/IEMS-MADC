@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, UserRoundPlus } from "lucide-react";
 import { employeeIdentityApi } from "@/modules/employee_master/api/employeeIdentityApi";
 import { employeeProfileApi } from "@/modules/employee_master";
+import { buildEmployeeIdentityFormSchema } from "@/modules/employee_master/schemas/identityFormSchema";
 import { mastersAPI } from "@/modules/organization_master";
 import {
   buildEmployeeDirectoryPath,
@@ -10,11 +11,19 @@ import {
   getEmployeeEditorScope,
 } from "@/shared/lib/employeeEditorRoutes";
 import { appendNoticeToPath } from "@/shared/lib/routeNotice";
+import { applyServerFieldErrors, useZodForm } from "@/shared/forms";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/shared/ui/form";
 import { Input } from "@/shared/ui/input";
-import { Label } from "@/shared/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/shared/lib/utils";
@@ -62,23 +71,6 @@ const buildIdentityPayload = (formData) =>
     }).filter(([, value]) => value !== undefined && value !== "")
   );
 
-const validateIdentityForm = (formData, { requireEmploymentType = false } = {}) => {
-  const nextErrors = {};
-  if (!String(formData.full_name || "").trim()) nextErrors.full_name = "Full name is required";
-  if (!formData.gender) nextErrors.gender = "Gender is required";
-  if (!formData.date_of_birth) nextErrors.date_of_birth = "Date of birth is required";
-  if (formData.mobile_primary && !/^[6-9]\d{9}$/.test(formData.mobile_primary)) {
-    nextErrors.mobile_primary = "Enter a valid 10-digit mobile number";
-  }
-  if (formData.email_official && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(formData.email_official).trim())) {
-    nextErrors.email_official = "Enter a valid official email";
-  }
-  if (requireEmploymentType && !formData.employment_type) {
-    nextErrors.employment_type = "Employment type is required for non-regular employees";
-  }
-  return nextErrors;
-};
-
 const EmployeeIdentityEditorPage = () => {
   const { employeeId } = useParams();
   const navigate = useNavigate();
@@ -90,11 +82,16 @@ const EmployeeIdentityEditorPage = () => {
   const isNonRegularCreation = !isEditMode && creationMode === "non_regular";
 
   const [loading, setLoading] = useState(true);
-  const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState(createEmptyForm());
   const [employeeCode, setEmployeeCode] = useState("");
   const [nonRegularEmploymentTypes, setNonRegularEmploymentTypes] = useState([]);
+
+  const schema = useMemo(
+    () => buildEmployeeIdentityFormSchema({ requireEmploymentType: isNonRegularCreation }),
+    [isNonRegularCreation],
+  );
+  const form = useZodForm({ schema, defaultValues: createEmptyForm() });
+  const { reset } = form;
+  const submitting = form.formState.isSubmitting;
 
   useEffect(() => {
     let cancelled = false;
@@ -106,10 +103,10 @@ const EmployeeIdentityEditorPage = () => {
         if (cancelled) return;
 
         if (identityResponse) {
-          setFormData(mapIdentityToForm(identityResponse.data));
+          reset(mapIdentityToForm(identityResponse.data));
           setEmployeeCode(identityResponse.data?.employee_code || "");
         } else {
-          setFormData(createEmptyForm());
+          reset(createEmptyForm());
           setEmployeeCode("");
         }
       } catch (error) {
@@ -125,7 +122,7 @@ const EmployeeIdentityEditorPage = () => {
     return () => {
       cancelled = true;
     };
-  }, [employeeId, isEditMode, isNonRegularCreation]);
+  }, [employeeId, isEditMode, isNonRegularCreation, reset]);
 
   useEffect(() => {
     if (!isNonRegularCreation) {
@@ -156,21 +153,9 @@ const EmployeeIdentityEditorPage = () => {
     navigate(returnTo || fallbackReturnPath);
   };
 
-  const updateField = (field, value) => {
-    setFormData((current) => ({ ...current, [field]: value }));
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const nextErrors = validateIdentityForm(formData, {
-      requireEmploymentType: isNonRegularCreation,
-    });
-    setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
-
-    setSubmitting(true);
+  const onSubmit = async (values) => {
     try {
-      const payload = buildIdentityPayload(formData);
+      const payload = buildIdentityPayload(values);
       if (isEditMode) {
         await employeeIdentityApi.update(employeeId, payload);
         const targetPath = returnTo || buildEmployeeFilePath(scope, employeeId);
@@ -180,18 +165,18 @@ const EmployeeIdentityEditorPage = () => {
 
       const response = await employeeIdentityApi.create(payload);
       const createdEmployeeId = response?.data?.employee_id;
-      const employeeCode = response?.data?.employee_code;
+      const createdEmployeeCode = response?.data?.employee_code;
       if (!createdEmployeeId) throw new Error("Missing employee_id");
 
-      if (isNonRegularCreation && formData.employment_type) {
+      if (isNonRegularCreation && values.employment_type) {
         await employeeProfileApi.update(createdEmployeeId, {
-          employment_type: normalizeEmploymentTypeCode(formData.employment_type),
+          employment_type: normalizeEmploymentTypeCode(values.employment_type),
         });
       }
 
       const successMessage = isNonRegularCreation
-        ? `Employee ${employeeCode || createdEmployeeId} identity created successfully. Complete the non-regular profile after the identity workflow is completed.`
-        : `Employee ${employeeCode || createdEmployeeId} identity created successfully.`;
+        ? `Employee ${createdEmployeeCode || createdEmployeeId} identity created successfully. Complete the non-regular profile after the identity workflow is completed.`
+        : `Employee ${createdEmployeeCode || createdEmployeeId} identity created successfully.`;
 
       navigate(
         appendNoticeToPath(
@@ -201,64 +186,52 @@ const EmployeeIdentityEditorPage = () => {
         )
       );
     } catch (error) {
-      const detail = error?.response?.data?.detail;
-      if (Array.isArray(detail)) {
-        const fieldErrors = {};
-        detail.forEach((issue) => {
-          const field = issue?.loc?.[1] || issue?.field || issue?.field_id;
-          if (field) fieldErrors[field] = issue?.msg || issue?.message || "Invalid value";
-        });
-        setErrors(fieldErrors);
-      }
+      applyServerFieldErrors(form, error);
       toast.error(
         getApiErrorMessage(error, isEditMode ? "Failed to update identity" : "Failed to create identity")
       );
-    } finally {
-      setSubmitting(false);
     }
   };
 
   if (loading) {
     return (
-      <>
-        <div className="max-w-5xl mx-auto py-8">
-          <Card>
-            <CardContent className="py-12 text-center text-slate-500">Loading employee identity...</CardContent>
-          </Card>
-        </div>
-      </>
+      <div className="max-w-5xl mx-auto py-8">
+        <Card>
+          <CardContent className="py-12 text-center text-slate-500">Loading employee identity...</CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <>
-      <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="employee-identity-editor-page">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Employee Identity</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
-              {isEditMode ? "Edit Employee Identity" : "Create Employee Identity"}
-            </h2>
-            <p className="text-sm text-slate-500 mt-1">
-              {isNonRegularCreation
-                ? "Create the core identity first. It will move through the normal identity workflow, then non-regular details can be completed from the employee file after activation."
-                : "This workflow captures core identity only. Profile extension stays separate and can be completed next or later from the employee file."}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" className="gap-2" onClick={handleCancel}>
-              <ArrowLeft className="w-4 h-4" />
-              Back
-            </Button>
-            {isEditMode && employeeCode && (
-              <Badge variant="outline" className="font-mono text-xs h-fit">
-                {employeeCode}
-              </Badge>
-            )}
-          </div>
+    <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="employee-identity-editor-page">
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-widest text-slate-500">Employee Identity</p>
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+            {isEditMode ? "Edit Employee Identity" : "Create Employee Identity"}
+          </h2>
+          <p className="text-sm text-slate-500 mt-1">
+            {isNonRegularCreation
+              ? "Create the core identity first. It will move through the normal identity workflow, then non-regular details can be completed from the employee file after activation."
+              : "This workflow captures core identity only. Profile extension stays separate and can be completed next or later from the employee file."}
+          </p>
         </div>
+        <div className="flex gap-2">
+          <Button variant="outline" className="gap-2" onClick={handleCancel}>
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </Button>
+          {isEditMode && employeeCode && (
+            <Badge variant="outline" className="font-mono text-xs h-fit">
+              {employeeCode}
+            </Badge>
+          )}
+        </div>
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -268,83 +241,122 @@ const EmployeeIdentityEditorPage = () => {
               <CardDescription>Canonical identity fields owned by Employee Identity.</CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="md:col-span-2 space-y-2">
-                <Label htmlFor="full_name">Full Name</Label>
-                <Input id="full_name" value={formData.full_name} onChange={(event) => updateField("full_name", event.target.value)} />
-                {errors.full_name && <p className="text-xs text-red-500">{errors.full_name}</p>}
-              </div>
+              <FormField
+                control={form.control}
+                name="full_name"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="space-y-2">
-                <Label>Gender</Label>
-                <Select value={formData.gender} onValueChange={(value) => updateField("gender", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {GENDER_OPTIONS.map((option) => (
-                      <SelectItem key={option} value={option}>{option}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {errors.gender && <p className="text-xs text-red-500">{errors.gender}</p>}
-              </div>
+              <FormField
+                control={form.control}
+                name="gender"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Gender</FormLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select gender" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {GENDER_OPTIONS.map((option) => (
+                          <SelectItem key={option} value={option}>{option}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="date_of_birth">Date of Birth</Label>
-                <Input id="date_of_birth" type="date" value={formData.date_of_birth} onChange={(event) => updateField("date_of_birth", event.target.value)} />
-                {errors.date_of_birth && <p className="text-xs text-red-500">{errors.date_of_birth}</p>}
-              </div>
+              <FormField
+                control={form.control}
+                name="date_of_birth"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date of Birth</FormLabel>
+                    <FormControl>
+                      <Input type="date" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="mobile_primary">Mobile Number</Label>
-                <Input
-                  id="mobile_primary"
-                  value={formData.mobile_primary}
-                  maxLength={10}
-                  onChange={(event) => updateField("mobile_primary", event.target.value.replace(/\D/g, "").slice(0, 10))}
-                />
-                {errors.mobile_primary && <p className="text-xs text-red-500">{errors.mobile_primary}</p>}
-              </div>
+              <FormField
+                control={form.control}
+                name="mobile_primary"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile Number</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        maxLength={10}
+                        onChange={(event) => field.onChange(event.target.value.replace(/\D/g, "").slice(0, 10))}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="space-y-2">
-                <Label htmlFor="email_official">Official Email</Label>
-                <Input
-                  id="email_official"
-                  type="email"
-                  value={formData.email_official}
-                  onChange={(event) => updateField("email_official", event.target.value)}
-                />
-                {errors.email_official && <p className="text-xs text-red-500">{errors.email_official}</p>}
-              </div>
+              <FormField
+                control={form.control}
+                name="email_official"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Official Email</FormLabel>
+                    <FormControl>
+                      <Input type="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {isNonRegularCreation && (
-                <div className="md:col-span-2 space-y-2">
-                  <Label htmlFor="employment_type">Non-Regular Employment Type</Label>
-                  <Select
-                    value={formData.employment_type}
-                    onValueChange={(value) => updateField("employment_type", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select non-regular employment type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {nonRegularEmploymentTypes.map((item) => {
-                        const code = String(
-                          item.employment_type_code || item.code || item.value || item.id || ""
-                        );
-                        const label = item.name || item.label || item.description || code;
-                        if (!code) return null;
-                        return (
-                          <SelectItem key={code} value={code}>{label}</SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-slate-500">
-                    Seeds the profile extension so the editor opens in non-regular mode after activation.
-                  </p>
-                  {errors.employment_type && <p className="text-xs text-red-500">{errors.employment_type}</p>}
-                </div>
+                <FormField
+                  control={form.control}
+                  name="employment_type"
+                  render={({ field }) => (
+                    <FormItem className="md:col-span-2">
+                      <FormLabel>Non-Regular Employment Type</FormLabel>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select non-regular employment type" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {nonRegularEmploymentTypes.map((item) => {
+                            const code = String(
+                              item.employment_type_code || item.code || item.value || item.id || ""
+                            );
+                            const label = item.name || item.label || item.description || code;
+                            if (!code) return null;
+                            return (
+                              <SelectItem key={code} value={code}>{label}</SelectItem>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                      <p className="text-xs text-slate-500">
+                        Seeds the profile extension so the editor opens in non-regular mode after activation.
+                      </p>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               )}
             </CardContent>
           </Card>
@@ -357,8 +369,8 @@ const EmployeeIdentityEditorPage = () => {
             </Button>
           </div>
         </form>
-      </div>
-    </>
+      </Form>
+    </div>
   );
 };
 

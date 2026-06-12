@@ -1,5 +1,6 @@
 import { Navigate, Route } from "react-router-dom";
 import { Permissions } from "@/platform/permissions";
+import { SENIORITY_AUTHORITIES } from "@/modules/identity_access";
 import { ProtectedRoute } from "@/app/router/guards";
 import { LeaveDashboardPage as LeaveDashboard } from "@/modules/leave_attendance";
 import { AnalyticsDashboardPage as AnalyticsDashboard } from "@/modules/reporting_analytics";
@@ -73,7 +74,7 @@ export const AdminRoutes = () => (
       path="/seniority"
       element={
         <ProtectedRoute
-          requiredAuthorities={["SYSTEM_ADMIN", "GLOBAL_DATA_ENTRY", "DEALING_ASSISTANT", "VERIFIER", "APPROVING_AUTHORITY"]}
+          requiredAuthorities={SENIORITY_AUTHORITIES}
         >
           <SeniorityPage />
         </ProtectedRoute>

@@ -1,6 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth, canEnterEssPortal } from "@/modules/identity_access";
+import {
+  useAuth,
+  canEnterEssPortal,
+  canAccessAdminConsole,
+  canAccessAnalytics,
+  canAccessAudit,
+  canAccessDepartmentPortal,
+  canAccessGlobalDirectory,
+  canAccessGlobalLeave,
+  canManageSeniority,
+} from "@/modules/identity_access";
 import { usePermissions } from "@/modules/identity_access";
 import { isRegularEssEmployee } from "@/modules/ess/services/essEligibility";
 import { canAccessEssDocuments } from "@/modules/ess/services/essDomainService";
@@ -153,13 +163,11 @@ const Layout = ({ children }) => {
   const hasDepartmentalAuthority = authorities.some((a) => ["DEPT_DATA_ENTRY", "HOD"].includes(a));
 
   // ── Permission flags ──────────────────────────────────────────────
-  // ESS portal eligibility is centralized in identity_access portalAccessRules.
+  // Portal-level capabilities come from identity_access portalAccessRules —
+  // the single source for these permission/authority combinations.
   const canEssPortal = canEnterEssPortal({ user, canAny, canAccessEssPortal });
-  const canDepartmentScopedPortal =
-    hasDepartmentalAuthority &&
-    can(Permissions.PROFILE_READ_ALL);
-  const canAdminPortal =
-    isSystemAdmin && can(Permissions.USER_MANAGEMENT) && can(Permissions.SYSTEM_CONFIG) && canAccessModule("admin_console");
+  const canDepartmentScopedPortal = canAccessDepartmentPortal({ user, can });
+  const canAdminPortal = canAccessAdminConsole({ can, canAccessModule, getPrimaryAuthority });
   const canEssDashboard = can(Permissions.PROFILE_READ_OWN) || can(Permissions.SERVICE_BOOK_READ_OWN);
   const canEssProfile = can(Permissions.PROFILE_READ_OWN) || can(Permissions.PROFILE_READ_ALL);
   const canEssDocuments = canAccessEssDocuments({ user, can });
@@ -167,18 +175,12 @@ const Layout = ({ children }) => {
   const canEssServiceBook = canEssServiceBookPermission && essServiceBookEligible;
   const canEssLeave = can(Permissions.LEAVE_APPLY_OWN) || can(Permissions.LEAVE_READ_OWN);
   const canDeptLeaveWorkflow = (can(Permissions.LEAVE_RECOMMEND) || can(Permissions.LEAVE_SANCTION)) && canAccessModule("leave");
-  const canGlobalLeaveWorkflow = (can(Permissions.LEAVE_RECOMMEND) || can(Permissions.LEAVE_SANCTION)) && canAccessModule("leave");
-  const canGlobalAudit = can(Permissions.AUDIT_READ_ALL) && canAccessModule("audit");
-  const canAnalytics = can(Permissions.PROFILE_READ_ALL);
-  const canSeniority = authorities.some((a) =>
-    ["GLOBAL_DATA_ENTRY", "DEALING_ASSISTANT", "VERIFIER", "APPROVING_AUTHORITY", "SYSTEM_ADMIN"].includes(a)
-  );
+  const canGlobalLeaveWorkflow = canAccessGlobalLeave({ user, can, canAccessModule });
+  const canGlobalAudit = canAccessAudit({ can, canAccessModule });
+  const canAnalytics = canAccessAnalytics({ can });
+  const canSeniority = canManageSeniority({ user });
   const canDocumentManagement = isGlobalRole || isSystemAdmin;
-  const canGlobalDirectory = canAny([
-    Permissions.PROFILE_READ_ALL, Permissions.PROFILE_CREATE,
-    Permissions.PROFILE_UPDATE_ALL, Permissions.SERVICE_BOOK_READ_ALL,
-    Permissions.SERVICE_BOOK_ENTRY_CREATE,
-  ]);
+  const canGlobalDirectory = canAccessGlobalDirectory({ user, canAny });
 
   // ── ESS service-book eligibility ──────────────────────────────────
   const isEssPortalPath = location.pathname === "/ess" || location.pathname.startsWith("/ess/");

@@ -45,7 +45,8 @@ jest.mock('@/platform/permissions', () => ({
 }));
 
 // Mock auth context
-jest.mock('@/modules/identity_access', () => ({
+jest.mock('@/modules/identity_access', async (importOriginal) => ({
+  ...(await importOriginal()),
   __esModule: true,
   AuthProvider: ({ children }) => <div>{children}</div>,
   useAuth: () => ({

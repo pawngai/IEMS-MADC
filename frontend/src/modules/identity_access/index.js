@@ -8,3 +8,16 @@ export {
   canEnterEssPortal,
   getDefaultLandingPath,
 } from "./model/portalAccessRules";
+export {
+  ESS_PORTAL_PERMISSIONS,
+  GLOBAL_DIRECTORY_PERMISSIONS,
+  SENIORITY_AUTHORITIES,
+  WORK_QUEUE_AUTHORITIES,
+  canAccessAdminConsole,
+  canAccessAnalytics,
+  canAccessAudit,
+  canAccessDepartmentPortal,
+  canAccessGlobalDirectory,
+  canAccessGlobalLeave,
+  canManageSeniority,
+} from "./model/portalAccessRules";

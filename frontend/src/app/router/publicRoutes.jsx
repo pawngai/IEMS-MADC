@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Navigate, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/app/router/guards";
-import { useAuth } from "@/modules/identity_access";
+import { useAuth, GLOBAL_DIRECTORY_PERMISSIONS } from "@/modules/identity_access";
 import { usePermissions } from "@/modules/identity_access";
 import { Permissions } from "@/platform/permissions";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
@@ -17,11 +17,7 @@ const NotFoundPage = lazy(() => import("@/app/pages/system-admin/NotFoundPage"))
  * EMPLOYEE-only accounts hold none of them and are denied.
  */
 const OPERATIONS_DASHBOARD_PERMISSIONS = [
-	Permissions.PROFILE_READ_ALL,
-	Permissions.PROFILE_CREATE,
-	Permissions.PROFILE_UPDATE_ALL,
-	Permissions.SERVICE_BOOK_READ_ALL,
-	Permissions.SERVICE_BOOK_ENTRY_CREATE,
+	...GLOBAL_DIRECTORY_PERMISSIONS,
 	Permissions.LEAVE_RECOMMEND,
 	Permissions.LEAVE_SANCTION,
 	Permissions.AUDIT_READ_ALL,

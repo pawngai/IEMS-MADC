@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { OPS } from "@/shared/lib/routes";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";
-import { useAuth } from "@/modules/identity_access";
+import { useAuth, GLOBAL_DIRECTORY_PERMISSIONS } from "@/modules/identity_access";
 import { usePermissions } from "@/modules/identity_access";
 import { listProfilesByStatus } from "@/modules/applications/model/globalPortalGateway";
 import { leaveAPI } from "@/modules/leave_attendance";
@@ -146,13 +146,7 @@ const GlobalPortalDashboard = () => {
   const canViewAudit =
     can(Permissions.AUDIT_READ_ALL) && canAccessModule("audit");
 
-  const canEmployeeDir = canAny([
-    Permissions.PROFILE_READ_ALL,
-    Permissions.PROFILE_CREATE,
-    Permissions.PROFILE_UPDATE_ALL,
-    Permissions.SERVICE_BOOK_READ_ALL,
-    Permissions.SERVICE_BOOK_ENTRY_CREATE,
-  ]);
+  const canEmployeeDir = canAny(GLOBAL_DIRECTORY_PERMISSIONS);
 
   useEffect(() => {
     let active = true;

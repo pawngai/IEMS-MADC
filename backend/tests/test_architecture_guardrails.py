@@ -226,7 +226,7 @@ def test_documents_context_cannot_store_service_history_truth() -> None:
         WORKSPACE_ROOT
         / "frontend"
         / "src"
-        / "contexts"
+        / "modules"
         / "documents"
         / "services"
         / "documentDomainService.js"

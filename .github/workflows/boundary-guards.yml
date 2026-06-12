@@ -72,6 +72,6 @@ jobs:
         run: >-
           npm run test --
           src/app/router/__tests__/routesImportGuard.test.js
-          src/contexts/__tests__/contextBoundary.test.js
+          src/modules/__tests__/contextBoundary.test.js
         env:
           CI: true

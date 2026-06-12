@@ -166,11 +166,12 @@ def test_contexts_do_not_import_legacy_auth_modules() -> None:
 
 
 def test_service_book_feature_folder_exists() -> None:
-    assert (FRONTEND_ROOT / "contexts" / "service_book").exists()
+    assert (FRONTEND_ROOT / "modules" / "service_book").exists()
 
 
-def test_frontend_modules_root_removed() -> None:
-    assert not (FRONTEND_ROOT / "modules").exists()
+def test_frontend_legacy_contexts_root_removed() -> None:
+    # src/contexts was renamed to src/modules; the old root must not return.
+    assert not (FRONTEND_ROOT / "contexts").exists()
 
 
 def test_service_events_context_absorbed_into_service_book_records() -> None:
@@ -396,9 +397,8 @@ def test_frontend_app_and_portals_use_canonical_context_imports() -> None:
     frontend_root = BACKEND_ROOT.parent / "frontend"
     scan_roots = [
         frontend_root / "src" / "app",
-        frontend_root / "src" / "portals",
     ]
-    forbidden = re.compile(r'@/contexts/(leave|pay|analytics|reporting|department|masters)(?:/|")')
+    forbidden = re.compile(r'@/modules/(leave|pay|analytics|reporting|department|masters)(?:/|")')
     violations: list[str] = []
     for root in scan_roots:
         for file_path in root.rglob("*"):

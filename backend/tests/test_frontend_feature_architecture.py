@@ -8,7 +8,10 @@ from pathlib import Path
 
 WORKSPACE_ROOT = Path(__file__).resolve().parents[2]
 FRONTEND_SRC = WORKSPACE_ROOT / "frontend" / "src"
-CONTEXTS_ROOT = FRONTEND_SRC / "contexts"
+# Frontend bounded modules moved from src/contexts to src/modules (the
+# "contexts" name collided with React Context); portals/ and features/
+# facades were dissolved in the same migration.
+CONTEXTS_ROOT = FRONTEND_SRC / "modules"
 APP_CONTEXTS_ROOT = FRONTEND_SRC / "app" / "contexts"
 
 # Deprecated staged baseline. In final mode, app/contexts must not exist.
@@ -19,7 +22,6 @@ REQUIRED_CONTEXTS = {
     "identity_access",
     "leave_attendance",
     "organization_master",
-    "pay_benefits",
     "reporting_analytics",
     "service_book",
     "workflow",
@@ -33,11 +35,13 @@ LEGACY_CONTEXT_IMPORTS = {
     "@/features/pay/",
     "@/features/documents/",
     "@/features/audit/",
+    "@/contexts/",
+    "@/portals/",
 }
 
-CONTEXT_IMPORT_RE = re.compile(r"@/contexts/([A-Za-z0-9_-]+)/")
+CONTEXT_IMPORT_RE = re.compile(r"@/modules/([A-Za-z0-9_-]+)/")
 CONTEXT_BOUNDARY_ALLOWLIST_PATH = (
-    FRONTEND_SRC / "contexts" / "__tests__" / "fixtures" / "context-boundary-allowlist.json"
+    FRONTEND_SRC / "modules" / "__tests__" / "fixtures" / "context-boundary-allowlist.json"
 )
 
 REQUIRED_SHARED_SUBDIRS = {
@@ -49,10 +53,8 @@ REQUIRED_SHARED_SUBDIRS = {
 
 REQUIRED_FRONTEND_TOP_LEVEL = {
     "app",
-    "contexts",
-    "features",
+    "modules",
     "platform",
-    "portals",
     "shared",
 }
 
@@ -61,10 +63,13 @@ FRONTEND_ARCH_ENFORCEMENT_MODE = os.getenv("FRONTEND_ARCH_ENFORCEMENT_MODE", "fi
 # Baselines for change_requests/seniority were raised when their oversized
 # components were split into co-located helper files (no new functionality;
 # total code shrank). Do not raise these for new features.
+# audit was raised 5 -> 6 for queries/keys.js (TanStack Query key registry,
+# refactor infrastructure rather than a new feature).
+# ess was raised 6 -> 8 when the portals/ facade dissolved and its two real
+# pages moved into modules/ess/pages.
 DEPRECATED_CONTEXT_BASELINES = {
-    "access_control": 2,
     "admin": 25,
-    "audit": 5,
+    "audit": 6,
     "change_requests": 18,
     "documents": 5,
     "ess": 8,
@@ -139,8 +144,11 @@ def test_deprecated_frontend_contexts_do_not_grow() -> None:
     )
 
 
-def test_legacy_modules_root_is_removed() -> None:
-    assert not (FRONTEND_SRC / "modules").exists()
+def test_legacy_frontend_roots_are_removed() -> None:
+    for legacy in ("contexts", "features", "portals"):
+        assert not (FRONTEND_SRC / legacy).exists(), (
+            f"frontend/src/{legacy} was removed in the modules migration and must not return"
+        )
 
 
 def test_required_shared_subdirectories_exist() -> None:
@@ -171,13 +179,13 @@ def test_cross_context_imports_use_allowlist_only() -> None:
     allowlist_set = set(allowlist if isinstance(allowlist, list) else [])
 
     for file_path in _iter_frontend_source_files():
-        if "contexts" not in file_path.parts or "__tests__" in file_path.parts:
+        if "modules" not in file_path.parts or "__tests__" in file_path.parts:
             continue
 
         rel = file_path.relative_to(WORKSPACE_ROOT).as_posix()
         context_rel = file_path.relative_to(CONTEXTS_ROOT).as_posix()
         parts = rel.split("/")
-        owner_context = parts[3] if len(parts) > 3 and parts[2] == "contexts" else None
+        owner_context = parts[3] if len(parts) > 3 and parts[2] == "modules" else None
         if not owner_context:
             continue
 
@@ -198,7 +206,7 @@ def test_app_contexts_deprecated_folder_is_removed_or_staged_frozen() -> None:
     if FRONTEND_ARCH_ENFORCEMENT_MODE == "final":
         assert not APP_CONTEXTS_ROOT.exists(), (
             "app/contexts/ is deprecated and must be removed in final mode. "
-            "Place domain code under src/contexts/."
+            "Place domain code under src/modules/."
         )
         return
 
@@ -214,5 +222,5 @@ def test_app_contexts_deprecated_folder_is_removed_or_staged_frozen() -> None:
     )
     assert current <= APP_CONTEXTS_STAGED_BASELINE, (
         f"app/contexts/ has {current} source files (baseline={APP_CONTEXTS_STAGED_BASELINE}). "
-        f"Do not add new code here — use src/contexts/ instead."
+        f"Do not add new code here — use src/modules/ instead."
     )

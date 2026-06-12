@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/sha
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { SearchableSelect } from "@/shared/ui/searchable-select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { Calendar } from "lucide-react";
 import { LeaveStatusBadge } from "@/modules/leave_attendance/components/LeaveStatusBadge";
 import LeaveAttachmentLinks from "@/modules/leave_attendance/pages/LeaveAttachmentLinks";
@@ -16,6 +16,38 @@ const formatDate = (isoDate) => {
   if (Number.isNaN(d.getTime())) return isoDate;
   return d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 };
+
+const LEAVE_HISTORY_COLUMNS = [
+  { key: "leave_type_code", header: "Type" },
+  {
+    key: "dates",
+    header: "Dates",
+    className: "text-sm",
+    headClassName: "",
+    render: (leave) => (
+      <>
+        <div>{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</div>
+        <LeaveAttachmentLinks attachments={leave.attachments} />
+      </>
+    ),
+  },
+  {
+    key: "days_applied",
+    header: "Days",
+    className: "hidden sm:table-cell",
+  },
+  {
+    key: "status",
+    header: "Status",
+    render: (leave) => <LeaveStatusBadge status={leave.status} />,
+  },
+  {
+    key: "applied_at",
+    header: "Applied",
+    className: "hidden sm:table-cell",
+    render: (leave) => (leave.applied_at ? new Date(leave.applied_at).toLocaleDateString("en-GB") : "-"),
+  },
+];
 
 const LeaveDashboardEmployeeHistory = ({
   balanceCardStyles,
@@ -191,44 +223,21 @@ const LeaveDashboardEmployeeHistory = ({
             </div>
           </CardHeader>
           <CardContent>
-            {filteredSelectedEmployeeLeaves.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <Calendar className="w-8 h-8 text-slate-300 mb-2" />
-                <p className="text-sm text-slate-500">
-                  {selectedEmployeeLeaves.length === 0
-                    ? "No leave history found for this employee"
-                    : "No leave history found for the selected leave type"}
-                </p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto -mx-4 sm:mx-0">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Dates</TableHead>
-                      <TableHead className="hidden sm:table-cell">Days</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="hidden sm:table-cell">Applied</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSelectedEmployeeLeaves.map((leave) => (
-                      <TableRow key={leave.id}>
-                        <TableCell>{leave.leave_type_code}</TableCell>
-                        <TableCell className="text-sm">
-                          <div>{formatDate(leave.from_date)} &ndash; {formatDate(leave.to_date)}</div>
-                          <LeaveAttachmentLinks attachments={leave.attachments} />
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">{leave.days_applied}</TableCell>
-                        <TableCell><LeaveStatusBadge status={leave.status} /></TableCell>
-                        <TableCell className="hidden sm:table-cell">{leave.applied_at ? new Date(leave.applied_at).toLocaleDateString("en-GB") : "-"}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
+            <DataTable
+              columns={LEAVE_HISTORY_COLUMNS}
+              rows={filteredSelectedEmployeeLeaves}
+              rowKey={(leave) => leave.id}
+              emptyState={
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <Calendar className="w-8 h-8 text-slate-300 mb-2" />
+                  <p className="text-sm text-slate-500">
+                    {selectedEmployeeLeaves.length === 0
+                      ? "No leave history found for this employee"
+                      : "No leave history found for the selected leave type"}
+                  </p>
+                </div>
+              }
+            />
           </CardContent>
         </Card>
       </>

@@ -1,8 +1,7 @@
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { TableSkeleton } from "@/shared/ui/skeletons";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
+import { DataTable } from "@/shared/data-table";
 import { cn } from "@/shared/lib/utils";
 import { Clock, FileText } from "lucide-react";
 
@@ -22,6 +21,84 @@ const STATUS_ICONS = {
   CANCELLED: Clock,
 };
 
+const buildColumns = ({
+  profileCategoryLabels,
+  serviceBookCategoryLabels,
+  onCancelRequest,
+  cancellingId,
+}) => [
+  {
+    key: "request_id",
+    header: "ID",
+    className: "font-mono text-xs hidden md:table-cell",
+    headClassName: "hidden md:table-cell",
+  },
+  {
+    key: "type",
+    header: "Type",
+    render: (request) => (
+      <Badge variant="outline">{request.request_type === "PROFILE" ? "Profile" : "Service Book"}</Badge>
+    ),
+  },
+  {
+    key: "category",
+    header: "Category",
+    className: "text-sm hidden sm:table-cell",
+    headClassName: "hidden sm:table-cell",
+    render: (request) =>
+      request.request_type === "PROFILE"
+        ? profileCategoryLabels[request.category]?.label || request.category
+        : serviceBookCategoryLabels[request.category]?.label || request.category,
+  },
+  {
+    key: "fields",
+    header: "Fields",
+    className: "text-sm hidden lg:table-cell",
+    headClassName: "hidden lg:table-cell",
+    render: (request) => `${request.fields?.length || 0} field(s)`,
+  },
+  {
+    key: "status",
+    header: "Status",
+    render: (request) => {
+      const StatusIcon = STATUS_ICONS[request.status] || Clock;
+      return (
+        <Badge className={cn("gap-1", STATUS_STYLES[request.status])}>
+          <StatusIcon className="h-3 w-3" />
+          {request.status}
+        </Badge>
+      );
+    },
+  },
+  {
+    key: "created_at",
+    header: "Date",
+    className: "text-xs text-muted-foreground hidden sm:table-cell",
+    headClassName: "hidden sm:table-cell",
+    render: (request) => new Date(request.created_at).toLocaleDateString("en-IN"),
+  },
+  {
+    key: "actions",
+    header: "Actions",
+    className: "text-right",
+    render: (request) =>
+      request.status === "PENDING" ? (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-red-600 hover:text-red-700"
+          disabled={cancellingId === request.request_id}
+          onClick={(event) => {
+            event.stopPropagation();
+            onCancelRequest(request.request_id);
+          }}
+        >
+          Cancel
+        </Button>
+      ) : null,
+  },
+];
+
 const ChangeRequestList = ({
   loading,
   requests,
@@ -33,6 +110,13 @@ const ChangeRequestList = ({
   profileCategoryLabels,
   serviceBookCategoryLabels,
 }) => {
+  const columns = buildColumns({
+    profileCategoryLabels,
+    serviceBookCategoryLabels,
+    onCancelRequest,
+    cancellingId,
+  });
+
   return (
     <Card>
       <CardHeader className="pb-3">
@@ -46,76 +130,22 @@ const ChangeRequestList = ({
         </div>
       </CardHeader>
       <CardContent>
-        {loading ? (
-          <TableSkeleton rows={5} columns={6} />
-        ) : (requests || []).length === 0 ? (
-          <div className="py-12 text-center text-muted-foreground">
-            <FileText className="mx-auto h-10 w-10 mb-2 opacity-30" />
-            {statusFilter === "ALL"
-              ? "No change requests yet. Click 'New Request' to submit one."
-              : `No ${statusFilter} requests found.`}
-          </div>
-        ) : (
-          <div className="overflow-x-auto -mx-4 sm:mx-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="hidden md:table-cell">ID</TableHead>
-                  <TableHead>Type</TableHead>
-                  <TableHead className="hidden sm:table-cell">Category</TableHead>
-                  <TableHead className="hidden lg:table-cell">Fields</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="hidden sm:table-cell">Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(requests || []).map((request) => {
-                  const StatusIcon = STATUS_ICONS[request.status] || Clock;
-                  return (
-                    <TableRow key={request.request_id} className="cursor-pointer" onClick={() => onSelectRequest(request)}>
-                      <TableCell className="font-mono text-xs hidden md:table-cell">{request.request_id}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{request.request_type === "PROFILE" ? "Profile" : "Service Book"}</Badge>
-                      </TableCell>
-                      <TableCell className="text-sm hidden sm:table-cell">
-                        {request.request_type === "PROFILE"
-                          ? profileCategoryLabels[request.category]?.label || request.category
-                          : serviceBookCategoryLabels[request.category]?.label || request.category}
-                      </TableCell>
-                      <TableCell className="text-sm hidden lg:table-cell">{request.fields?.length || 0} field(s)</TableCell>
-                      <TableCell>
-                        <Badge className={cn("gap-1", STATUS_STYLES[request.status])}>
-                          <StatusIcon className="h-3 w-3" />
-                          {request.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-xs text-muted-foreground hidden sm:table-cell">
-                        {new Date(request.created_at).toLocaleDateString("en-IN")}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {request.status === "PENDING" && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600 hover:text-red-700"
-                            disabled={cancellingId === request.request_id}
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              onCancelRequest(request.request_id);
-                            }}
-                          >
-                            Cancel
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              </TableBody>
-            </Table>
-          </div>
-        )}
+        <DataTable
+          columns={columns}
+          rows={requests || []}
+          rowKey={(request) => request.request_id}
+          loading={loading}
+          skeletonRows={5}
+          onRowClick={onSelectRequest}
+          emptyState={
+            <div className="py-12 text-center text-muted-foreground">
+              <FileText className="mx-auto h-10 w-10 mb-2 opacity-30" />
+              {statusFilter === "ALL"
+                ? "No change requests yet. Click 'New Request' to submit one."
+                : `No ${statusFilter} requests found.`}
+            </div>
+          }
+        />
       </CardContent>
     </Card>
   );

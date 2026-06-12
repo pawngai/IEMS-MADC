@@ -31,7 +31,7 @@ import {
   TableRow,
 } from "@/shared/ui/table";
 import { useAuth } from "@/contexts/identity_access";
-import { hasAuthority } from "@/contexts/access_control";
+import { hasAuthority } from "@/platform/permissions";
 import SeniorityListDetailView from "@/contexts/seniority/components/SeniorityListDetailView";
 import {
   DESIGNATIONS_FALLBACK,

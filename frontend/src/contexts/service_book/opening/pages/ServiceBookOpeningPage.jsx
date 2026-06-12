@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Layout from "@/app/layout/Layout";
 import { AlertCircle, User } from "lucide-react";
 import { Card, CardContent } from "@/shared/ui/card";
 import { CardSkeleton } from "@/shared/ui/skeletons";
@@ -45,13 +44,13 @@ const ServiceBookOpeningPage = () => {
 
   if (!targetEmployeeId) {
     return (
-      <Layout>
+      <>
         <div className="text-center py-12">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
           <h2 className="text-xl font-semibold mb-2">No Employee Profile Linked</h2>
           <p className="text-muted-foreground">Your account is not linked to an employee profile.</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -86,7 +85,7 @@ const ServiceBookOpeningPage = () => {
   );
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="service-book-opening-page">
         <OpeningHeader
           employeeId={loading ? employeeFileId : employeeFileId || targetEmployeeId}
@@ -142,7 +141,7 @@ const ServiceBookOpeningPage = () => {
           </>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

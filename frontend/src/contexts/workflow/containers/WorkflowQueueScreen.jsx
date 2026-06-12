@@ -14,7 +14,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ESS, MAIN } from "@/shared/lib/routes";
-import Layout from "@/app/layout/Layout";
 import {
   getOpeningActionLabel,
   resolveServiceBookStatus,
@@ -401,17 +400,17 @@ const WorkflowQueueScreen = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-7xl mx-auto space-y-6" data-testid="work-queue-loading">
           <PageHeaderSkeleton />
           <WorkQueueSkeleton items={8} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <TooltipProvider delayDuration={200}>
         <div className="animate-fade-in" data-testid="work-queue">
           <div className="max-w-[1440px] mx-auto space-y-5 px-2 sm:px-0">
@@ -611,7 +610,7 @@ const WorkflowQueueScreen = () => {
 
         </div>
       </TooltipProvider>
-    </Layout>
+    </>
   );
 };
 

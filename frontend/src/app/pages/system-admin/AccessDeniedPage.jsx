@@ -2,7 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
-import { getDefaultLandingPath } from "@/app/router/defaultLanding";
+import { getDefaultLandingPath } from "@/contexts/identity_access";
 import { AUTH } from "@/shared/lib/routes";
 import { Button } from "@/shared/ui/button";
 

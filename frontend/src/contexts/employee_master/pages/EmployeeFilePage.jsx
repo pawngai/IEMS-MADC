@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import EmployeeProfile from "@/contexts/employee_master/components/EmployeeProfileSummary";
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
@@ -263,7 +262,7 @@ const EmployeeFile = () => {
   }), [referenceData]);
 
   return (
-    <Layout>
+    <>
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in" data-testid="employee-profile-page">
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
           <div className="min-w-0">
@@ -414,7 +413,7 @@ const EmployeeFile = () => {
           <EmployeeProfile profile={profile} serviceSummary={serviceSummary} referenceLabelMaps={referenceLabelMaps} />
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

@@ -11,8 +11,7 @@
  */
 
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useLocation } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
+import { useNavigate, useParams } from "react-router-dom";
 import AdminActionDialogs from "@/contexts/admin/components/AdminActionDialogs";
 import AdminDetailDialogs from "@/contexts/admin/components/AdminDetailDialogs";
 import UserManagementTab from "@/contexts/admin/components/UserManagementTab";
@@ -34,16 +33,25 @@ import {
   RefreshCw,
 } from "lucide-react";
 
+/** Legacy tab paths kept addressable (e.g. /admin/masters bookmarks). */
+const TAB_PATH_ALIASES = { masters: "policy-masters" };
+
 const SystemAdminConsoleScreen = () => {
-  const location = useLocation();
+  const { tab: tabParam } = useParams();
+  const navigate = useNavigate();
   const { isSystemAdmin } = useAdminConsolePermissions();
   const { tabs: consoleTabs, defaultTab } = useAdminConsoleTabs();
-  const resolveRouteTab = useCallback((pathname) => {
-    if (pathname === "/admin/masters") return "policy-masters";
-    return null;
-  }, []);
-  const routeTab = resolveRouteTab(location.pathname);
-  const [activeTab, setActiveTab] = useState(routeTab || defaultTab);
+  // Tabs are URL-addressable (/admin/:tab) so console views can be bookmarked
+  // and shared; an unknown or inaccessible tab falls back to the default.
+  const requestedTab = TAB_PATH_ALIASES[tabParam] || tabParam || null;
+  const activeTab =
+    requestedTab && consoleTabs.some((tab) => tab.id === requestedTab)
+      ? requestedTab
+      : defaultTab;
+  const setActiveTab = useCallback(
+    (tabId) => navigate(`/admin/${tabId}`, { replace: false }),
+    [navigate],
+  );
   const [loading, setLoading] = useState(true);
 
   const [users, setUsers] = useState([]);
@@ -90,16 +98,6 @@ const SystemAdminConsoleScreen = () => {
       : Promise.resolve();
     initialLoad.finally(() => setLoading(false));
   }, [fetchDashboardData, fetchRoleChangeData, isSystemAdmin]);
-
-  useEffect(() => {
-    if (routeTab) {
-      setActiveTab(routeTab);
-      return;
-    }
-    if (!activeTab && defaultTab) {
-      setActiveTab(defaultTab);
-    }
-  }, [activeTab, defaultTab, routeTab]);
 
   useEffect(() => {
     if (activeTab === "role-mgmt") {
@@ -165,7 +163,7 @@ const SystemAdminConsoleScreen = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="space-y-6" data-testid="system-admin-console-loading">
           <PageHeaderSkeleton />
           <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
@@ -174,12 +172,12 @@ const SystemAdminConsoleScreen = () => {
           </div>
           <TableSkeleton rows={6} columns={6} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6 animate-fade-in" data-testid="system-admin-console">
         {/* HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -284,7 +282,7 @@ const SystemAdminConsoleScreen = () => {
           handleSaveUserRoles={handleSaveUserRoles}
         />
       </div>
-    </Layout>
+    </>
   );
 };
 

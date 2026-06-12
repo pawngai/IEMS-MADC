@@ -72,17 +72,6 @@ jest.mock("@/contexts/identity_access/model/authContext", () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock("@/contexts/identity_access/model/rbac", () => ({
-  __esModule: true,
-  Permissions: {
-    PROFILE_READ_OWN: "PROFILE_READ_OWN",
-    PROFILE_READ_ALL: "PROFILE_READ_ALL",
-    PROFILE_UPDATE_OWN_LIMITED: "PROFILE_UPDATE_OWN_LIMITED",
-    PROFILE_UPDATE_ALL: "PROFILE_UPDATE_ALL",
-    SERVICE_BOOK_READ_OWN: "SERVICE_BOOK_READ_OWN",
-  },
-}));
-
 jest.mock("sonner", () => ({
   __esModule: true,
   toast: {

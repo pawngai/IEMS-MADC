@@ -7,7 +7,6 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { OPS } from "@/shared/lib/routes";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";
 import { useAuth } from "@/contexts/identity_access";
@@ -280,7 +279,7 @@ const GlobalPortalDashboard = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-6xl mx-auto space-y-6" data-testid="global-portal-dashboard-loading">
           <PageHeaderSkeleton />
           <StatGridSkeleton count={4} />
@@ -290,12 +289,12 @@ const GlobalPortalDashboard = () => {
           </div>
           <TableSkeleton rows={5} columns={4} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div
         className="max-w-6xl mx-auto space-y-6 animate-fade-in"
         data-testid="global-portal-dashboard"
@@ -512,7 +511,7 @@ const GlobalPortalDashboard = () => {
           </Card>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

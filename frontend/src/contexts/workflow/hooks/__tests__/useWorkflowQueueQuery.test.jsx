@@ -1,5 +1,13 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render as rtlRender, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const render = (ui) =>
+  rtlRender(
+    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      {ui}
+    </QueryClientProvider>
+  );
 
 import { useWorkflowQueueQuery } from "@/contexts/workflow/hooks/useWorkflowQueueQuery";
 import { Permissions } from "@/platform/permissions";

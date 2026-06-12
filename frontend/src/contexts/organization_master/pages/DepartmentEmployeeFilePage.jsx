@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { DEPT } from "@/shared/lib/routes";
 import DepartmentEmployeeProfileSummary from "@/contexts/organization_master/components/DepartmentEmployeeProfileSummary";
 import { useAuth } from "@/contexts/identity_access";
@@ -153,28 +152,28 @@ const DepartmentEmployeeFilePage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-6xl mx-auto" data-testid="department-employee-file-loading">
           <ProfileSkeleton />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (scopeError) {
     return (
-      <Layout>
+      <>
         <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4" data-testid="department-employee-file-scope-error">
           <AlertTriangle className="w-8 h-8 text-amber-500 mb-3" />
           <h2 className="text-lg font-semibold text-slate-800">Department Not Mapped</h2>
           <p className="text-sm text-slate-500 max-w-md">{scopeError}</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in" data-testid="department-employee-file-page">
         <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
           <div className="min-w-0">
@@ -277,7 +276,7 @@ const DepartmentEmployeeFilePage = () => {
           </Card>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

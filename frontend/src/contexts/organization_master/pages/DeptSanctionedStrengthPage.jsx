@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import Layout from "@/app/layout/Layout";
 import { departmentPortalAPI } from "@/contexts/organization_master/api/departmentApi";
 import { useDepartmentScope } from "@/contexts/organization_master/hooks/useDepartmentScope";
 import { mastersAPI } from "@/contexts/organization_master";
@@ -311,43 +310,43 @@ const DeptSanctionedStrengthPage = () => {
 
   if (!canUseDepartmentPortal) {
     return (
-      <Layout>
+      <>
         <div className="flex h-[60vh] flex-col items-center justify-center px-4 text-center">
           <AlertTriangle className="mb-3 h-8 w-8 text-slate-400" />
           <h2 className="text-lg font-semibold text-slate-800">Access Restricted</h2>
           <p className="text-sm text-slate-500">Department Operations Portal is available only for HOD and Data Entry roles.</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (scopeLoading || loading) {
     return (
-      <Layout>
+      <>
         <div className="mx-auto max-w-7xl space-y-6" data-testid="dept-sanctioned-strength-loading">
           <PageHeaderSkeleton />
           <StatGridSkeleton count={4} />
           <CardSkeleton lines={2} />
           <TableSkeleton rows={6} columns={6} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (scopeError) {
     return (
-      <Layout>
+      <>
         <div className="flex h-[60vh] flex-col items-center justify-center px-4 text-center">
           <AlertTriangle className="mb-3 h-8 w-8 text-amber-500" />
           <h2 className="text-lg font-semibold text-slate-800">Department Not Mapped</h2>
           <p className="text-sm text-slate-500">{scopeError}</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="mx-auto max-w-7xl space-y-6 animate-fade-in" data-testid="dept-sanctioned-strength-page">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
@@ -518,7 +517,7 @@ const DeptSanctionedStrengthPage = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ import {
   DEPARTMENT_SCOPED_AUTHORITIES,
   hasAnyAuthority,
   hasAuthority,
-} from "@/contexts/access_control";
+} from "@/platform/permissions";
 import { authAPI } from "@/contexts/identity_access";
 import { mastersAPI } from "@/contexts/organization_master";
 import { Permissions } from "@/platform/permissions";

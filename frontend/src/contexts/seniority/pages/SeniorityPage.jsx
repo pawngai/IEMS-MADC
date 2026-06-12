@@ -1,4 +1,3 @@
-import Layout from "@/app/layout/Layout";
 import SeniorityListsTab from "@/contexts/seniority/components/SeniorityListsTab";
 import useSeniorityAdmin from "@/contexts/seniority/hooks/useSeniorityAdmin";
 
@@ -6,7 +5,7 @@ const SeniorityPage = () => {
   const seniority = useSeniorityAdmin();
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6">
         <SeniorityListsTab
         lists={seniority.lists}
@@ -39,7 +38,7 @@ const SeniorityPage = () => {
         setDetail={seniority.setDetail}
       />
     </div>
-    </Layout>
+    </>
   );
 };
 

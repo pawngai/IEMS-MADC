@@ -1,5 +1,5 @@
 import { ADMIN, DEPT, ESS, OPS } from "@/shared/lib/routes";
-import { getDefaultLandingPath } from "@/app/router/defaultLanding";
+import { getDefaultLandingPath } from "@/contexts/identity_access/model/portalAccessRules";
 
 describe("getDefaultLandingPath", () => {
   test("routes system admins to the admin console", () => {

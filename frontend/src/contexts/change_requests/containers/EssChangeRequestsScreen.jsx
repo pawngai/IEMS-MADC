@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Layout from "@/app/layout/Layout";
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { documentsAPI } from "@/contexts/documents";
@@ -117,7 +116,7 @@ export default function EssChangeRequestsScreen() {
     form.hasCategory && form.hasEntrySelection && form.hasValidFields && form.isReasonValid && !submitting;
 
   return (
-    <Layout>
+    <>
       <div className="mx-auto max-w-5xl space-y-6 p-6">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -414,6 +413,6 @@ export default function EssChangeRequestsScreen() {
           submitHint={submitHint}
         />
       </div>
-    </Layout>
+    </>
   );
 }

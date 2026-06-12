@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { Badge } from "@/shared/ui/badge";
 import {
   Breadcrumb,
@@ -145,44 +144,44 @@ export default function ServiceBookReadScreen({ essMode = false }) {
 
   if (loading || routeLookupPending) {
     return (
-      <Layout>
+      <>
         <div className="max-w-6xl mx-auto space-y-6" data-testid={essMode ? "ess-service-book-loading" : "service-book-loading"}>
           <PageHeaderSkeleton />
           <CardSkeleton lines={2} />
           <TableSkeleton rows={8} columns={4} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (!targetEmployeeId) {
     return (
-      <Layout>
+      <>
         <div className="max-w-4xl mx-auto text-center py-12">
           {essMode ? <UserRound className="w-14 h-14 mx-auto mb-3 text-slate-300" /> : <User className="w-16 h-16 mx-auto mb-4 text-slate-300" />}
           <h2 className="text-xl font-semibold text-slate-900">No linked employee profile</h2>
           <p className="text-slate-500 mt-2">Your account is not linked to an employee profile yet.</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (routeError) {
     return (
-      <Layout>
+      <>
         <div className="max-w-4xl mx-auto text-center py-12" data-testid="service-book-error">
           <User className="w-16 h-16 mx-auto mb-4 text-slate-300" />
           <h2 className="text-xl font-semibold text-slate-900">Employee not found</h2>
           <p className="text-slate-500 mt-2">{routeError}</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   const entryCount = serviceBook?._raw_entries?.length || 0;
 
   return (
-    <Layout>
+    <>
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in" data-testid={essMode ? "ess-service-book-page" : "service-book-page"}>
         <Breadcrumb className="no-print">
           <BreadcrumbList>
@@ -259,6 +258,6 @@ export default function ServiceBookReadScreen({ essMode = false }) {
         employeeName={employeeName || targetEmployeeId}
         employeeId={targetEmployeeId}
       />
-    </Layout>
+    </>
   );
 }

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
-import Layout from "@/app/layout/Layout";
 import { useDepartmentEmployeeDirectory } from "@/contexts/organization_master/hooks/useDepartmentEmployeeDirectory";
 import { useDepartmentScope } from "@/contexts/organization_master/hooks/useDepartmentScope";
 import { buildIdentityCreatePath } from "@/shared/lib/employeeEditorRoutes";
@@ -36,42 +35,42 @@ const DeptDirectoryPage = () => {
 
   if (!canUseDepartmentPortal) {
     return (
-      <Layout>
+      <>
         <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
           <Lock className="w-8 h-8 text-slate-400 mb-3" />
           <h2 className="text-lg font-semibold text-slate-800">Access Restricted</h2>
           <p className="text-sm text-slate-500">Department Operations Portal is available only for HOD and Data Entry roles.</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (dir.loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-7xl mx-auto space-y-6">
           <PageHeaderSkeleton />
           <SearchBarSkeleton />
           <EmployeeTableSkeleton rows={8} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (scopeError) {
     return (
-      <Layout>
+      <>
         <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
           <AlertTriangle className="w-8 h-8 text-amber-500 mb-3" />
           <h2 className="text-lg font-semibold text-slate-800">Department Not Mapped</h2>
           <p className="text-sm text-slate-500">{scopeError}</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-7xl mx-auto space-y-5 animate-fade-in" data-testid="dept-directory-page">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
@@ -195,7 +194,7 @@ const DeptDirectoryPage = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

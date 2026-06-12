@@ -69,9 +69,8 @@ jest.mock("@/contexts/leave_attendance/api/leaveApi", () => ({
   },
 }));
 
-jest.mock("@/contexts/access_control/services/authorizationService", () => ({
-  __esModule: true,
-  EMPLOYEE: "EMPLOYEE",
+jest.mock("@/platform/permissions", async (importOriginal) => ({
+  ...(await importOriginal()),
   resolveScopeAccess: () => ({ scope: "EMPLOYEE", allowed: true }),
 }));
 

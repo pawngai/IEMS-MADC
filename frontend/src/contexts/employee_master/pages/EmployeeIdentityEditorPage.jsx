@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Save, UserRoundPlus } from "lucide-react";
-import Layout from "@/app/layout/Layout";
 import { employeeIdentityApi } from "@/contexts/employee_master/api/employeeIdentityApi";
 import { employeeProfileApi } from "@/contexts/employee_master";
 import { mastersAPI } from "@/contexts/organization_master";
@@ -221,18 +220,18 @@ const EmployeeIdentityEditorPage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-5xl mx-auto py-8">
           <Card>
             <CardContent className="py-12 text-center text-slate-500">Loading employee identity...</CardContent>
           </Card>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="employee-identity-editor-page">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -359,7 +358,7 @@ const EmployeeIdentityEditorPage = () => {
           </div>
         </form>
       </div>
-    </Layout>
+    </>
   );
 };
 

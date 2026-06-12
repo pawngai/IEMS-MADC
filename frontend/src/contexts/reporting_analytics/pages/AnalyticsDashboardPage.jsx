@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Layout from "@/app/layout/Layout";
 import { analyticsAPI } from "@/contexts/reporting_analytics/api/analyticsApi";
 import { mastersAPI } from "@/contexts/organization_master";
 import { useAuth } from "@/contexts/identity_access";
@@ -383,7 +382,7 @@ const AnalyticsDashboardPage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="space-y-6" data-testid="analytics-dashboard-loading">
           <PageHeaderSkeleton />
           <StatGridSkeleton count={4} />
@@ -396,7 +395,7 @@ const AnalyticsDashboardPage = () => {
             <CardSkeleton lines={5} />
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -409,7 +408,7 @@ const AnalyticsDashboardPage = () => {
   ];
 
   return (
-    <Layout>
+    <>
       <div className="mx-auto w-full max-w-7xl min-w-0 space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
@@ -500,7 +499,7 @@ const AnalyticsDashboardPage = () => {
           canOpenServiceEvents={canOpenServiceEvents}
         />
       </div>
-    </Layout>
+    </>
   );
 };
 

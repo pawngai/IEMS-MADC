@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "@/contexts/identity_access";
+import { useAuth, canEnterEssPortal } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { isRegularEssEmployee } from "@/contexts/ess/services/essEligibility";
 import { canAccessEssDocuments } from "@/contexts/ess/services/essDomainService";
@@ -119,21 +119,6 @@ export const buildSwitchTargets = ({
   return targets;
 };
 
-export const canEnterEssPortal = ({
-  authorities,
-  employeeId,
-  canAccessEssPortal,
-  hasEssPermissions,
-}) => {
-  return (
-    Array.isArray(authorities) &&
-    authorities.includes("EMPLOYEE") &&
-    Boolean(employeeId) &&
-    Boolean(canAccessEssPortal) &&
-    Boolean(hasEssPermissions)
-  );
-};
-
 const NAV_COLLAPSED_KEY = "iems_nav_collapsed";
 
 const readCollapsed = () => {
@@ -168,16 +153,8 @@ const Layout = ({ children }) => {
   const hasDepartmentalAuthority = authorities.some((a) => ["DEPT_DATA_ENTRY", "HOD"].includes(a));
 
   // ── Permission flags ──────────────────────────────────────────────
-  const hasEssPermissions = canAny([
-    Permissions.DOCUMENT_READ_OWN,
-    Permissions.PROFILE_READ_OWN, Permissions.SERVICE_BOOK_READ_OWN,
-    Permissions.LEAVE_APPLY_OWN, Permissions.LEAVE_READ_OWN,
-    Permissions.PROFILE_UPDATE_OWN_LIMITED, Permissions.PROFILE_UPDATE_ALL,
-  ]);
-  const canEssPortal = canEnterEssPortal({
-    authorities, employeeId: user?.employee_id,
-    canAccessEssPortal: canAccessEssPortal(), hasEssPermissions,
-  });
+  // ESS portal eligibility is centralized in identity_access portalAccessRules.
+  const canEssPortal = canEnterEssPortal({ user, canAny, canAccessEssPortal });
   const canDepartmentScopedPortal =
     hasDepartmentalAuthority &&
     can(Permissions.PROFILE_READ_ALL);

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useAuth } from "@/contexts/identity_access";
-import { hasAuthority } from "@/contexts/access_control";
+import { hasAuthority } from "@/platform/permissions";
 
 const TAB_OWNERSHIP = {
   "policy-masters": "system_admin",

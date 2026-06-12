@@ -6,7 +6,7 @@ import { dedupeAuthorityCodes } from "@/contexts/admin/hooks/authorityNormalizat
 import {
   assignRole,
   revokeRole,
-} from "@/contexts/access_control";
+} from "@/platform/permissions";
 
 const useAdminUserActions = ({
   newUser,

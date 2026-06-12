@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, FileText, Loader2, Upload, X } from "lucide-react";
-import Layout from "@/app/layout/Layout";
 import { documentsAPI } from "@/contexts/documents";
 import { employeeProfileApi } from "@/contexts/employee_master";
 import { mastersAPI } from "@/contexts/organization_master";
@@ -173,7 +172,7 @@ const RegularisationRecordPage = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="regularisation-record-page">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -277,7 +276,7 @@ const RegularisationRecordPage = () => {
           <Button disabled={submitting} onClick={handleSubmit}>{submitting ? "Creating..." : "Create Regularisation Draft"}</Button>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

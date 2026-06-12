@@ -1,25 +1,24 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 
-import { buildSwitchTargets, canEnterEssPortal } from '@/app/layout/Layout';
+import { buildSwitchTargets } from '@/app/layout/Layout';
+import { canEnterEssPortal } from '@/contexts/identity_access/model/portalAccessRules';
 
 describe('Layout dual-role portal switching', () => {
   test('requires employee authority and employee id for ESS portal eligibility', () => {
     expect(
       canEnterEssPortal({
-        authorities: ['SYSTEM_ADMIN'],
-        employeeId: '',
-        canAccessEssPortal: true,
-        hasEssPermissions: true,
+        user: { authorities: ['SYSTEM_ADMIN'], employee_id: '' },
+        canAny: () => true,
+        canAccessEssPortal: () => true,
       })
     ).toBe(false);
 
     expect(
       canEnterEssPortal({
-        authorities: ['EMPLOYEE'],
-        employeeId: 'EMP-1',
-        canAccessEssPortal: true,
-        hasEssPermissions: true,
+        user: { authorities: ['EMPLOYEE'], employee_id: 'EMP-1' },
+        canAny: () => true,
+        canAccessEssPortal: () => true,
       })
     ).toBe(true);
   });

@@ -63,9 +63,8 @@ jest.mock("@/contexts/employee_master/api/employeeIdentityApi", () => ({
   },
 }));
 
-jest.mock("@/contexts/access_control/services/authorizationService", () => ({
-  __esModule: true,
-  EMPLOYEE: "EMPLOYEE",
+jest.mock("@/platform/permissions", async (importOriginal) => ({
+  ...(await importOriginal()),
   resolveScopeAccess: () => ({ scope: "GLOBAL", allowed: true }),
 }));
 

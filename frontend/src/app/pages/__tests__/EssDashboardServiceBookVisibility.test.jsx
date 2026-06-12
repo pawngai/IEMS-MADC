@@ -1,5 +1,13 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render as rtlRender, screen, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const render = (ui) =>
+  rtlRender(
+    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      {ui}
+    </QueryClientProvider>
+  );
 import '@testing-library/jest-dom';
 
 import EssDashboard from '@/portals/ess/pages/EssDashboardPage';
@@ -44,16 +52,6 @@ const mockGetMyLeaveBalances = jest.fn();
 const mockGetMyServiceBook = jest.fn();
 const mockListMyLeaves = jest.fn();
 const mockGetMyProfileAuditTrail = jest.fn();
-
-jest.mock('@/contexts/identity_access/model/rbac', () => ({
-  __esModule: true,
-  Permissions: {
-    PROFILE_UPDATE_OWN_LIMITED: 'PROFILE_UPDATE_OWN_LIMITED',
-    PROFILE_UPDATE_ALL: 'PROFILE_UPDATE_ALL',
-    LEAVE_APPLY_OWN: 'LEAVE_APPLY_OWN',
-    LEAVE_READ_OWN: 'LEAVE_READ_OWN',
-  },
-}));
 
 jest.mock('@/contexts/ess/api/essApi', () => ({
   __esModule: true,

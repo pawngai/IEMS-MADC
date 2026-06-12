@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Layout from "@/app/layout/Layout";
 import { essAPI } from "@/contexts/ess";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
@@ -252,7 +251,7 @@ const EssDocumentsPage = () => {
   }, []);
 
   return (
-    <Layout>
+    <>
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in" data-testid="ess-documents-page">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -500,7 +499,7 @@ const EssDocumentsPage = () => {
           </>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

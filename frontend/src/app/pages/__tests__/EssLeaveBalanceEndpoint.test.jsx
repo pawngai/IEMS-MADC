@@ -23,14 +23,6 @@ jest.mock('@/contexts/identity_access/model/authContext', () => ({
   useAuth: () => mockUseAuth(),
 }));
 
-jest.mock('@/contexts/identity_access/model/rbac', () => ({
-  __esModule: true,
-  Permissions: {
-    LEAVE_APPLY_OWN: 'LEAVE_APPLY_OWN',
-    LEAVE_READ_OWN: 'LEAVE_READ_OWN',
-  },
-}));
-
 const mockGetMyProfile = jest.fn();
 const mockGetMyLeaveBalances = jest.fn();
 

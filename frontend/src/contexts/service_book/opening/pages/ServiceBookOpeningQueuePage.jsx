@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { BookOpen, RefreshCw, Users } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
@@ -45,7 +44,7 @@ const ServiceBookOpeningQueuePage = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="service-book-opening-queue-page">
         <Card className="border-0 shadow-sm">
           <CardHeader>
@@ -104,7 +103,7 @@ const ServiceBookOpeningQueuePage = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </>
   );
 };
 

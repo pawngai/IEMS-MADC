@@ -1,5 +1,4 @@
 import { useState } from "react";
-import Layout from "@/app/layout/Layout";
 import { documentsAPI } from "@/contexts/documents/api/documentsApi";
 import { useDocumentsBrowser } from "@/contexts/documents/hooks/useDocumentsBrowser";
 import { Badge } from "@/shared/ui/badge";
@@ -95,7 +94,7 @@ export default function DocumentManagementPage() {
   };
 
   return (
-    <Layout>
+    <>
       <div className="mx-auto max-w-6xl space-y-6 p-6" data-testid="document-management-page">
         <Card>
           <CardHeader>
@@ -371,6 +370,6 @@ export default function DocumentManagementPage() {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </>
   );
 }

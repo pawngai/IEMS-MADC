@@ -4,7 +4,7 @@ import { essAPI } from "@/contexts/ess";
 import { useAuth, usePermissions } from "@/contexts/identity_access";
 import { employeeIdentityApi } from "@/contexts/employee_master";
 import { leaveAPI } from "@/contexts/leave_attendance/api/leaveApi";
-import { EMPLOYEE, resolveScopeAccess } from "@/contexts/access_control";
+import { EMPLOYEE, resolveScopeAccess } from "@/platform/permissions";
 import { Permissions } from "@/platform/permissions";
 import { getApiErrorMessage, getLeaveTypeUnavailableMessage } from "@/shared/lib/utils";
 import { toast } from "sonner";

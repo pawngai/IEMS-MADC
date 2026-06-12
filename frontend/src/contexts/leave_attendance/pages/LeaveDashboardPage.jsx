@@ -1,4 +1,3 @@
-import Layout from "@/app/layout/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
@@ -75,7 +74,7 @@ const LeaveDashboard = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="space-y-6" data-testid="leave-dashboard-loading">
           <PageHeaderSkeleton />
           <StatGridSkeleton count={3} />
@@ -85,12 +84,12 @@ const LeaveDashboard = () => {
           </div>
           <TableSkeleton rows={6} columns={5} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6 animate-fade-in">
         {isEmployeeHistoryMode && (
           <div>
@@ -393,7 +392,7 @@ const LeaveDashboard = () => {
         onClose={() => setActionDialog({ open: false, action: null, record: null })}
         onDone={fetchData}
       />
-    </Layout>
+    </>
   );
 };
 

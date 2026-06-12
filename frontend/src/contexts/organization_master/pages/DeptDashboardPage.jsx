@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { DEPT } from "@/shared/lib/routes";
 import { departmentPortalAPI } from "@/contexts/organization_master/api/departmentApi";
 import { useDepartmentScope } from "@/contexts/organization_master/hooks/useDepartmentScope";
@@ -91,7 +90,7 @@ const DeptDashboard = () => {
 
   if (!canUseDepartmentPortal) {
     return (
-      <Layout>
+      <>
         <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4" data-testid="department-portal-denied">
           <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
             <Lock className="w-8 h-8 text-slate-400" />
@@ -101,23 +100,23 @@ const DeptDashboard = () => {
             Department Operations Portal is available only for Head of Department and Data Entry roles.
           </p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-7xl mx-auto" data-testid="department-portal-loading">
           <DashboardSkeleton />
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (scopeError) {
     return (
-      <Layout>
+      <>
         <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4" data-testid="department-portal-scope-error">
           <div className="w-16 h-16 rounded-full bg-amber-50 flex items-center justify-center mb-4">
             <AlertTriangle className="w-8 h-8 text-amber-500" />
@@ -125,7 +124,7 @@ const DeptDashboard = () => {
           <h2 className="text-lg font-semibold text-slate-800 mb-1">Department Not Mapped</h2>
           <p className="text-sm text-slate-500 max-w-md">{scopeError}</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -163,7 +162,7 @@ const DeptDashboard = () => {
       : "blue";
 
   return (
-    <Layout>
+    <>
       <div className="max-w-7xl mx-auto space-y-6 animate-fade-in" data-testid="dept-dashboard">
         {/* ── Header ── */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
@@ -300,7 +299,7 @@ const DeptDashboard = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

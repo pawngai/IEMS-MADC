@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { ESS } from "@/shared/lib/routes";
 import { essAPI } from "@/contexts/ess";
 import { leaveAPI } from "@/contexts/leave_attendance";
@@ -169,7 +168,7 @@ const EssNotificationsPage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-5xl mx-auto space-y-6" data-testid="ess-notifications-loading">
           <PageHeaderSkeleton />
           <div className="space-y-3">
@@ -178,12 +177,12 @@ const EssNotificationsPage = () => {
             <CardSkeleton lines={3} />
           </div>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="ess-notifications-page">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -248,7 +247,7 @@ const EssNotificationsPage = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </>
   );
 };
 

@@ -20,27 +20,6 @@ vi.mock("@/contexts/identity_access/api/authApi", () => ({
   },
 }));
 
-vi.mock("@/contexts/identity_access/model/rbac", () => ({
-  __esModule: true,
-  Permissions: {},
-  Authorities: {},
-  hasAuthority: (user, authority) => Array.isArray(user?.authorities) && user.authorities.includes(authority),
-  hasAnyAuthority: (user, authorities) => Array.isArray(authorities) && authorities.some((authority) => Array.isArray(user?.authorities) && user.authorities.includes(authority)),
-}));
-
-vi.mock("@/contexts/access_control/services/authorizationService", () => ({
-  __esModule: true,
-  canPerformAction: () => false,
-  resolveScopeAccess: () => ({ scope: "GLOBAL" }),
-  resolveUserPermissions: () => new Set(),
-}));
-
-vi.mock("@/contexts/identity_access/model/authorityMeta", () => ({
-  __esModule: true,
-  AUTHORITY_DISPLAY_NAMES: {},
-  AUTHORITY_PRIORITY: ["SYSTEM_ADMIN", "GLOBAL_DATA_ENTRY", "DEPT_DATA_ENTRY", "EMPLOYEE"],
-}));
-
 vi.mock("@/platform/api/httpClient", () => ({
   __esModule: true,
   getToken: () => sessionStorage.getItem("iems_token"),

@@ -1,10 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback } from "react";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Permissions } from "@/platform/permissions";
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
 import { getEmployeeCompletionStatus } from "@/shared/lib/utils";
 import { filterQueuedProfilesByStage, getProfileQueueStagesForAuthority } from "@/shared/lib/profileWorkflowQueue";
 import { toast } from "sonner";
+import { workflowKeys } from "@/contexts/workflow/queries/keys";
 import {
   getMyEssProfile,
   clearWorkQueueInflightRequests,
@@ -26,6 +28,8 @@ import {
 
 const normalizeStage = (value) => String(value || "").trim().toUpperCase();
 
+const EMPTY_QUEUE = [];
+
 export function useWorkflowQueueQuery() {
   const { user } = useAuth();
   const {
@@ -39,12 +43,6 @@ export function useWorkflowQueueQuery() {
 
   const authority = getPrimaryAuthority();
   const authorityLabel = getAuthorityDisplayName(authority);
-
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [items, setItems] = useState([]);
-  const mountedRef = useRef(true);
-  const loadRequestIdRef = useRef(0);
 
   const canServiceBookWorkflow =
     canAny([
@@ -67,7 +65,7 @@ export function useWorkflowQueueQuery() {
   const canChangeRequestReview =
     can(Permissions.PROFILE_READ_ALL) && can(Permissions.PROFILE_UPDATE_ALL);
 
-  const canIdentityWorkflow = useMemo(() => {
+  const canIdentityWorkflow = (() => {
     if (["SYSTEM_ADMIN", "EMPLOYEE"].includes(authority)) return false;
     if (["DEPT_DATA_ENTRY", "GLOBAL_DATA_ENTRY", "DEALING_ASSISTANT"].includes(authority)) {
       return canAccessModule("data_entry");
@@ -75,9 +73,9 @@ export function useWorkflowQueueQuery() {
     if (authority === "VERIFIER") return canAccessModule("verification");
     if (authority === "APPROVING_AUTHORITY") return canAccessModule("approval");
     return false;
-  }, [authority, canAccessModule]);
+  })();
 
-  const canProfileWorkflow = useMemo(() => {
+  const canProfileWorkflow = (() => {
     if (authority === "SYSTEM_ADMIN") return false;
     if (authority === "EMPLOYEE") return canAccessEssPortal();
     if (["DEPT_DATA_ENTRY", "GLOBAL_DATA_ENTRY", "DEALING_ASSISTANT", "SECTION_OFFICER"].includes(authority)) {
@@ -89,29 +87,43 @@ export function useWorkflowQueueQuery() {
       return canAccessModule("attestation");
     }
     return true;
-  }, [authority, canAccessModule, canAccessEssPortal]);
+  })();
 
-  const shouldLoadProfileQueueItems = useMemo(() => {
-    if (!canProfileWorkflow) return false;
-    return true;
-  }, [authority, canProfileWorkflow]);
+  const profileStages = getProfileQueueStagesForAuthority(authority);
 
-  const profileStages = useMemo(() => getProfileQueueStagesForAuthority(authority), [authority]);
+  const includeEssTask = authority === "EMPLOYEE" && canAccessEssPortal();
+  const includeProfileQueue =
+    canProfileWorkflow &&
+    canAny([
+      Permissions.PROFILE_READ_ALL,
+      Permissions.PROFILE_CREATE,
+      Permissions.PROFILE_UPDATE_ALL,
+      Permissions.PROFILE_UPDATE_OWN_LIMITED,
+    ]);
 
-  const load = useCallback(
-    async (mode = "initial") => {
-      const requestId = loadRequestIdRef.current + 1;
-      loadRequestIdRef.current = requestId;
-      const isCurrentRequest = () => mountedRef.current && loadRequestIdRef.current === requestId;
+  // Capability snapshot: any change produces a new cache entry, so queues are
+  // never served across role/permission switches.
+  const queueKeyInputs = {
+    authority,
+    employeeId: user?.employee_id ?? null,
+    ess: includeEssTask,
+    profiles: includeProfileQueue,
+    profileStages,
+    identity: canIdentityWorkflow,
+    serviceBook: canServiceBookWorkflow,
+    serviceBookOpening: canServiceBookOpeningWorkflow,
+    changeRequests: canChangeRequestReview,
+  };
 
-      if (mode === "initial") setLoading(true);
-      else setRefreshing(true);
-
+  const queueQuery = useQuery({
+    queryKey: workflowKeys.queue(queueKeyInputs),
+    placeholderData: keepPreviousData,
+    queryFn: async () => {
       try {
         clearWorkQueueInflightRequests();
         const queueTasks = [];
 
-        if (authority === "EMPLOYEE" && canAccessEssPortal()) {
+        if (includeEssTask) {
           queueTasks.push(async () => {
             const profile = await getMyEssProfile();
             const completion = getEmployeeCompletionStatus(profile);
@@ -124,15 +136,7 @@ export function useWorkflowQueueQuery() {
           });
         }
 
-        if (
-          shouldLoadProfileQueueItems &&
-          canAny([
-            Permissions.PROFILE_READ_ALL,
-            Permissions.PROFILE_CREATE,
-            Permissions.PROFILE_UPDATE_ALL,
-            Permissions.PROFILE_UPDATE_OWN_LIMITED,
-          ])
-        ) {
+        if (includeProfileQueue) {
           queueTasks.push(async () => {
             const stageItems = await Promise.all(profileStages.map(async (stage) => {
               const profiles = await listProfilesByStatus(stage, 200);
@@ -222,45 +226,22 @@ export function useWorkflowQueueQuery() {
         }
 
         const queueItemGroups = await Promise.all(queueTasks.map((task) => task()));
-        const nextItems = queueItemGroups.flat().filter(Boolean);
-
-        if (isCurrentRequest()) {
-          setItems(enrichAndSortQueueItems(nextItems));
-        }
+        return enrichAndSortQueueItems(queueItemGroups.flat().filter(Boolean));
       } catch (error) {
-        if (isCurrentRequest()) {
-          console.error("Work queue load failed:", error);
-          toast.error("Failed to load work queue");
-          setItems([]);
-        }
-      } finally {
-        if (isCurrentRequest()) {
-          setLoading(false);
-          setRefreshing(false);
-        }
+        console.error("Work queue load failed:", error);
+        toast.error("Failed to load work queue");
+        return EMPTY_QUEUE;
       }
     },
-    [authority, can, canAny, canAccessEssPortal, canServiceBookOpeningWorkflow, canServiceBookWorkflow, canChangeRequestReview, canIdentityWorkflow, profileStages, shouldLoadProfileQueueItems, user]
-  );
+  });
 
-  useEffect(() => {
-    mountedRef.current = true;
-
-    return () => {
-      mountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    load("initial");
-  }, [load]);
-
-  const refresh = useCallback(() => load("refresh"), [load]);
+  const { refetch: refetchQueue } = queueQuery;
+  const refresh = useCallback(() => refetchQueue(), [refetchQueue]);
 
   return {
-    loading,
-    refreshing,
-    items,
+    loading: queueQuery.isPending,
+    refreshing: queueQuery.isFetching && !queueQuery.isPending,
+    items: queueQuery.data ?? EMPTY_QUEUE,
     refresh,
     authority,
     authorityLabel,

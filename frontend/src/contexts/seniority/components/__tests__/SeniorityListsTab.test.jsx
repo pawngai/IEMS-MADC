@@ -10,8 +10,8 @@ jest.mock("@/contexts/identity_access/model/authContext", () => ({
   useAuth: () => ({ user: { authorities: [] } }),
 }));
 
-jest.mock("@/contexts/access_control", () => ({
-  __esModule: true,
+jest.mock("@/platform/permissions", async (importOriginal) => ({
+  ...(await importOriginal()),
   hasAuthority: (...args) => mockHasAuthority(...args),
 }));
 

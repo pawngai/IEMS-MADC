@@ -1,4 +1,3 @@
-import Layout from "@/app/layout/Layout";
 import { Link } from "react-router-dom";
 import { useServiceBookRecordsPageState } from "@/contexts/service_book/records/hooks/useServiceBookRecordsPageState";
 import ServiceRecordTimeline from "@/contexts/service_book/records/components/ServiceRecordTimeline";
@@ -51,7 +50,7 @@ const ServiceBookRecordsPage = () => {
 
   if (!targetEmployeeId) {
     return (
-      <Layout>
+      <>
         <div className="text-center py-12">
           <User className="w-16 h-16 mx-auto mb-4 text-muted-foreground/50" />
           <h2 className="text-xl font-semibold mb-2">No Employee Profile Linked</h2>
@@ -59,13 +58,13 @@ const ServiceBookRecordsPage = () => {
             Your account is not linked to an employee profile.
           </p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (serviceBookRecordsEligible === false) {
     return (
-      <Layout>
+      <>
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in" data-testid="service-records-not-applicable">
           <Card>
             <CardHeader className="pb-3">
@@ -84,12 +83,12 @@ const ServiceBookRecordsPage = () => {
             </CardContent>
           </Card>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div
         className="max-w-5xl mx-auto space-y-6 animate-fade-in"
         data-testid="service-records-page"
@@ -261,7 +260,7 @@ const ServiceBookRecordsPage = () => {
           onClose={() => setAttachTarget(null)}
         />
       )}
-    </Layout>
+    </>
   );
 };
 

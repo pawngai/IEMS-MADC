@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import AccessDeniedPage from "@/app/pages/system-admin/AccessDeniedPage";
-import Layout from "@/app/layout/Layout";
 import { ESS } from "@/shared/lib/routes";
 import { useAuth } from "@/contexts/identity_access";
 import { usePermissions } from "@/contexts/identity_access";
@@ -99,33 +99,27 @@ const formatEventActionLabel = (value, fallback = "Unknown") => {
     .replace(/\b\w/g, (char) => char.toUpperCase());
 };
 
+const EMPTY_BALANCES = {};
+const EMPTY_LEAVES = [];
+const EMPTY_AUDIT = [];
+
 const EssDashboard = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { can } = usePermissions();
-  const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState(null);
-  const [dashboardStats, setDashboardStats] = useState(null);
-  const [serviceBook, setServiceBook] = useState(null);
-  const [leaveBalances, setLeaveBalances] = useState({});
-  const [myLeaves, setMyLeaves] = useState([]);
-  const [profileAudit, setProfileAudit] = useState([]);
-  const [loadError, setLoadError] = useState(false);
-  const [accessDenied, setAccessDenied] = useState(false);
-  const [reloadKey, setReloadKey] = useState(0);
-
   const canEditProfile = can(Permissions.PROFILE_UPDATE_OWN_LIMITED) || can(Permissions.PROFILE_UPDATE_ALL);
   const canReadOwnDocuments = canAccessEssDocuments({ user, can });
   const canUseLeave = can(Permissions.LEAVE_APPLY_OWN) || can(Permissions.LEAVE_READ_OWN);
   const canReadOwnServiceBook = can(Permissions.SERVICE_BOOK_READ_OWN);
 
-  useEffect(() => {
-    let active = true;
+  const isAccessDeniedError = (error) => {
+    const message = String(error?.message || "").toLowerCase();
+    return message.includes("linked employee account") || message.includes("self scope");
+  };
 
-    const load = async () => {
-      setLoading(true);
-      setAccessDenied(false);
-      setLoadError(false);
+  const dashboardQuery = useQuery({
+    queryKey: ["ess", "dashboard", { employeeId: user?.employee_id ?? null, canUseLeave, canReadOwnServiceBook }],
+    queryFn: async () => {
       try {
         assertEssPortalSession({ user });
         const [profileRes, leavesRes, dashboardRes] = await Promise.all([
@@ -142,80 +136,47 @@ const EssDashboard = () => {
         assertEssSelfScope({ user, targetEmployeeId });
         const nextLeaves = Array.isArray(leavesRes.data) ? leavesRes.data : [];
 
-        let serviceBookEligible = false;
-        if (nextProfile) {
-          serviceBookEligible = canShowEssServiceBook({ profile: nextProfile, user });
-        }
-
+        const serviceBookEligible = canShowEssServiceBook({ profile: nextProfile, user });
         let serviceBookRes = { data: null };
         if (serviceBookEligible && targetEmployeeId) {
-          serviceBookRes = await essAPI.getMyServiceBook().catch((error) => {
-            const detail = error?.response?.data?.detail;
-            const detailError = detail?.error;
-            const detailMessage = detail?.message;
-            const notApplicable =
-              error?.response?.status === 403 &&
-              (detailError === "Service Book not applicable" ||
-                (typeof detailMessage === "string" && detailMessage.toLowerCase().includes("service book")) ||
-                (typeof detail === "string" && detail.toLowerCase().includes("service book")));
-
-            if (notApplicable) {
-              serviceBookEligible = false;
-              return { data: null };
-            }
-
-            return { data: null };
-          });
+          serviceBookRes = await essAPI.getMyServiceBook().catch(() => ({ data: null }));
         }
 
-        if (!active) return;
-        setProfile(nextProfile);
-        setDashboardStats(dashboardRes.data || null);
-        setServiceBook(serviceBookRes.data || null);
-        setMyLeaves(nextLeaves);
+        const [balanceRes, auditRes] = await Promise.all([
+          user?.employee_id && canUseLeave
+            ? essAPI.getMyLeaveBalances().catch(() => ({ data: { balances: {} } }))
+            : Promise.resolve({ data: { balances: {} } }),
+          getMyProfileAuditTrail(nextProfile.employee_id)
+            .then((auditTrail) => ({ data: { audit_trail: auditTrail } }))
+            .catch(() => ({ data: { audit_trail: [] } })),
+        ]);
 
-        const loads = [];
-        if (user?.employee_id && canUseLeave) {
-          loads.push(
-            essAPI.getMyLeaveBalances().catch(() => ({ data: { balances: {} } }))
-          );
-        } else {
-          loads.push(Promise.resolve({ data: { balances: {} } }));
-        }
-
-        if (nextProfile?.employee_id) {
-          loads.push(
-            getMyProfileAuditTrail(nextProfile.employee_id)
-              .then((auditTrail) => ({ data: { audit_trail: auditTrail } }))
-              .catch(() => ({ data: { audit_trail: [] } }))
-          );
-        } else {
-          loads.push(Promise.resolve({ data: { audit_trail: [] } }));
-        }
-
-        const [balanceRes, auditRes] = await Promise.all(loads);
-        if (!active) return;
-        setLeaveBalances(balanceRes.data?.balances || {});
-        setProfileAudit(auditRes.data?.audit_trail || []);
+        return {
+          profile: nextProfile,
+          dashboardStats: dashboardRes.data || null,
+          serviceBook: serviceBookRes.data || null,
+          myLeaves: nextLeaves,
+          leaveBalances: balanceRes.data?.balances || {},
+          profileAudit: auditRes.data?.audit_trail || [],
+        };
       } catch (error) {
-        if (!active) return;
-        const message = String(error?.message || "").toLowerCase();
-        if (message.includes("linked employee account") || message.includes("self scope")) {
-          setAccessDenied(true);
-        } else {
-          setLoadError(true);
+        if (!isAccessDeniedError(error)) {
           toast.error("Failed to load employee dashboard");
         }
-      } finally {
-        if (active) setLoading(false);
+        throw error;
       }
-    };
+    },
+  });
 
-    load();
-    return () => {
-      active = false;
-    };
-  }, [user, canUseLeave, canReadOwnServiceBook, reloadKey]);
+  const loading = dashboardQuery.isPending;
+  const accessDenied = dashboardQuery.isError && isAccessDeniedError(dashboardQuery.error);
+  const loadError = dashboardQuery.isError && !accessDenied;
+  const profile = dashboardQuery.data?.profile ?? null;
+  const dashboardStats = dashboardQuery.data?.dashboardStats ?? null;
+  const serviceBook = dashboardQuery.data?.serviceBook ?? null;
+  const leaveBalances = dashboardQuery.data?.leaveBalances ?? EMPTY_BALANCES;
+  const myLeaves = dashboardQuery.data?.myLeaves ?? EMPTY_LEAVES;
+  const profileAudit = dashboardQuery.data?.profileAudit ?? EMPTY_AUDIT;
 
   const serviceBookEntries = useMemo(() => {
     const entryCount = Number(dashboardStats?.service_book_entries);
@@ -283,11 +244,11 @@ const EssDashboard = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-6xl mx-auto">
           <DashboardSkeleton />
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -302,7 +263,7 @@ const EssDashboard = () => {
 
   if (loadError) {
     return (
-      <Layout>
+      <>
         <div className="max-w-3xl mx-auto">
           <Card>
             <CardHeader>
@@ -315,11 +276,11 @@ const EssDashboard = () => {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <Button onClick={() => setReloadKey((value) => value + 1)}>Retry</Button>
+              <Button onClick={() => dashboardQuery.refetch()}>Retry</Button>
             </CardContent>
           </Card>
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -350,7 +311,7 @@ const EssDashboard = () => {
   const serviceStatusClass = serviceStatusColors[serviceStatus] || "bg-slate-100 text-slate-600";
 
   return (
-    <Layout>
+    <>
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in" data-testid="ess-dashboard">
 
         {/* ── Header ── */}
@@ -609,7 +570,7 @@ const EssDashboard = () => {
         </div>
 
       </div>
-    </Layout>
+    </>
   );
 };
 

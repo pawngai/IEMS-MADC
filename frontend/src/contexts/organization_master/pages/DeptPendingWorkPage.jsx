@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { DEPT } from "@/shared/lib/routes";
 import { useDepartmentScope } from "@/contexts/organization_master/hooks/useDepartmentScope";
 import { departmentPortalAPI } from "@/contexts/organization_master/api/departmentApi";
@@ -56,35 +55,35 @@ const DeptPendingWorkPage = () => {
 
   if (!canUseDepartmentPortal) {
     return (
-      <Layout>
+      <>
         <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
           <Lock className="w-8 h-8 text-slate-400 mb-3" />
           <h2 className="text-lg font-semibold text-slate-800">Access Restricted</h2>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (scopeError) {
     return (
-      <Layout>
+      <>
         <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4" data-testid="department-pending-work-scope-error">
           <AlertTriangle className="w-8 h-8 text-amber-500 mb-3" />
           <h2 className="text-lg font-semibold text-slate-800">Department Not Mapped</h2>
           <p className="text-sm text-slate-500 max-w-md">{scopeError}</p>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-6xl mx-auto space-y-6">
           <PageHeaderSkeleton />
           <TableSkeleton rows={6} columns={4} />
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -92,7 +91,7 @@ const DeptPendingWorkPage = () => {
   const rejectedCount = pendingWork.filter((i) => i.workflow_status === "REJECTED").length;
 
   return (
-    <Layout>
+    <>
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in" data-testid="dept-pending-work-page">
         {/* Header */}
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4">
@@ -186,7 +185,7 @@ const DeptPendingWorkPage = () => {
           </Card>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

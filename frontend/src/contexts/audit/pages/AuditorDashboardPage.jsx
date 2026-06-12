@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import Layout from "@/app/layout/Layout";
 import { auditAPI, dashboardAPI } from "@/contexts/audit/api/auditApi";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
@@ -78,19 +77,19 @@ const AuditorDashboard = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="space-y-6" data-testid="auditor-dashboard-loading">
           <PageHeaderSkeleton />
           <CardSkeleton lines={2} />
           <StatGridSkeleton count={3} />
           <TableSkeleton rows={8} columns={4} />
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="space-y-6 animate-fade-in" data-testid="auditor-dashboard">
         {/* Header */}
         <div>
@@ -278,7 +277,7 @@ const AuditorDashboard = () => {
           </div>
         </div>
       </div>
-    </Layout>
+    </>
   );
 };
 

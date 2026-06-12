@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { ESS } from "@/shared/lib/routes";
 import EmployeeProfile from "@/contexts/employee_master/components/EmployeeProfileSummary";
 import EmployeeProfileExtensionEditor from "@/contexts/employee_master/components/EmployeeProfileExtensionEditor";
@@ -70,11 +69,11 @@ const EssProfilePage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-6xl mx-auto">
           <ProfileSkeleton />
         </div>
-      </Layout>
+      </>
     );
   }
 
@@ -109,7 +108,7 @@ const EssProfilePage = () => {
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-6xl mx-auto space-y-6 animate-fade-in" data-testid="ess-profile-page">
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -279,7 +278,7 @@ const EssProfilePage = () => {
           </Card>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

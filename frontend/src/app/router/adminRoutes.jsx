@@ -57,7 +57,7 @@ export const AdminRoutes = () => (
       }
     />
     <Route
-      path="/admin/masters"
+      path="/admin/:tab"
       element={
         <ProtectedRoute
           requiredPermissions={[Permissions.USER_MANAGEMENT, Permissions.SYSTEM_CONFIG]}

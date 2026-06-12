@@ -1,6 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { useEmployeeDirectory } from "@/contexts/employee_master/hooks/useEmployeeDirectory";
 import { employeeIdentityApi } from "@/contexts/employee_master/api/employeeIdentityApi";
 import { userManagementAPI } from "@/contexts/identity_access";
@@ -185,19 +184,19 @@ const EmployeeDirectoryPage = () => {
 
   if (!canSeeEmployees) {
     return (
-      <Layout>
+      <>
         <div
           className="max-w-4xl mx-auto p-8 text-center text-slate-500"
           data-testid="employees-denied"
         >
           Employee directory is not available for your role/module access.
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div
         className="max-w-full space-y-6 animate-fade-in"
         data-testid="employees-page"
@@ -346,7 +345,7 @@ const EmployeeDirectoryPage = () => {
         )}
       </div>
 
-    </Layout>
+    </>
   );
 };
 

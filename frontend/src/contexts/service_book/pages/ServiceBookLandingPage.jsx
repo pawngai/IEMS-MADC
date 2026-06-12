@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import Layout from "@/app/layout/Layout";
 import { OPS, MAIN } from "@/shared/lib/routes";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
@@ -13,7 +12,7 @@ const ServiceBookLandingPage = () => {
   const directoryPath = isPortalPath ? OPS.EMPLOYEES : MAIN.EMPLOYEES;
 
   return (
-    <Layout>
+    <>
       <div className="max-w-4xl mx-auto space-y-6 animate-fade-in" data-testid="service-book-landing-page">
         <Card className="border-0 shadow-sm">
           <CardHeader>
@@ -44,7 +43,7 @@ const ServiceBookLandingPage = () => {
           </CardContent>
         </Card>
       </div>
-    </Layout>
+    </>
   );
 };
 

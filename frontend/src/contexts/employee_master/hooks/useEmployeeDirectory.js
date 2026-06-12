@@ -1,18 +1,37 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { useUrlTableState } from "@/shared/lib/useUrlTableState";
 import { employeeProfileApi } from "@/contexts/employee_master";
 import { formatDirectoryEnumLabel } from "@/contexts/employee_master";
+import { employeeMasterKeys } from "@/contexts/employee_master/queries/keys";
 import { mastersAPI } from "@/contexts/organization_master";
 import { toast } from "sonner";
+
+const EMPTY_LIST = [];
+const EMPTY_DIRECTORY_PAGE = { employees: EMPTY_LIST, total: 0, totalPages: 1 };
+
+const unwrapMasterList = (response, key) =>
+  Array.isArray(response.data) ? response.data : response.data?.[key] || [];
 
 const PAGE_SIZE = 20;
 
 const EMPLOYEE_STATUSES = ["ACTIVE", "RETIRED", "SUSPENDED", "DECEASED"];
 const RECRUITMENT_MODES = ["DIRECT", "PROMOTION", "DEPUTATION", "TRANSFER", "COMPASSIONATE"];
 
-const parsePositiveInt = (value, fallback) => {
-  const parsed = Number.parseInt(value || "", 10);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+const DIRECTORY_FILTERS = {
+  query: { param: "q", defaultValue: "" },
+  status: { param: "status", defaultValue: "ALL" },
+  department: { param: "dept", defaultValue: "ALL" },
+  type: { param: "type", defaultValue: "ALL" },
+  designation: { param: "desig", defaultValue: "ALL" },
+  office: { param: "office", defaultValue: "ALL" },
+  employeeStatus: { param: "emp_status", defaultValue: "ALL" },
+  recruitment: { param: "recruit", defaultValue: "ALL" },
+  payLevel: { param: "pay", defaultValue: "ALL" },
+  service: { param: "svc", defaultValue: "ALL" },
+  group: { param: "grp", defaultValue: "ALL" },
+  dateFrom: { param: "date_from", defaultValue: "" },
+  dateTo: { param: "date_to", defaultValue: "" },
 };
 
 const normalizeDirectoryEmployee = (employee, source = "profile") => {
@@ -42,76 +61,37 @@ export function useEmployeeDirectory({
   useIdentityDirectory = false,
   listIdentityDirectory = null,
 } = {}) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const searchParams = useMemo(
-    () => new URLSearchParams(location.search || ""),
-    [location.search],
-  );
+  // ── URL-derived state (filters / sort / pagination) ───────────────
+  const {
+    values: filterValues,
+    setValue: setFilterValue,
+    page,
+    setPage,
+    sortField,
+    sortDir,
+    toggleSort,
+    clearFilters,
+  } = useUrlTableState({
+    filters: DIRECTORY_FILTERS,
+    sort: { fieldParam: "sort", dirParam: "dir", defaultField: "full_name", defaultDir: "asc" },
+    pageParam: "page",
+  });
 
-  // ── URL-synced state ──────────────────────────────────────────────
-  const [query, _setQuery] = useState(() => searchParams.get("q") || "");
-  const [activeStatusFilter, _setActiveStatusFilter] = useState(
-    () => searchParams.get("status") || "ALL",
-  );
-  const [departmentFilter, _setDepartmentFilter] = useState(
-    () => searchParams.get("dept") || "ALL",
-  );
-  const [typeFilter, _setTypeFilter] = useState(
-    () => searchParams.get("type") || "ALL",
-  );
-  const [designationFilter, _setDesignationFilter] = useState(
-    () => searchParams.get("desig") || "ALL",
-  );
-  const [officeFilter, _setOfficeFilter] = useState(
-    () => searchParams.get("office") || "ALL",
-  );
-  const [employeeStatusFilter, _setEmployeeStatusFilter] = useState(
-    () => searchParams.get("emp_status") || "ALL",
-  );
-  const [recruitmentFilter, _setRecruitmentFilter] = useState(
-    () => searchParams.get("recruit") || "ALL",
-  );
-  const [payLevelFilter, _setPayLevelFilter] = useState(
-    () => searchParams.get("pay") || "ALL",
-  );
-  const [serviceFilter, _setServiceFilter] = useState(
-    () => searchParams.get("svc") || "ALL",
-  );
-  const [groupFilter, _setGroupFilter] = useState(
-    () => searchParams.get("grp") || "ALL",
-  );
-  const [dateFromFilter, _setDateFromFilter] = useState(
-    () => searchParams.get("date_from") || "",
-  );
-  const [dateToFilter, _setDateToFilter] = useState(
-    () => searchParams.get("date_to") || "",
-  );
-  const [sortField, setSortField] = useState(
-    () => searchParams.get("sort") || "full_name",
-  );
-  const [sortDir, setSortDir] = useState(
-    () => searchParams.get("dir") || "asc",
-  );
-  const [page, setPage] = useState(() =>
-    parsePositiveInt(searchParams.get("page"), 1),
-  );
-
-  // ── Loading / data state ──────────────────────────────────────────
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [employees, setEmployees] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(1);
-
-  // ── Reference data ────────────────────────────────────────────────
-  const [departments, setDepartments] = useState([]);
-  const [employmentTypes, setEmploymentTypes] = useState([]);
-  const [designations, setDesignations] = useState([]);
-  const [offices, setOffices] = useState([]);
-  const [payLevels, setPayLevels] = useState([]);
-  const [services, setServices] = useState([]);
-  const [serviceGroups, setServiceGroups] = useState([]);
+  const {
+    query,
+    status: activeStatusFilter,
+    department: departmentFilter,
+    type: typeFilter,
+    designation: designationFilter,
+    office: officeFilter,
+    employeeStatus: employeeStatusFilter,
+    recruitment: recruitmentFilter,
+    payLevel: payLevelFilter,
+    service: serviceFilter,
+    group: groupFilter,
+    dateFrom: dateFromFilter,
+    dateTo: dateToFilter,
+  } = filterValues;
 
   // ── Debounced search ──────────────────────────────────────────────
   const [debouncedQuery, setDebouncedQuery] = useState(query);
@@ -123,12 +103,36 @@ export function useEmployeeDirectory({
     return () => clearTimeout(debounceRef.current);
   }, [query]);
 
-  // ── Fetch employees from server ───────────────────────────────────
-  const fetchEmployees = useCallback(
-    async ({ mode = "initial" } = {}) => {
-      if (mode === "initial") setLoading(true);
-      else setRefreshing(true);
+  // ── Fetch employees from server (TanStack Query) ─────────────────
+  const directorySource =
+    useIdentityDirectory && listIdentityDirectory
+      ? "identity"
+      : useUserDirectory && listUserDirectory
+        ? "user"
+        : "profile";
 
+  const listFilters = {
+    source: directorySource,
+    page,
+    q: debouncedQuery.trim(),
+    status: activeStatusFilter,
+    department: departmentFilter,
+    type: typeFilter,
+    designation: designationFilter,
+    office: officeFilter,
+    employeeStatus: employeeStatusFilter,
+    recruitment: recruitmentFilter,
+    payLevel: payLevelFilter,
+    service: serviceFilter,
+    group: groupFilter,
+    dateFrom: dateFromFilter,
+    dateTo: dateToFilter,
+    sortField,
+    sortDir,
+  };
+
+  const fetchDirectoryPage = useCallback(
+    async () => {
       const params = {
         page,
         page_size: PAGE_SIZE,
@@ -191,133 +195,82 @@ export function useEmployeeDirectory({
         }
         const data = res.data || {};
         const rows = data.employees || data.profiles || data.identities || data || [];
-        setEmployees(Array.isArray(rows) ? rows.map((row) => normalizeDirectoryEmployee(row, rowSource)) : []);
-        setTotal(data.total ?? rows.length);
-        setTotalPages(data.total_pages ?? Math.max(1, Math.ceil((data.total ?? rows.length) / PAGE_SIZE)));
+        const total = data.total ?? rows.length;
+        return {
+          employees: Array.isArray(rows) ? rows.map((row) => normalizeDirectoryEmployee(row, rowSource)) : [],
+          total,
+          totalPages: data.total_pages ?? Math.max(1, Math.ceil(total / PAGE_SIZE)),
+        };
       } catch (error) {
         console.error("Failed to load employees:", error);
         toast.error("Failed to load employee directory");
-        setEmployees([]);
-        setTotal(0);
-        setTotalPages(1);
-      } finally {
-        setLoading(false);
-        setRefreshing(false);
+        return EMPTY_DIRECTORY_PAGE;
       }
     },
     [debouncedQuery, activeStatusFilter, departmentFilter, typeFilter, designationFilter, officeFilter, employeeStatusFilter, recruitmentFilter, payLevelFilter, serviceFilter, groupFilter, dateFromFilter, dateToFilter, sortField, sortDir, page, useUserDirectory, listUserDirectory, useIdentityDirectory, listIdentityDirectory],
   );
 
-  useEffect(() => {
-    fetchEmployees({ mode: "initial" });
-  }, [fetchEmployees]);
+  const directoryQuery = useQuery({
+    queryKey: employeeMasterKeys.directoryList(listFilters),
+    queryFn: fetchDirectoryPage,
+    placeholderData: keepPreviousData,
+  });
 
-  // ── Load reference data once ──────────────────────────────────────
-  useEffect(() => {
-    let active = true;
-    const load = async () => {
-      try {
-        const [deptRes, typeRes, desigRes, officeRes, payRes, svcRes, grpRes] = await Promise.all([
-          mastersAPI.getDepartments().catch(() => ({ data: [] })),
-          mastersAPI.getEmploymentTypes().catch(() => ({ data: [] })),
-          mastersAPI.getDesignations().catch(() => ({ data: [] })),
-          mastersAPI.getOffices().catch(() => ({ data: [] })),
-          mastersAPI.getPayLevels().catch(() => ({ data: [] })),
-          mastersAPI.getServices().catch(() => ({ data: [] })),
-          mastersAPI.getServiceGroups().catch(() => ({ data: [] })),
-        ]);
-        if (!active) return;
-        const depts = Array.isArray(deptRes.data)
-          ? deptRes.data
-          : deptRes.data?.departments || [];
-        const types = Array.isArray(typeRes.data)
-          ? typeRes.data
-          : typeRes.data?.employment_types || [];
-        const desigs = Array.isArray(desigRes.data)
-          ? desigRes.data
-          : desigRes.data?.designations || [];
-        const offs = Array.isArray(officeRes.data)
-          ? officeRes.data
-          : officeRes.data?.offices || [];
-        const pays = Array.isArray(payRes.data)
-          ? payRes.data
-          : payRes.data?.pay_levels || [];
-        const svcs = Array.isArray(svcRes.data)
-          ? svcRes.data
-          : svcRes.data?.services || [];
-        const grps = Array.isArray(grpRes.data)
-          ? grpRes.data
-          : grpRes.data?.service_groups || [];
-        setDepartments(depts);
-        setEmploymentTypes(types);
-        setDesignations(desigs);
-        setOffices(offs);
-        setPayLevels(pays);
-        setServices(svcs);
-        setServiceGroups(grps);
-      } catch {
-        /* filter dropdowns will fall back to empty */
-      }
-    };
-    load();
-    return () => {
-      active = false;
-    };
-  }, []);
+  const directoryPage = directoryQuery.data ?? EMPTY_DIRECTORY_PAGE;
+  const employees = directoryPage.employees;
+  const total = directoryPage.total;
+  const totalPages = directoryPage.totalPages;
+  const loading = directoryQuery.isPending;
+  const refreshing = directoryQuery.isFetching && !directoryQuery.isPending;
 
-  // ── URL sync ──────────────────────────────────────────────────────
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (query) params.set("q", query);
-    if (activeStatusFilter !== "ALL") params.set("status", activeStatusFilter);
-    if (departmentFilter !== "ALL") params.set("dept", departmentFilter);
-    if (typeFilter !== "ALL") params.set("type", typeFilter);
-    if (designationFilter !== "ALL") params.set("desig", designationFilter);
-    if (officeFilter !== "ALL") params.set("office", officeFilter);
-    if (employeeStatusFilter !== "ALL") params.set("emp_status", employeeStatusFilter);
-    if (recruitmentFilter !== "ALL") params.set("recruit", recruitmentFilter);
-    if (payLevelFilter !== "ALL") params.set("pay", payLevelFilter);
-    if (serviceFilter !== "ALL") params.set("svc", serviceFilter);
-    if (groupFilter !== "ALL") params.set("grp", groupFilter);
-    if (dateFromFilter) params.set("date_from", dateFromFilter);
-    if (dateToFilter) params.set("date_to", dateToFilter);
-    if (sortField !== "full_name") params.set("sort", sortField);
-    if (sortDir !== "asc") params.set("dir", sortDir);
-    if (page > 1) params.set("page", String(page));
+  // ── Reference data (cached indefinitely; master data rarely changes) ─
+  const referenceQuery = useQuery({
+    queryKey: employeeMasterKeys.directoryReference(),
+    staleTime: Infinity,
+    queryFn: async () => {
+      const [deptRes, typeRes, desigRes, officeRes, payRes, svcRes, grpRes] = await Promise.all([
+        mastersAPI.getDepartments().catch(() => ({ data: [] })),
+        mastersAPI.getEmploymentTypes().catch(() => ({ data: [] })),
+        mastersAPI.getDesignations().catch(() => ({ data: [] })),
+        mastersAPI.getOffices().catch(() => ({ data: [] })),
+        mastersAPI.getPayLevels().catch(() => ({ data: [] })),
+        mastersAPI.getServices().catch(() => ({ data: [] })),
+        mastersAPI.getServiceGroups().catch(() => ({ data: [] })),
+      ]);
+      return {
+        departments: unwrapMasterList(deptRes, "departments"),
+        employmentTypes: unwrapMasterList(typeRes, "employment_types"),
+        designations: unwrapMasterList(desigRes, "designations"),
+        offices: unwrapMasterList(officeRes, "offices"),
+        payLevels: unwrapMasterList(payRes, "pay_levels"),
+        services: unwrapMasterList(svcRes, "services"),
+        serviceGroups: unwrapMasterList(grpRes, "service_groups"),
+      };
+    },
+  });
 
-    const nextSearch = params.toString();
-    const normalizedCurrent = (location.search || "").replace(/^\?/, "");
-    if (nextSearch === normalizedCurrent) return;
+  const departments = referenceQuery.data?.departments ?? EMPTY_LIST;
+  const employmentTypes = referenceQuery.data?.employmentTypes ?? EMPTY_LIST;
+  const designations = referenceQuery.data?.designations ?? EMPTY_LIST;
+  const offices = referenceQuery.data?.offices ?? EMPTY_LIST;
+  const payLevels = referenceQuery.data?.payLevels ?? EMPTY_LIST;
+  const services = referenceQuery.data?.services ?? EMPTY_LIST;
+  const serviceGroups = referenceQuery.data?.serviceGroups ?? EMPTY_LIST;
 
-    navigate(
-      { pathname: location.pathname, search: nextSearch ? `?${nextSearch}` : "" },
-      { replace: true },
-    );
-  }, [activeStatusFilter, departmentFilter, typeFilter, designationFilter, officeFilter, employeeStatusFilter, recruitmentFilter, payLevelFilter, serviceFilter, groupFilter, dateFromFilter, dateToFilter, location.pathname, location.search, navigate, page, query, sortDir, sortField]);
-
-  // ── Filter setters that auto-reset to page 1 ─────────────────────
-  const setQuery = useCallback((v) => { _setQuery(v); }, []);
-  const setActiveStatusFilter = useCallback((v) => { _setActiveStatusFilter(v); setPage(1); }, []);
-  const setDepartmentFilter = useCallback((v) => { _setDepartmentFilter(v); setPage(1); }, []);
-  const setTypeFilter = useCallback((v) => { _setTypeFilter(v); setPage(1); }, []);
-  const setDesignationFilter = useCallback((v) => { _setDesignationFilter(v); setPage(1); }, []);
-  const setOfficeFilter = useCallback((v) => { _setOfficeFilter(v); setPage(1); }, []);
-  const setEmployeeStatusFilter = useCallback((v) => { _setEmployeeStatusFilter(v); setPage(1); }, []);
-  const setRecruitmentFilter = useCallback((v) => { _setRecruitmentFilter(v); setPage(1); }, []);
-  const setPayLevelFilter = useCallback((v) => { _setPayLevelFilter(v); setPage(1); }, []);
-  const setServiceFilter = useCallback((v) => { _setServiceFilter(v); setPage(1); }, []);
-  const setGroupFilter = useCallback((v) => { _setGroupFilter(v); setPage(1); }, []);
-  const setDateFromFilter = useCallback((v) => { _setDateFromFilter(v); setPage(1); }, []);
-  const setDateToFilter = useCallback((v) => { _setDateToFilter(v); setPage(1); }, []);
-
-  // Reset page when debounced search changes (but not on mount)
-  const prevDebouncedQuery = useRef(debouncedQuery);
-  useEffect(() => {
-    if (prevDebouncedQuery.current !== debouncedQuery) {
-      prevDebouncedQuery.current = debouncedQuery;
-      setPage(1);
-    }
-  }, [debouncedQuery]);
+  // ── Filter setters (URL-backed; changing a filter resets the page) ─
+  const setQuery = useCallback((v) => setFilterValue("query", v), [setFilterValue]);
+  const setActiveStatusFilter = useCallback((v) => setFilterValue("status", v), [setFilterValue]);
+  const setDepartmentFilter = useCallback((v) => setFilterValue("department", v), [setFilterValue]);
+  const setTypeFilter = useCallback((v) => setFilterValue("type", v), [setFilterValue]);
+  const setDesignationFilter = useCallback((v) => setFilterValue("designation", v), [setFilterValue]);
+  const setOfficeFilter = useCallback((v) => setFilterValue("office", v), [setFilterValue]);
+  const setEmployeeStatusFilter = useCallback((v) => setFilterValue("employeeStatus", v), [setFilterValue]);
+  const setRecruitmentFilter = useCallback((v) => setFilterValue("recruitment", v), [setFilterValue]);
+  const setPayLevelFilter = useCallback((v) => setFilterValue("payLevel", v), [setFilterValue]);
+  const setServiceFilter = useCallback((v) => setFilterValue("service", v), [setFilterValue]);
+  const setGroupFilter = useCallback((v) => setFilterValue("group", v), [setFilterValue]);
+  const setDateFromFilter = useCallback((v) => setFilterValue("dateFrom", v), [setFilterValue]);
+  const setDateToFilter = useCallback((v) => setFilterValue("dateTo", v), [setFilterValue]);
 
   // ── Derived data ──────────────────────────────────────────────────
   const statusCounts = useMemo(() => {
@@ -440,39 +393,10 @@ export function useEmployeeDirectory({
     + (dateToFilter ? 1 : 0);
 
   // ── Actions ───────────────────────────────────────────────────────
-  const clearAllFilters = useCallback(() => {
-    setActiveStatusFilter("ALL");
-    setDepartmentFilter("ALL");
-    setTypeFilter("ALL");
-    setDesignationFilter("ALL");
-    setOfficeFilter("ALL");
-    setEmployeeStatusFilter("ALL");
-    setRecruitmentFilter("ALL");
-    setPayLevelFilter("ALL");
-    setServiceFilter("ALL");
-    setGroupFilter("ALL");
-    setDateFromFilter("");
-    setDateToFilter("");
-    setQuery("");
-  }, [setActiveStatusFilter, setDepartmentFilter, setTypeFilter, setDesignationFilter, setOfficeFilter, setEmployeeStatusFilter, setRecruitmentFilter, setPayLevelFilter, setServiceFilter, setGroupFilter, setDateFromFilter, setDateToFilter, setQuery]);
+  const clearAllFilters = clearFilters;
 
-  const toggleSort = useCallback(
-    (field) => {
-      if (sortField === field) {
-        setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-      } else {
-        setSortField(field);
-        setSortDir("asc");
-      }
-      setPage(1);
-    },
-    [sortField],
-  );
-
-  const refresh = useCallback(
-    () => fetchEmployees({ mode: "refresh" }),
-    [fetchEmployees],
-  );
+  const { refetch: refetchDirectory } = directoryQuery;
+  const refresh = useCallback(() => refetchDirectory(), [refetchDirectory]);
 
   // ── Pagination helpers ────────────────────────────────────────────
   const currentPage = Math.min(page, totalPages);
@@ -548,7 +472,7 @@ export function useEmployeeDirectory({
 
     // actions
     refresh,
-    loadEmployees: fetchEmployees,
+    loadEmployees: refresh,
     workflowFilterKind: useIdentityDirectory ? "Identity" : "Profile",
   };
 }

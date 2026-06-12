@@ -75,7 +75,7 @@ export const resolveRouteLoadingVariant = (pathname = "") => {
   return "generic";
 };
 
-const RouteShellSkeleton = ({ pathname }) => {
+export const RouteShellSkeleton = ({ pathname }) => {
   const variant = resolveRouteLoadingVariant(pathname);
 
   if (variant === "employees") {

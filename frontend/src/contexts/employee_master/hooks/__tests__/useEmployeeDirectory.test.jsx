@@ -1,5 +1,13 @@
 import React from "react";
-import { render, waitFor } from "@testing-library/react";
+import { render as rtlRender, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const render = (ui) =>
+  rtlRender(
+    <QueryClientProvider client={new QueryClient({ defaultOptions: { queries: { retry: false } } })}>
+      {ui}
+    </QueryClientProvider>
+  );
 import "@testing-library/jest-dom";
 
 import { useEmployeeDirectory } from "@/contexts/employee_master/hooks/useEmployeeDirectory";

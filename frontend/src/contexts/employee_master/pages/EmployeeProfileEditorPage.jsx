@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
-import Layout from "@/app/layout/Layout";
 import { employeeProfileApi } from "@/contexts/employee_master/api/employeeProfileApi";
 import EmployeeProfileExtensionEditor from "@/contexts/employee_master/components/EmployeeProfileExtensionEditor";
 import {
@@ -87,32 +86,32 @@ const EmployeeProfileEditorPage = () => {
 
   if (loading) {
     return (
-      <Layout>
+      <>
         <div className="max-w-5xl mx-auto py-8">
           <Card>
             <CardContent className="py-12 text-center text-slate-500">Loading employee profile...</CardContent>
           </Card>
         </div>
-      </Layout>
+      </>
     );
   }
 
   if (!profile) {
     return (
-      <Layout>
+      <>
         <div className="max-w-5xl mx-auto py-8">
           <Card>
             <CardContent className="py-12 text-center text-slate-500">Employee profile not found.</CardContent>
           </Card>
         </div>
-      </Layout>
+      </>
     );
   }
 
   const identityWorkflowStatus = String(profile?.identity_workflow_status || "").trim().toUpperCase();
   if (identityWorkflowStatus && identityWorkflowStatus !== "ACTIVE") {
     return (
-      <Layout>
+      <>
         <div className="max-w-5xl mx-auto py-8">
           <Card>
             <CardHeader>
@@ -127,12 +126,12 @@ const EmployeeProfileEditorPage = () => {
             </CardContent>
           </Card>
         </div>
-      </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto space-y-6 animate-fade-in" data-testid="employee-profile-editor-page">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
@@ -163,7 +162,7 @@ const EmployeeProfileEditorPage = () => {
           onSuccess={handleSuccess}
         />
       </div>
-    </Layout>
+    </>
   );
 };
 

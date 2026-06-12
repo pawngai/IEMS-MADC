@@ -21,7 +21,7 @@ COLLECTION_OWNERSHIP: dict[str, str] = {
     r"^service_book_entries$": "service_book",
     r"^service_book_part_projections$": "service_book",
     r"^service_book_projection_status$": "service_book",
-    r"^service_book_part_revisions$": "leave_attendance",
+    r"^service_book_part_revisions$": "service_book",
     r"^service_book_part_(i|ii_a|ii_b|iii|iv|v|vi|vii|viii)$": "service_book",
     r"^servicebook_.*": "service_book",
     r"^service_book_.*": "service_book",

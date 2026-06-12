@@ -86,7 +86,7 @@ COLLECTION_OWNER: dict[str, str] = {
     "service_book_part_viii": "service_book",
     "service_book_entries": "service_book",
     "service_book_part_projections": "service_book",
-    "service_book_part_revisions": "leave_attendance",
+    "service_book_part_revisions": "service_book",
 }
 
 # Contexts that are thin compatibility shims or sub-contexts of a parent.

@@ -139,6 +139,43 @@ async def test_production_startup_fails_when_database_is_missing(monkeypatch) ->
     assert runtime.mongo_state.db is None
 
 
+class _TopologyDb:
+    def __init__(self, hello_response):
+        self._hello_response = hello_response
+
+    async def command(self, command):
+        assert command == "hello"
+        return self._hello_response
+
+
+@pytest.mark.asyncio
+async def test_transaction_support_logged_for_replica_set(caplog) -> None:
+    with caplog.at_level("INFO", logger=runtime.logger.name):
+        await runtime._log_transaction_support(_TopologyDb({"ok": 1, "setName": "rs0"}))
+
+    assert any(
+        "transactions are enabled" in record.getMessage() and record.levelname == "INFO"
+        for record in caplog.records
+    )
+
+
+@pytest.mark.asyncio
+async def test_standalone_mongo_logs_error_in_production(monkeypatch, caplog) -> None:
+    monkeypatch.setattr(
+        runtime,
+        "settings",
+        SimpleNamespace(mongo_url="mongodb://example", db_name="iems_db", is_production=True),
+    )
+
+    with caplog.at_level("INFO", logger=runtime.logger.name):
+        await runtime._log_transaction_support(_TopologyDb({"ok": 1}))
+
+    assert any(
+        "transactions are unavailable" in record.getMessage() and record.levelname == "ERROR"
+        for record in caplog.records
+    )
+
+
 @pytest.mark.asyncio
 async def test_post_connect_bootstrap_propagates_index_failures(monkeypatch) -> None:
     async def _migrations_ok(_db):

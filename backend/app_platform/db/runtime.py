@@ -642,6 +642,37 @@ async def _require_database_exists(client: AsyncIOMotorClient, db_name: str) -> 
         raise RuntimeError(f"MongoDB database {db_name!r} does not exist")
 
 
+async def _log_transaction_support(db) -> None:
+    """Report whether the deployment supports multi-document transactions.
+
+    run_atomic silently degrades to sequential non-transactional writes on a
+    standalone mongod, so a misconfigured production deployment loses atomicity
+    without any other signal.
+    """
+    try:
+        hello = await db.command("hello")
+    except Exception as exc:
+        logger.warning("Could not determine MongoDB topology: %s", exc)
+        return
+    set_name = hello.get("setName")
+    if set_name:
+        logger.info(
+            "MongoDB replica set %r detected; multi-document transactions are enabled.",
+            set_name,
+        )
+    elif settings.is_production:
+        logger.error(
+            "MongoDB is running standalone; multi-document transactions are unavailable "
+            "and atomic writes fall back to sequential non-transactional updates. "
+            "Run mongod with --replSet and initiate the replica set "
+            "(see deploy/gcp/docker-compose.vm.yml)."
+        )
+    else:
+        logger.info(
+            "MongoDB is running standalone; transactions disabled (run_atomic falls back)."
+        )
+
+
 async def _connect() -> None:
     if not settings.mongo_url:
         if settings.is_production:
@@ -660,6 +691,7 @@ async def _connect() -> None:
             await db.command("ping")
             if settings.is_production:
                 await _require_database_exists(client, settings.db_name)
+            await _log_transaction_support(db)
             await _run_post_connect_bootstrap(db)
             mongo_state.client = client
             mongo_state.db = db

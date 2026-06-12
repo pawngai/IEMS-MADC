@@ -201,7 +201,7 @@ Edit `deploy/gcp/.env`:
 - Set `FRONTEND_IMAGE` to the pushed frontend image reference when deploying outside GitHub Actions
 - Keep `ENVIRONMENT=production` so production-only hardening is active
 - Set a real `JWT_SECRET`
-- Keep `MONGO_URL=mongodb://mongo:27017` when Mongo runs in the same Compose project
+- Keep `MONGO_URL=mongodb://mongo:27017/?replicaSet=rs0` when Mongo runs in the same Compose project (the Compose file runs Mongo as a single-node replica set so multi-document transactions work)
 - Set `CORS_ORIGINS` to your public frontend origin
 - If frontend and API are on different sites and refresh-cookie flows are required, set `REFRESH_COOKIE_SAMESITE=none` and a suitable `REFRESH_COOKIE_DOMAIN`; production defaults `REFRESH_COOKIE_SECURE=true`
 - For multi-worker or multi-process backend deployments, set `RATE_LIMIT_STORAGE_URI` to a shared backend such as Redis
@@ -214,7 +214,7 @@ FRONTEND_IMAGE=us-central1-docker.pkg.dev/your-project-id/iems/myiems-frontend:l
 ENVIRONMENT=production
 JWT_SECRET=replace-with-a-long-random-secret
 DB_NAME=iems_db
-MONGO_URL=mongodb://mongo:27017
+MONGO_URL=mongodb://mongo:27017/?replicaSet=rs0
 UPLOAD_DIR=/app/uploads
 DOCUMENT_STORAGE_BACKEND=local
 CORS_ORIGINS=https://app.example.com
@@ -224,6 +224,17 @@ CORS_ORIGINS=https://app.example.com
 ```
 
 Edit `deploy/gcp/Caddyfile` and replace `your-app-domain.example.com` with your actual public app domain if you are not using the GitHub deploy workflow to write it for you.
+
+### Upgrading an existing VM to the replica-set Mongo
+
+Existing deployments that ran Mongo standalone keep their data: restarting the `mongo` service with the new Compose file starts `mongod` with `--replSet rs0` on the same `mongo_data` volume, and the container healthcheck runs `rs.initiate(...)` automatically on the first check. Verify after `docker compose up -d`:
+
+```bash
+sudo docker compose -f docker-compose.vm.yml exec mongo mongosh --quiet --eval 'rs.status().members[0].stateStr'
+# expected: PRIMARY
+```
+
+The backend logs `MongoDB replica set 'rs0' detected; multi-document transactions are enabled.` at startup. If it instead logs an error about Mongo running standalone, transactions are silently skipped (writes fall back to sequential updates) — fix `MONGO_URL` and the Mongo service definition before relying on atomic workflows.
 
 ## 6.1 Module Access Configuration
 
